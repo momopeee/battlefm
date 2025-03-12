@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				battle: {
+					pink: '#E94D84',
+					purple: '#9C27B0',
+					blue: '#1E88E5',
+					gameover: '#8E24AA',
+					gameclear: '#E94D84'
 				}
 			},
 			borderRadius: {
@@ -84,11 +92,25 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'text-scroll': {
+					'0%': { transform: 'translateY(100%)' },
+					'100%': { transform: 'translateY(-100%)' }
+				},
+				'blink': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'text-scroll': 'text-scroll 60s linear infinite',
+				'blink': 'blink 1s ease-in-out infinite'
+			},
+			fontFamily: {
+				'game': ['"Noto Sans JP"', 'sans-serif'],
+				'pixel': ['"Press Start 2P"', 'cursive']
 			}
 		}
 	},
