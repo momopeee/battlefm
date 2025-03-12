@@ -8,30 +8,31 @@ interface AudioPlayerProps {
   autoPlay?: boolean;
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, loop = true, autoPlay = true }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, loop = false, autoPlay = false }) => {
   const { bgmEnabled } = useApp();
-
+  const audioRef = useRef<HTMLAudioElement>(null);
+  
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    if (bgmEnabled && autoPlay) {
+    
+    if (bgmEnabled) {
+      audio.volume = 0.5;
       audio.play().catch(error => {
-        console.error("Audio playback failed:", error);
+        console.error("Audio play failed:", error);
       });
     } else {
       audio.pause();
     }
-  }, [bgmEnabled, autoPlay, src]);
-
+  }, [bgmEnabled, src]);
+  
   return (
-    <audio
+    <audio 
       ref={audioRef}
       src={src}
       loop={loop}
-      preload="auto"
-      style={{ display: 'none' }}
+      autoPlay={autoPlay && bgmEnabled}
+      className="hidden"
     />
   );
 };

@@ -1,49 +1,165 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Define the types for our context
-type Screen = 'start' | 'battle1' | 'victory1' | 'select' | 'battle2' | 'endingA' | 'endingB' | 'endingC';
+// Define types for our app
+export type Screen = 'start' | 'battle1' | 'victory1' | 'select' | 'battle2' | 'endingA' | 'endingB' | 'endingC';
+
+export interface Character {
+  name: string;
+  icon: string;
+  maxHp: number;
+  currentHp: number;
+  attackMin: number;
+  attackMax: number;
+  specialPower: number;
+}
+
+export interface Comment {
+  author: string;
+  text: string;
+  isSystem?: boolean;
+}
 
 interface AppContextType {
   currentScreen: Screen;
   bgmEnabled: boolean;
-  playerHP: number;
-  enemyHP: number;
+  player: Character;
+  opponent1: Character;
+  opponent2: Character;
   battleTimer: number;
+  comments: Comment[];
+  attackCount: number;
+  specialAttackAvailable: boolean;
+  highballMode: boolean;
+  sosoHealMode: boolean;
+  yujiSpecialMode: boolean;
+  showCharacterSheet: boolean;
+  currentCharacterSheet: 'player' | 'opponent1' | 'opponent2' | null;
   totalComments: number;
+  
+  // Methods
   toggleBgm: () => void;
   handleScreenTransition: (screen: Screen) => void;
-  updatePlayerHP: (hp: number) => void;
-  updateEnemyHP: (hp: number) => void;
+  setPlayer: (player: Character) => void;
+  setOpponent1: (opponent: Character) => void;
+  setOpponent2: (opponent: Character) => void;
+  resetBattleTimer: () => void;
+  startBattleTimer: () => void;
+  addComment: (author: string, text: string, isSystem?: boolean) => void;
+  clearComments: () => void;
+  setAttackCount: (count: number) => void;
+  setSpecialAttackAvailable: (available: boolean) => void;
+  setHighballMode: (mode: boolean) => void;
+  setSosoHealMode: (mode: boolean) => void;
+  setYujiSpecialMode: (mode: boolean) => void;
+  setShowCharacterSheet: (show: boolean) => void;
+  setCurrentCharacterSheet: (character: 'player' | 'opponent1' | 'opponent2' | null) => void;
   incrementComments: () => void;
-  resetBattle: () => void;
 }
 
 // Create the context with default values
 const AppContext = createContext<AppContextType>({
   currentScreen: 'start',
   bgmEnabled: true,
-  playerHP: 100,
-  enemyHP: 70,
+  player: {
+    name: 'とおる＠経営参謀',
+    icon: '/lovable-uploads/a37987c5-d1ab-4f11-86a4-7ac9a089a401.png',
+    maxHp: 100,
+    currentHp: 100,
+    attackMin: 15,
+    attackMax: 25,
+    specialPower: 40
+  },
+  opponent1: {
+    name: 'そーそー＠狂犬ツイート',
+    icon: '/lovable-uploads/5af802e0-9f63-462c-838c-e2b1acbf3c6f.png',
+    maxHp: 70,
+    currentHp: 70,
+    attackMin: 20,
+    attackMax: 30,
+    specialPower: 0
+  },
+  opponent2: {
+    name: 'ゆうじ＠陽気なおじさん',
+    icon: '/lovable-uploads/656bd67f-53fe-4f15-86f3-0db149cc7285.png',
+    maxHp: 100,
+    currentHp: 100,
+    attackMin: 15,
+    attackMax: 25,
+    specialPower: 40
+  },
   battleTimer: 0,
+  comments: [],
+  attackCount: 0,
+  specialAttackAvailable: false,
+  highballMode: false,
+  sosoHealMode: false,
+  yujiSpecialMode: false,
+  showCharacterSheet: false,
+  currentCharacterSheet: null,
   totalComments: 0,
+  
   toggleBgm: () => {},
   handleScreenTransition: () => {},
-  updatePlayerHP: () => {},
-  updateEnemyHP: () => {},
+  setPlayer: () => {},
+  setOpponent1: () => {},
+  setOpponent2: () => {},
+  resetBattleTimer: () => {},
+  startBattleTimer: () => {},
+  addComment: () => {},
+  clearComments: () => {},
+  setAttackCount: () => {},
+  setSpecialAttackAvailable: () => {},
+  setHighballMode: () => {},
+  setSosoHealMode: () => {},
+  setYujiSpecialMode: () => {},
+  setShowCharacterSheet: () => {},
+  setCurrentCharacterSheet: () => {},
   incrementComments: () => {},
-  resetBattle: () => {},
 });
 
 // Create the provider component
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('start');
   const [bgmEnabled, setBgmEnabled] = useState(true);
-  const [playerHP, setPlayerHP] = useState(100);
-  const [enemyHP, setEnemyHP] = useState(70);
+  const [player, setPlayerState] = useState<Character>({
+    name: 'とおる＠経営参謀',
+    icon: '/lovable-uploads/a37987c5-d1ab-4f11-86a4-7ac9a089a401.png',
+    maxHp: 100,
+    currentHp: 100,
+    attackMin: 15,
+    attackMax: 25,
+    specialPower: 40
+  });
+  const [opponent1, setOpponent1State] = useState<Character>({
+    name: 'そーそー＠狂犬ツイート',
+    icon: '/lovable-uploads/5af802e0-9f63-462c-838c-e2b1acbf3c6f.png',
+    maxHp: 70,
+    currentHp: 70,
+    attackMin: 20,
+    attackMax: 30,
+    specialPower: 0
+  });
+  const [opponent2, setOpponent2State] = useState<Character>({
+    name: 'ゆうじ＠陽気なおじさん',
+    icon: '/lovable-uploads/656bd67f-53fe-4f15-86f3-0db149cc7285.png',
+    maxHp: 100,
+    currentHp: 100,
+    attackMin: 15,
+    attackMax: 25,
+    specialPower: 40
+  });
   const [battleTimer, setBattleTimer] = useState(0);
-  const [totalComments, setTotalComments] = useState(0);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [attackCount, setAttackCount] = useState(0);
+  const [specialAttackAvailable, setSpecialAttackAvailable] = useState(false);
+  const [highballMode, setHighballMode] = useState(false);
+  const [sosoHealMode, setSosoHealMode] = useState(false);
+  const [yujiSpecialMode, setYujiSpecialMode] = useState(false);
   const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null);
+  const [showCharacterSheet, setShowCharacterSheet] = useState(false);
+  const [currentCharacterSheet, setCurrentCharacterSheet] = useState<'player' | 'opponent1' | 'opponent2' | null>(null);
+  const [totalComments, setTotalComments] = useState(0);
 
   // Toggle BGM on/off
   const toggleBgm = () => {
@@ -56,56 +172,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     
     // Reset battle timer when entering battle screens
     if (screen === 'battle1' || screen === 'battle2') {
-      setBattleTimer(0);
-      startTimer();
+      resetBattleTimer();
+      startBattleTimer();
     } else {
       stopTimer();
     }
   };
 
-  // Update player HP
-  const updatePlayerHP = (hp: number) => {
-    setPlayerHP(hp);
-    
-    // Check for game over condition
-    if (hp <= 0) {
-      if (currentScreen === 'battle1') {
-        setTimeout(() => handleScreenTransition('endingB'), 20000);
-      } else if (currentScreen === 'battle2') {
-        setTimeout(() => handleScreenTransition('endingC'), 20000);
-      }
-    }
+  // Update player character
+  const setPlayer = (updatedPlayer: Character) => {
+    setPlayerState(updatedPlayer);
   };
 
-  // Update enemy HP
-  const updateEnemyHP = (hp: number) => {
-    setEnemyHP(hp);
-    
-    // Check for victory condition
-    if (hp <= 0) {
-      if (currentScreen === 'battle1') {
-        setTimeout(() => handleScreenTransition('victory1'), 20000);
-      } else if (currentScreen === 'battle2') {
-        setTimeout(() => handleScreenTransition('endingA'), 20000);
-      }
-    }
+  // Update opponent1 character
+  const setOpponent1 = (updatedOpponent: Character) => {
+    setOpponent1State(updatedOpponent);
   };
 
-  // Increment comments counter
-  const incrementComments = () => {
-    setTotalComments(prev => prev + 1);
+  // Update opponent2 character
+  const setOpponent2 = (updatedOpponent: Character) => {
+    setOpponent2State(updatedOpponent);
   };
 
-  // Reset battle state
-  const resetBattle = () => {
-    setPlayerHP(100);
-    setEnemyHP(70);
+  // Reset battle timer
+  const resetBattleTimer = () => {
     setBattleTimer(0);
-    setTotalComments(0);
   };
 
   // Start battle timer
-  const startTimer = () => {
+  const startBattleTimer = () => {
     if (timerInterval) {
       clearInterval(timerInterval);
     }
@@ -125,6 +220,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  // Add comment to the chat
+  const addComment = (author: string, text: string, isSystem: boolean = false) => {
+    setComments(prev => [...prev, { author, text, isSystem }]);
+    incrementComments();
+  };
+
+  // Clear all comments
+  const clearComments = () => {
+    setComments([]);
+  };
+
+  // Increment total comments counter
+  const incrementComments = () => {
+    setTotalComments(prev => prev + 1);
+  };
+
   // Clean up timer on unmount
   useEffect(() => {
     return () => {
@@ -138,16 +249,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const contextValue: AppContextType = {
     currentScreen,
     bgmEnabled,
-    playerHP,
-    enemyHP,
+    player,
+    opponent1,
+    opponent2,
     battleTimer,
+    comments,
+    attackCount,
+    specialAttackAvailable,
+    highballMode,
+    sosoHealMode,
+    yujiSpecialMode,
+    showCharacterSheet,
+    currentCharacterSheet,
     totalComments,
     toggleBgm,
     handleScreenTransition,
-    updatePlayerHP,
-    updateEnemyHP,
+    setPlayer,
+    setOpponent1,
+    setOpponent2,
+    resetBattleTimer,
+    startBattleTimer,
+    addComment,
+    clearComments,
+    setAttackCount,
+    setSpecialAttackAvailable,
+    setHighballMode,
+    setSosoHealMode,
+    setYujiSpecialMode,
+    setShowCharacterSheet,
+    setCurrentCharacterSheet,
     incrementComments,
-    resetBattle,
   };
 
   return (

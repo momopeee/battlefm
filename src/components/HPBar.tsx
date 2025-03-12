@@ -10,12 +10,16 @@ const HPBar: React.FC<HPBarProps> = ({ currentHP, maxHP }) => {
   const percentage = Math.max(0, Math.min(100, (currentHP / maxHP) * 100));
   
   return (
-    <div className="hp-bar w-full">
-      <div 
-        className="hp-bar-inner" 
-        style={{ width: `${percentage}%` }}
-      ></div>
-      <div className="hp-text">残りHP: {currentHP}</div>
+    <div className="w-full">
+      <div className="flex justify-between mb-1">
+        <span className="text-white text-sm">{currentHP > 0 ? `残りHP: ${currentHP}` : '瀕死'}</span>
+      </div>
+      <div className="w-full bg-gray-700 rounded-full h-4">
+        <div 
+          className="bg-battle-pink h-4 rounded-full transition-all duration-300 ease-out"
+          style={{ width: `${percentage}%` }}
+        ></div>
+      </div>
     </div>
   );
 };

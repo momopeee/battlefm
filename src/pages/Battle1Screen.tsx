@@ -5,7 +5,7 @@ import HPBar from '@/components/HPBar';
 import CommentArea from '@/components/CommentArea';
 import CharacterSheet from '@/components/CharacterSheet';
 import AudioPlayer from '@/components/AudioPlayer';
-import { Music, MusicOff } from 'lucide-react';
+import { Volume2, VolumeX } from 'lucide-react';
 
 // Attack comments for player
 const playerAttackComments = [
@@ -53,8 +53,8 @@ const Battle1Screen: React.FC = () => {
     player, setPlayer,
     opponent1, setOpponent1,
     battleTimer,
-    startBattleTimer,
     resetBattleTimer,
+    startBattleTimer,
     comments, addComment, clearComments,
     specialAttackAvailable, setSpecialAttackAvailable,
     attackCount, setAttackCount,
@@ -374,16 +374,13 @@ const Battle1Screen: React.FC = () => {
     }, 20000);
   };
 
-  const handleCharacterClick = (character: string) => {
+  const handleCharacterClick = (character: 'player' | 'opponent1') => {
     setCurrentCharacterSheet(character);
     setShowCharacterSheet(true);
   };
 
   return (
-    <div className="battle-bg min-h-screen p-4 pt-10 text-white">
-      <AudioPlayer src="/audios/toru.mp3" loop autoPlay />
-      {soundEffect && <AudioPlayer src={soundEffect} loop={false} autoPlay />}
-      
+    <div className="bg-black min-h-screen p-4 pt-10 text-white">
       {/* Battle title and timer */}
       <div className="text-center mb-4">
         <h1 className="text-2xl font-bold mb-2">さよならクソリプそーそー！</h1>
@@ -459,7 +456,7 @@ const Battle1Screen: React.FC = () => {
         <button 
           onClick={handlePlayerSpecial} 
           disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-          className={`py-3 px-4 rounded-md font-bold ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-pink-500'}`}
+          className={`py-3 px-4 rounded-md font-bold ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-battle-pink'}`}
         >
           とくぎ
         </button>
@@ -498,7 +495,7 @@ const Battle1Screen: React.FC = () => {
         onClick={toggleBgm}
         className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
       >
-        {bgmEnabled ? <Music size={24} color="white" /> : <MusicOff size={24} color="white" />}
+        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
       
       {/* Character Sheet Popup */}
