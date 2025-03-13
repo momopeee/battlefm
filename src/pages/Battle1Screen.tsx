@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
@@ -383,14 +384,17 @@ const Battle1Screen: React.FC = () => {
     <div className="bg-battle-background min-h-screen flex flex-col h-screen p-4 text-white">
       {/* Top section with title and timer */}
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-bold mb-2">バトルタイトルを表示</h1>
+        <h1 className="text-2xl font-bold mb-2">さよならクソリプそーそー！</h1>
         <div className="flex items-center justify-center gap-4">
           <img 
             src={player.icon} 
             alt={player.name} 
             className="w-12 h-12 rounded-full"
           />
-          <p className="text-sm">対戦時間: {formatTime(battleTimer)}</p>
+          <div className="flex flex-col">
+            <span className="text-sm">{player.name}</span>
+            <p className="text-sm">{formatTime(battleTimer)}</p>
+          </div>
         </div>
       </div>
       
@@ -414,30 +418,36 @@ const Battle1Screen: React.FC = () => {
           <SpecialGauge 
             currentValue={sosoHealMode ? 0 : opponent1.currentHp <= 30 ? 1 : 0} 
             maxValue={1} 
-            label={sosoHealMode ? "回復中" : "回復まで：1"}
+            label={sosoHealMode ? "回復中" : "とくぎはつどう：1"}
           />
         </div>
       </div>
       
-      {/* Character info - centered horizontally */}
-      <div className="flex justify-center mb-2">
-        <div className="flex flex-col items-center mr-16 cursor-pointer" onClick={() => handleCharacterClick('player')}>
+      {/* Character info - centered horizontally with 4-grid layout */}
+      <div className="grid grid-cols-4 mb-2">
+        <div className="col-span-1"></div>
+        <div className="flex flex-col items-center col-span-1 cursor-pointer" onClick={() => handleCharacterClick('player')}>
           <img 
             src={player.icon} 
             alt={player.name} 
             className="w-16 h-16 rounded-full"
           />
-          <span className="font-bold mt-1">{player.name}</span>
+          <span className="font-bold mt-1 truncate w-20 text-center">
+            {player.name.length > 5 ? `${player.name.substring(0, 5)}` : player.name}
+          </span>
         </div>
         
-        <div className="flex flex-col items-center ml-16 cursor-pointer" onClick={() => handleCharacterClick('opponent1')}>
+        <div className="flex flex-col items-center col-span-1 cursor-pointer" onClick={() => handleCharacterClick('opponent1')}>
           <img 
             src={opponent1.icon} 
             alt={opponent1.name} 
             className="w-16 h-16 rounded-full"
           />
-          <span className="font-bold mt-1">{opponent1.name}</span>
+          <span className="font-bold mt-1 truncate w-20 text-center">
+            {opponent1.name.length > 5 ? `${opponent1.name.substring(0, 5)}` : opponent1.name}
+          </span>
         </div>
+        <div className="col-span-1"></div>
       </div>
       
       {/* Comments area with fixed height */}
@@ -447,12 +457,12 @@ const Battle1Screen: React.FC = () => {
       
       {/* Battle actions at bottom */}
       <div className="mt-auto">
-        {/* Battle actions */}
+        {/* Battle actions - slimmer buttons with consistent text size */}
         <div className="grid grid-cols-4 gap-2 mb-2">
           <button 
             onClick={handlePlayerAttack} 
             disabled={!isPlayerTurn || isBattleOver}
-            className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+            className={`py-1 px-4 rounded-full font-bold text-white text-xs ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
           >
             こうげき
           </button>
@@ -460,7 +470,7 @@ const Battle1Screen: React.FC = () => {
           <button 
             onClick={handlePlayerSpecial} 
             disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-            className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-black'}`}
+            className={`py-1 px-4 rounded-full font-bold text-white text-xs ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-black'}`}
           >
             とくぎ
           </button>
@@ -468,7 +478,7 @@ const Battle1Screen: React.FC = () => {
           <button 
             onClick={handleRunAway} 
             disabled={!isPlayerTurn || isBattleOver}
-            className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+            className={`py-1 px-4 rounded-full font-bold text-white text-xs ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
           >
             にげる
           </button>
@@ -476,7 +486,7 @@ const Battle1Screen: React.FC = () => {
           <button 
             onClick={handleHighball} 
             disabled={!isPlayerTurn || isBattleOver}
-            className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+            className={`py-1 px-4 rounded-full font-bold text-white text-xs ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
           >
             ハイボール
           </button>

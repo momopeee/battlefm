@@ -21,7 +21,7 @@ const SpecialGauge: React.FC<SpecialGaugeProps> = ({ currentValue, maxValue, lab
         </div>
         <div className="absolute inset-0 flex justify-center items-center">
           <span className="text-white text-sm z-10">
-            {label ? label : `発動まで：${remainingToFull}`}
+            {label ? label : `とくぎはつどう：${remainingToFull}`}
           </span>
         </div>
       </div>
