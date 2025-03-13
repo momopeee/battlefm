@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
@@ -380,9 +379,9 @@ const Battle1Screen: React.FC = () => {
   };
 
   return (
-    <div className="bg-battle-background min-h-screen p-4 pt-10 text-white">
-      {/* Battle title and timer */}
-      <div className="text-center mb-4">
+    <div className="bg-battle-background min-h-screen flex flex-col h-screen p-4 text-white">
+      {/* Top section with title and timer */}
+      <div className="text-center mb-2">
         <h1 className="text-2xl font-bold mb-2">バトルタイトルを表示</h1>
         <div className="flex items-center justify-center gap-4">
           <img 
@@ -394,8 +393,8 @@ const Battle1Screen: React.FC = () => {
         </div>
       </div>
       
-      {/* Health bars - updated to match wireframe exactly */}
-      <div className="flex gap-4 mb-6">
+      {/* Health bars */}
+      <div className="flex gap-4 mb-2">
         <div className="flex-1">
           <HPBar currentHP={player.currentHp} maxHP={player.maxHp} />
         </div>
@@ -404,8 +403,8 @@ const Battle1Screen: React.FC = () => {
         </div>
       </div>
       
-      {/* Character info - updated to match wireframe exactly */}
-      <div className="flex justify-between mb-6">
+      {/* Character info */}
+      <div className="flex justify-between mb-2">
         <div 
           className="flex items-center gap-2 cursor-pointer" 
           onClick={() => handleCharacterClick('player')}
@@ -431,58 +430,63 @@ const Battle1Screen: React.FC = () => {
         </div>
       </div>
       
-      {/* Comments area */}
-      <CommentArea comments={comments} />
-      
-      {/* Battle actions - updated to oval shape and mobile responsive */}
-      <div className="grid grid-cols-4 gap-2 mt-4">
-        <button 
-          onClick={handlePlayerAttack} 
-          disabled={!isPlayerTurn || isBattleOver}
-          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
-        >
-          こうげき
-        </button>
-        
-        <button 
-          onClick={handlePlayerSpecial} 
-          disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-black'}`}
-        >
-          とくぎ
-        </button>
-        
-        <button 
-          onClick={handleRunAway} 
-          disabled={!isPlayerTurn || isBattleOver}
-          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
-        >
-          にげる
-        </button>
-        
-        <button 
-          onClick={handleHighball} 
-          disabled={!isPlayerTurn || isBattleOver}
-          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
-        >
-          ハイボール
-        </button>
+      {/* Flexible comments area that takes up available space */}
+      <div className="flex-1 mb-2">
+        <CommentArea comments={comments} />
       </div>
       
-      {/* Comment input - updated to match wireframe */}
-      <div className="flex gap-2 mt-4">
-        <input
-          type="text"
-          placeholder="コメント"
-          className="flex-1 bg-gray-200 text-black rounded-md px-4 py-2"
-          disabled
-        />
-        <button
-          className="bg-pink-500 text-white rounded-md px-4 py-2"
-          disabled
-        >
-          送信
-        </button>
+      {/* Bottom section with battle actions - stays at bottom */}
+      <div className="mt-auto">
+        {/* Battle actions */}
+        <div className="grid grid-cols-4 gap-2 mb-2">
+          <button 
+            onClick={handlePlayerAttack} 
+            disabled={!isPlayerTurn || isBattleOver}
+            className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+          >
+            こうげき
+          </button>
+          
+          <button 
+            onClick={handlePlayerSpecial} 
+            disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
+            className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-black'}`}
+          >
+            とくぎ
+          </button>
+          
+          <button 
+            onClick={handleRunAway} 
+            disabled={!isPlayerTurn || isBattleOver}
+            className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+          >
+            にげる
+          </button>
+          
+          <button 
+            onClick={handleHighball} 
+            disabled={!isPlayerTurn || isBattleOver}
+            className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+          >
+            ハイボール
+          </button>
+        </div>
+        
+        {/* Comment input - always at bottom */}
+        <div className="flex gap-2 mb-2">
+          <input
+            type="text"
+            placeholder="コメント"
+            className="flex-1 bg-gray-200 text-black rounded-md px-4 py-2"
+            disabled
+          />
+          <button
+            className="bg-pink-500 text-white rounded-md px-4 py-2"
+            disabled
+          >
+            送信
+          </button>
+        </div>
       </div>
       
       {/* BGM Toggle Button */}
@@ -501,7 +505,7 @@ const Battle1Screen: React.FC = () => {
         />
       )}
       
-      {/* Audio Player - fixing the missing src property */}
+      {/* Audio Player */}
       {soundEffect && <AudioPlayer src={soundEffect} />}
     </div>
   );
