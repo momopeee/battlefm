@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -150,7 +151,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 9999px;
-  padding: 10px 25px;
+  padding: 10px 15px;
   color: #fff;
   line-height: 1.8;
   text-decoration: none;
@@ -159,6 +160,13 @@
   background-position: 1% 50%;
   background-size: 200% auto;
   transition: all 0.3s ease-out;
+  /* Make buttons oval-shaped by adjusting width */
+  width: 100%;
+  min-width: 70px;
+  max-width: 100%;
+  height: 36px; /* Fixed height to ensure oval shape */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .battle-action-button:hover:not(:disabled) {

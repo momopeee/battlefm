@@ -25,7 +25,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       <button 
         onClick={onAttack} 
         disabled={!isPlayerTurn || isBattleOver}
-        className={`battle-action-button text-xs ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
+        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
         こうげき
       </button>
@@ -33,7 +33,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       <button 
         onClick={onSpecial} 
         disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-        className={`battle-action-button text-xs ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''}`}
+        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''}`}
       >
         とくぎ
       </button>
@@ -41,7 +41,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       <button 
         onClick={onRunAway} 
         disabled={!isPlayerTurn || isBattleOver}
-        className={`battle-action-button text-xs ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
+        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
         にげる
       </button>
@@ -49,7 +49,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       <button 
         onClick={onHighball} 
         disabled={!isPlayerTurn || isBattleOver}
-        className={`battle-action-button text-xs ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
+        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
         ハイボール
       </button>
