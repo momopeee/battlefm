@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useApp, Character } from '@/context/AppContext';
 
@@ -132,7 +133,7 @@ export const useBattleLogic = () => {
     }
   }, [battleTimer, sosoHealMode, isBattleOver, addComment]);
 
-  // Handle player attack with 50% damage reduction during heal mode
+  // Handle player attack - removed 50% damage reduction
   const handlePlayerAttack = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
@@ -173,12 +174,6 @@ export const useBattleLogic = () => {
     // Normal attack damage calculation
     damage = Math.floor(Math.random() * (player.attackMax - player.attackMin + 1)) + player.attackMin;
     
-    // Apply 50% damage reduction during heal mode
-    if (sosoHealMode) {
-      damage = Math.floor(damage * 0.5);
-      addComment("システム", "そーそーは回復モード中！攻撃が50%カットされた！", true);
-    }
-    
     // Add attack comments
     addComment(player.name, attackComment);
     addComment("システム", `とおるの攻撃、そーそーは${damage}のダメージを受けた`, true);
@@ -193,7 +188,7 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(false);
   };
 
-  // Handle player special attack with 50% damage reduction during heal mode
+  // Handle player special attack - removed 50% damage reduction
   const handlePlayerSpecial = () => {
     if (isBattleOver || !isPlayerTurn || !specialAttackAvailable) return;
     
@@ -202,12 +197,6 @@ export const useBattleLogic = () => {
     
     // Calculate damage (higher than regular attack)
     let damage = Math.floor(Math.random() * (player.specialPower - 30 + 1)) + 30;
-    
-    // Apply 50% damage reduction during heal mode
-    if (sosoHealMode) {
-      damage = Math.floor(damage * 0.5);
-      addComment("システム", "そーそーは回復モード中！攻撃が50%カットされた！", true);
-    }
     
     // Add attack comments
     addComment(player.name, specialComment);
@@ -314,25 +303,25 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(true);
   };
 
-  // Handle soso heal with updated heal amount
+  // Handle soso heal with fixed 10 points
   const handleSosoHeal = () => {
     if (isBattleOver) return;
     
     // Add heal comments
     addComment(opponent1.name, "あー、生きるってむずかしいんだよなー、株クラのみんな上がってきてよ");
-    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した。そーそーの体力が20回復した", true);
+    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した。そーそーの体力が10回復した", true);
     
-    // Heal opponent (changed from 30 to 20)
+    // Heal opponent - fixed at 10 points
     setOpponent1({
       ...opponent1,
-      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + 20)
+      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + 10)
     });
     
     // Start player's turn
     setIsPlayerTurn(true);
   };
 
-  // Handle victory
+  // Handle victory - ensure correct screen transition
   const handleVictory = () => {
     setSoundEffect("/audios/syouri.mp3");
     
@@ -347,10 +336,10 @@ export const useBattleLogic = () => {
     // Transition to victory screen after delay
     setTimeout(() => {
       handleScreenTransition('victory1');
-    }, 20000);
+    }, 15000);
   };
 
-  // Handle defeat
+  // Handle defeat - ensure correct screen transition
   const handleDefeat = () => {
     setSoundEffect("/audios/orehamou.mp3");
     
@@ -366,7 +355,7 @@ export const useBattleLogic = () => {
     // Transition to ending B screen after delay
     setTimeout(() => {
       handleScreenTransition('endingB');
-    }, 20000);
+    }, 15000);
   };
 
   // Handle character sheet display

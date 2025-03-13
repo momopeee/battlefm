@@ -71,7 +71,7 @@ const Battle1Screen: React.FC = () => {
       />
       
       {/* Comments area with fixed height */}
-      <div className="flex-1 mb-2 h-[40vh] overflow-hidden">
+      <div className="flex-1 mb-2 h-[25vh] overflow-hidden">
         <CommentArea comments={comments} />
       </div>
       

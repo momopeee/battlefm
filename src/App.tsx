@@ -9,6 +9,9 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Battle1Screen from "./pages/Battle1Screen";
 import StartScreen from "./pages/StartScreen";
+import Victory1Screen from "./pages/Victory1Screen";
+import SelectScreen from "./pages/SelectScreen";
+import EndingBScreen from "./pages/EndingBScreen";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +25,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<StartScreen />} />
             <Route path="/battle1" element={<Battle1Screen />} />
+            <Route path="/victory1" element={<Victory1Screen />} />
+            <Route path="/select" element={<SelectScreen />} />
+            <Route path="/endingB" element={<EndingBScreen />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
