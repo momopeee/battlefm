@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useApp, Character } from '@/context/AppContext';
 
@@ -125,15 +124,15 @@ export const useBattleLogic = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.currentHp, opponent1.currentHp]);
 
-  // Update the HP threshold for soso heal mode
+  // Updated: Activate soso heal mode after 30 seconds
   useEffect(() => {
-    if (opponent1.currentHp <= 10 && !sosoHealMode && !isBattleOver) {
+    if (battleTimer >= 30 && !sosoHealMode && !isBattleOver) {
       setSosoHealMode(true);
+      addComment("システム", "そーそーのとくぎがはつどうした！", true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opponent1.currentHp]);
+  }, [battleTimer, sosoHealMode, isBattleOver, addComment]);
 
-  // Handle player attack
+  // Handle player attack with 50% damage reduction during heal mode
   const handlePlayerAttack = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
@@ -174,6 +173,12 @@ export const useBattleLogic = () => {
     // Normal attack damage calculation
     damage = Math.floor(Math.random() * (player.attackMax - player.attackMin + 1)) + player.attackMin;
     
+    // Apply 50% damage reduction during heal mode
+    if (sosoHealMode) {
+      damage = Math.floor(damage * 0.5);
+      addComment("システム", "そーそーは回復モード中！攻撃が50%カットされた！", true);
+    }
+    
     // Add attack comments
     addComment(player.name, attackComment);
     addComment("システム", `とおるの攻撃、そーそーは${damage}のダメージを受けた`, true);
@@ -188,7 +193,7 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(false);
   };
 
-  // Handle player special attack
+  // Handle player special attack with 50% damage reduction during heal mode
   const handlePlayerSpecial = () => {
     if (isBattleOver || !isPlayerTurn || !specialAttackAvailable) return;
     
@@ -196,7 +201,13 @@ export const useBattleLogic = () => {
     const specialComment = playerSpecialComments[Math.floor(Math.random() * playerSpecialComments.length)];
     
     // Calculate damage (higher than regular attack)
-    const damage = Math.floor(Math.random() * (player.specialPower - 30 + 1)) + 30;
+    let damage = Math.floor(Math.random() * (player.specialPower - 30 + 1)) + 30;
+    
+    // Apply 50% damage reduction during heal mode
+    if (sosoHealMode) {
+      damage = Math.floor(damage * 0.5);
+      addComment("システム", "そーそーは回復モード中！攻撃が50%カットされた！", true);
+    }
     
     // Add attack comments
     addComment(player.name, specialComment);
@@ -316,9 +327,6 @@ export const useBattleLogic = () => {
       ...opponent1,
       currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + 20)
     });
-    
-    // Reset heal mode
-    setSosoHealMode(false);
     
     // Start player's turn
     setIsPlayerTurn(true);
