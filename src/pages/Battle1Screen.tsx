@@ -410,10 +410,12 @@ const Battle1Screen: React.FC = () => {
           <SpecialGauge currentValue={attackCount} maxValue={3} />
         </div>
         <div className="flex-1">
-          {/* Empty div to maintain layout balance */}
-          <div className="invisible">
-            <SpecialGauge currentValue={0} maxValue={1} />
-          </div>
+          {/* Opponent's special gauge (heal mode gauge) */}
+          <SpecialGauge 
+            currentValue={sosoHealMode ? 0 : opponent1.currentHp <= 30 ? 1 : 0} 
+            maxValue={1} 
+            label={sosoHealMode ? "回復中" : "回復まで：1"}
+          />
         </div>
       </div>
       
