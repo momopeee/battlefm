@@ -13,9 +13,9 @@ const SpecialGauge: React.FC<SpecialGaugeProps> = ({ currentValue, maxValue, lab
   
   return (
     <div className="w-full">
-      <div className="bg-gray-700 rounded-md overflow-hidden relative">
+      <div className="bg-gray-700 rounded-xl overflow-hidden relative h-[20px]">
         <div 
-          className="text-white rounded-md h-full p-2"
+          className="text-white rounded-xl h-full"
           style={{ 
             width: `${percentage}%`, 
             backgroundImage: 'linear-gradient(270deg, rgba(124, 238, 255, 1), rgba(201, 100, 250, 1))' 

@@ -385,12 +385,13 @@ const Battle1Screen: React.FC = () => {
       style={{ 
         background: 'linear-gradient(180deg, rgba(212, 50, 144, 1), rgba(119, 3, 175, 1))',
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
       }}
     >
       {/* Top section with title and timer */}
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-bold mb-2">さよならクソリプそーそー！</h1>
+        <h1 className="text-[13px] font-bold mb-2">さよならクソリプそーそー！</h1>
         <div className="flex items-start justify-start gap-4">
           <img 
             src={player.icon} 
@@ -398,8 +399,8 @@ const Battle1Screen: React.FC = () => {
             className="w-12 h-12 rounded-full"
           />
           <div className="flex flex-col items-start">
-            <span className="text-sm">{player.name}</span>
-            <p className="text-sm">{formatTime(battleTimer)}</p>
+            <span className="text-[11px]">{player.name}</span>
+            <p className="text-[11px]">{formatTime(battleTimer)}</p>
           </div>
         </div>
       </div>
@@ -438,7 +439,7 @@ const Battle1Screen: React.FC = () => {
             alt={player.name} 
             className="w-16 h-16 rounded-full"
           />
-          <span className="font-bold mt-1 truncate w-20 text-center text-xs">
+          <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
             {player.name.length > 5 ? `${player.name.substring(0, 5)}...` : player.name}
           </span>
         </div>
@@ -449,7 +450,7 @@ const Battle1Screen: React.FC = () => {
             alt={opponent1.name} 
             className="w-16 h-16 rounded-full"
           />
-          <span className="font-bold mt-1 truncate w-20 text-center text-xs">
+          <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
             {opponent1.name.length > 5 ? `${opponent1.name.substring(0, 5)}...` : opponent1.name}
           </span>
         </div>
@@ -463,12 +464,12 @@ const Battle1Screen: React.FC = () => {
       
       {/* Battle actions at bottom */}
       <div className="mt-auto">
-        {/* Battle actions - slimmer buttons with consistent text size */}
+        {/* Battle actions buttons with new styling */}
         <div className="grid grid-cols-4 gap-2 mb-2">
           <button 
             onClick={handlePlayerAttack} 
             disabled={!isPlayerTurn || isBattleOver}
-            className={`py-1 px-4 rounded-full font-bold text-white text-xs ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+            className={`battle-action-button text-xs ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
           >
             こうげき
           </button>
@@ -476,7 +477,7 @@ const Battle1Screen: React.FC = () => {
           <button 
             onClick={handlePlayerSpecial} 
             disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-            className={`py-1 px-4 rounded-full font-bold text-white text-xs ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-black'}`}
+            className={`battle-action-button text-xs ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''}`}
           >
             とくぎ
           </button>
@@ -484,7 +485,7 @@ const Battle1Screen: React.FC = () => {
           <button 
             onClick={handleRunAway} 
             disabled={!isPlayerTurn || isBattleOver}
-            className={`py-1 px-4 rounded-full font-bold text-white text-xs ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+            className={`battle-action-button text-xs ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
           >
             にげる
           </button>
@@ -492,7 +493,7 @@ const Battle1Screen: React.FC = () => {
           <button 
             onClick={handleHighball} 
             disabled={!isPlayerTurn || isBattleOver}
-            className={`py-1 px-4 rounded-full font-bold text-white text-xs ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+            className={`battle-action-button text-xs ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
           >
             ハイボール
           </button>

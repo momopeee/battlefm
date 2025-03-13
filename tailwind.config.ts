@@ -111,7 +111,8 @@ export default {
 			},
 			fontFamily: {
 				'game': ['"Noto Sans JP"', 'sans-serif'],
-				'pixel': ['"Press Start 2P"', 'cursive']
+				'pixel': ['"Press Start 2P"', 'cursive'],
+				'hiragino': ['"Hiragino Kaku Gothic ProN"', '"Hiragino Sans"', 'sans-serif']
 			}
 		}
 	},

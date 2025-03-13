@@ -72,6 +72,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
   }
 }
 
@@ -141,4 +142,32 @@
   height: 200px;
   width: 90%;
   background-image: linear-gradient(270deg, rgba(124, 238, 255, 1), rgba(201, 100, 250, 1));
+}
+
+/* Battle action button gradient */
+.battle-action-button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 10px 25px;
+  color: #fff;
+  line-height: 1.8;
+  text-decoration: none;
+  font-weight: 500;
+  background: linear-gradient(270deg, #3bade3 0%, #576fe6 25%, #9844b7 51%, #ff357f 100%);
+  background-position: 1% 50%;
+  background-size: 200% auto;
+  transition: all 0.3s ease-out;
+}
+
+.battle-action-button:hover:not(:disabled) {
+  color: #fff;
+  background-position: 99% 50%;
+}
+
+.battle-action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
