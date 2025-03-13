@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
@@ -382,7 +381,7 @@ const Battle1Screen: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col h-screen p-4 text-white"
+      className="min-h-screen flex flex-col h-screen p-4 text-white bg-black"
       style={{ 
         backgroundImage: `url('/lovable-uploads/4ffef06b-d781-4e1f-ae48-43aa4f9eca42.png')`,
         backgroundSize: 'cover',
