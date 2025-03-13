@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
@@ -385,13 +384,13 @@ const Battle1Screen: React.FC = () => {
       {/* Top section with title and timer */}
       <div className="text-center mb-2">
         <h1 className="text-2xl font-bold mb-2">さよならクソリプそーそー！</h1>
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-start justify-start gap-4">
           <img 
             src={player.icon} 
             alt={player.name} 
             className="w-12 h-12 rounded-full"
           />
-          <div className="flex flex-col">
+          <div className="flex flex-col items-start">
             <span className="text-sm">{player.name}</span>
             <p className="text-sm">{formatTime(battleTimer)}</p>
           </div>
@@ -432,8 +431,8 @@ const Battle1Screen: React.FC = () => {
             alt={player.name} 
             className="w-16 h-16 rounded-full"
           />
-          <span className="font-bold mt-1 truncate w-20 text-center">
-            {player.name.length > 5 ? `${player.name.substring(0, 5)}` : player.name}
+          <span className="font-bold mt-1 truncate w-20 text-center text-xs">
+            {player.name.length > 5 ? `${player.name.substring(0, 5)}...` : player.name}
           </span>
         </div>
         
@@ -443,8 +442,8 @@ const Battle1Screen: React.FC = () => {
             alt={opponent1.name} 
             className="w-16 h-16 rounded-full"
           />
-          <span className="font-bold mt-1 truncate w-20 text-center">
-            {opponent1.name.length > 5 ? `${opponent1.name.substring(0, 5)}` : opponent1.name}
+          <span className="font-bold mt-1 truncate w-20 text-center text-xs">
+            {opponent1.name.length > 5 ? `${opponent1.name.substring(0, 5)}...` : opponent1.name}
           </span>
         </div>
         <div className="col-span-1"></div>
