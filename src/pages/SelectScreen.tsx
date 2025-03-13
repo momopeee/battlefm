@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
-import { Music, MusicOff } from 'lucide-react';
+import { Volume2, VolumeX } from 'lucide-react';
 
 const SelectScreen: React.FC = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
@@ -46,7 +46,7 @@ const SelectScreen: React.FC = () => {
             onClick={toggleBgm}
             className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
           >
-            {bgmEnabled ? <Music size={24} color="white" /> : <MusicOff size={24} color="white" />}
+            {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
           </button>
         </>
       )}

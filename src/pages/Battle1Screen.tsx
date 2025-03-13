@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
@@ -315,7 +316,7 @@ const Battle1Screen: React.FC = () => {
     setIsPlayerTurn(true);
   };
 
-  // Update soso heal amount to 20
+  // Handle soso heal with updated heal amount
   const handleSosoHeal = () => {
     if (isBattleOver) return;
     
