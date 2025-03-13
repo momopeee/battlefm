@@ -5,7 +5,7 @@ import { Character } from '@/context/AppContext';
 interface CharacterPortraitsProps {
   player: Character;
   opponent: Character;
-  onCharacterClick: (character: 'player' | 'opponent1' | 'opponent2') => void;
+  onCharacterClick: (character: 'player' | 'opponent1') => void;
   sosoHealMode: boolean;
 }
 
@@ -16,55 +16,93 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
   sosoHealMode
 }) => {
   return (
-    <div className="flex justify-center gap-8 my-4">
-      {/* Player icon */}
-      <div 
-        className="w-20 h-20 rounded-full overflow-hidden border-4 border-white cursor-pointer hover:scale-105 transition-transform"
-        onClick={() => onCharacterClick('player')}
-      >
-        <img 
-          src={player.icon} 
-          alt={player.name} 
-          className="w-full h-full object-cover"
-        />
-      </div>
-      
-      {/* Support characters or empty space (left) */}
-      {sosoHealMode ? (
-        <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-yellow-400">
-          <img 
-            src="/lovable-uploads/db3fdcd1-853f-40c3-be10-0826c9314e44.png" 
-            alt="Lambda" 
-            className="w-full h-full object-cover"
-          />
-        </div>
-      ) : (
-        <div className="w-20 h-20 opacity-0"></div>
+    <div className="grid grid-cols-4 mb-2">
+      {!sosoHealMode && (
+        <>
+          <div className="col-span-1"></div>
+          <div 
+            className="flex flex-col items-center col-span-1 cursor-pointer" 
+            onClick={() => onCharacterClick('player')}
+          >
+            <img 
+              src={player.icon} 
+              alt={player.name} 
+              className="w-16 h-16 rounded-full"
+            />
+            <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
+              {player.name.length > 5 ? `${player.name.substring(0, 5)}...` : player.name}
+            </span>
+          </div>
+          
+          <div 
+            className="flex flex-col items-center col-span-1 cursor-pointer" 
+            onClick={() => onCharacterClick('opponent1')}
+          >
+            <img 
+              src={opponent.icon} 
+              alt={opponent.name} 
+              className="w-16 h-16 rounded-full"
+            />
+            <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
+              {opponent.name.length > 5 ? `${opponent.name.substring(0, 5)}...` : opponent.name}
+            </span>
+          </div>
+          <div className="col-span-1"></div>
+        </>
       )}
       
-      {/* Opponent icon */}
-      <div 
-        className="w-20 h-20 rounded-full overflow-hidden border-4 border-pink-500 cursor-pointer hover:scale-105 transition-transform"
-        onClick={() => onCharacterClick(opponent.name.includes('そーそー') ? 'opponent1' : 'opponent2')}
-      >
-        <img 
-          src={opponent.icon} 
-          alt={opponent.name} 
-          className="w-full h-full object-cover"
-        />
-      </div>
-      
-      {/* Support characters or empty space (right) */}
-      {sosoHealMode ? (
-        <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-yellow-400">
-          <img 
-            src="/lovable-uploads/a9d33020-6655-47eb-919f-1417c213722e.png" 
-            alt="Matsushima Koto" 
-            className="w-full h-full object-cover"
-          />
-        </div>
-      ) : (
-        <div className="w-20 h-20 opacity-0"></div>
+      {sosoHealMode && (
+        <>
+          <div 
+            className="flex flex-col items-center col-span-1 cursor-pointer" 
+            onClick={() => onCharacterClick('player')}
+          >
+            <img 
+              src={player.icon} 
+              alt={player.name} 
+              className="w-16 h-16 rounded-full"
+            />
+            <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
+              {player.name.length > 5 ? `${player.name.substring(0, 5)}...` : player.name}
+            </span>
+          </div>
+          
+          <div 
+            className="flex flex-col items-center col-span-1 cursor-pointer" 
+            onClick={() => onCharacterClick('opponent1')}
+          >
+            <img 
+              src={opponent.icon} 
+              alt={opponent.name} 
+              className="w-16 h-16 rounded-full"
+            />
+            <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
+              {opponent.name.length > 5 ? `${opponent.name.substring(0, 5)}...` : opponent.name}
+            </span>
+          </div>
+          
+          <div className="flex flex-col items-center col-span-1">
+            <img 
+              src="/lovable-uploads/a9d33020-6655-47eb-919f-1417c213722e.png" 
+              alt="ラムダ" 
+              className="w-16 h-16 rounded-full"
+            />
+            <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
+              ラムダ
+            </span>
+          </div>
+          
+          <div className="flex flex-col items-center col-span-1">
+            <img 
+              src="/lovable-uploads/ecbf0b74-7dad-4ec2-bdf6-1ec0a1bed255.png" 
+              alt="松嶋こと" 
+              className="w-16 h-16 rounded-full"
+            />
+            <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
+              松嶋こと
+            </span>
+          </div>
+        </>
       )}
     </div>
   );
