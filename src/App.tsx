@@ -8,6 +8,7 @@ import { AppProvider } from "./context/AppContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Battle1Screen from "./pages/Battle1Screen";
+import StartScreen from "./pages/StartScreen";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<StartScreen />} />
             <Route path="/battle1" element={<Battle1Screen />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
