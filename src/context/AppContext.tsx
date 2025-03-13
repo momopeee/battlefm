@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Define types for our app
@@ -63,7 +62,7 @@ const AppContext = createContext<AppContextType>({
   bgmEnabled: true,
   player: {
     name: 'とおる＠経営参謀',
-    icon: '/lovable-uploads/a37987c5-d1ab-4f11-86a4-7ac9a089a401.png',
+    icon: '/lovable-uploads/6b157674-e844-4829-b50a-8f97228e333e.png',
     maxHp: 100,
     currentHp: 100,
     attackMin: 15,
@@ -72,7 +71,7 @@ const AppContext = createContext<AppContextType>({
   },
   opponent1: {
     name: 'そーそー＠狂犬ツイート',
-    icon: '/lovable-uploads/5af802e0-9f63-462c-838c-e2b1acbf3c6f.png',
+    icon: '/lovable-uploads/fe83fabb-d53f-4b39-8b88-170eb64b66f1.png',
     maxHp: 70,
     currentHp: 70,
     attackMin: 20,
@@ -81,7 +80,7 @@ const AppContext = createContext<AppContextType>({
   },
   opponent2: {
     name: 'ゆうじ＠陽気なおじさん',
-    icon: '/lovable-uploads/656bd67f-53fe-4f15-86f3-0db149cc7285.png',
+    icon: '/lovable-uploads/87eeca18-7288-449e-b4dc-8a6b2d6ad9a9.png',
     maxHp: 100,
     currentHp: 100,
     attackMin: 15,
@@ -124,7 +123,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [bgmEnabled, setBgmEnabled] = useState(true);
   const [player, setPlayerState] = useState<Character>({
     name: 'とおる＠経営参謀',
-    icon: '/lovable-uploads/a37987c5-d1ab-4f11-86a4-7ac9a089a401.png',
+    icon: '/lovable-uploads/6b157674-e844-4829-b50a-8f97228e333e.png',
     maxHp: 100,
     currentHp: 100,
     attackMin: 15,
@@ -133,7 +132,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const [opponent1, setOpponent1State] = useState<Character>({
     name: 'そーそー＠狂犬ツイート',
-    icon: '/lovable-uploads/5af802e0-9f63-462c-838c-e2b1acbf3c6f.png',
+    icon: '/lovable-uploads/fe83fabb-d53f-4b39-8b88-170eb64b66f1.png',
     maxHp: 70,
     currentHp: 70,
     attackMin: 20,
@@ -142,7 +141,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const [opponent2, setOpponent2State] = useState<Character>({
     name: 'ゆうじ＠陽気なおじさん',
-    icon: '/lovable-uploads/656bd67f-53fe-4f15-86f3-0db149cc7285.png',
+    icon: '/lovable-uploads/87eeca18-7288-449e-b4dc-8a6b2d6ad9a9.png',
     maxHp: 100,
     currentHp: 100,
     attackMin: 15,

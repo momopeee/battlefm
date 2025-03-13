@@ -27,7 +27,11 @@ const Index = () => {
     <div className="relative min-h-screen overflow-hidden bg-black">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center z-0 bg-battle-purple"
+        className="absolute inset-0 bg-cover bg-center z-0"
+        style={{ 
+          backgroundImage: `url('/lovable-uploads/aa5fc8cf-18e4-48c6-9feb-1c54a9111f51.png')`,
+          backgroundSize: 'cover'
+        }}
       ></div>
       
       {/* Star Wars style scrolling text */}

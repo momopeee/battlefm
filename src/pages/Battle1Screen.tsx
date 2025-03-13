@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
@@ -380,7 +381,14 @@ const Battle1Screen: React.FC = () => {
   };
 
   return (
-    <div className="bg-battle-background min-h-screen flex flex-col h-screen p-4 text-white">
+    <div 
+      className="min-h-screen flex flex-col h-screen p-4 text-white"
+      style={{ 
+        backgroundImage: `url('/lovable-uploads/4ffef06b-d781-4e1f-ae48-43aa4f9eca42.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    >
       {/* Top section with title and timer */}
       <div className="text-center mb-2">
         <h1 className="text-2xl font-bold mb-2">さよならクソリプそーそー！</h1>
