@@ -304,7 +304,7 @@ const Battle1Screen: React.FC = () => {
     
     // Add attack comments
     addComment(opponent1.name, attackComment);
-    addComment("システム", `そーそーの攻撃、とおるは${damage}のダメージを受け���`, true);
+    addComment("システム", `そーそーの攻撃、とおるは${damage}のダメージを受けた`, true);
     
     // Apply damage to player
     setPlayer({
