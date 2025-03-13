@@ -38,7 +38,7 @@ const playerSpecialComments = [
 // Attack comments for opponent1 (soso)
 const opponent1AttackComments = [
   "消費税一律30%とかにすれば全て解決する",
-  "マジでこいつのフォロワーヤバイ奴しかおらんな",
+  "マジでこいつのフォロワヤバイ奴しかおらんな",
   "国民皆保険ごとなくせよバカやろう💢",
   "貧乏な移民を追い出し、金持ちにビザを買わせる",
   "真面目に働いていれば万作にはならない",
@@ -381,9 +381,9 @@ const Battle1Screen: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col h-screen p-4 text-white bg-black"
+      className="min-h-screen flex flex-col h-screen p-4 text-white"
       style={{ 
-        backgroundImage: `url('/lovable-uploads/4ffef06b-d781-4e1f-ae48-43aa4f9eca42.png')`,
+        background: 'linear-gradient(90deg, rgba(248, 57, 168, 1), rgba(81, 48, 97, 1))',
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}

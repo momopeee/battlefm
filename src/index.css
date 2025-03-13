@@ -135,3 +135,10 @@
 .animate-blink {
   animation: blink 1s infinite;
 }
+
+/* Battle background gradient */
+.original-gradient {
+  height: 200px;
+  width: 90%;
+  background-image: linear-gradient(90deg, rgba(248, 57, 168, 1), rgba(81, 48, 97, 1));
+}
