@@ -44,9 +44,7 @@ const Battle1Screen: React.FC = () => {
         background: 'linear-gradient(180deg, rgba(212, 50, 144, 1), rgba(119, 3, 175, 1))',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
-        maxHeight: '100vh', // Limit maximum height to viewport height
-        overflowY: 'hidden' // Prevent scrolling
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
       }}
     >
       {/* Top section with title and timer */}
@@ -72,8 +70,8 @@ const Battle1Screen: React.FC = () => {
         sosoHealMode={sosoHealMode}
       />
       
-      {/* Comments area with reduced height */}
-      <div className="flex-1 mb-2 h-[25vh] overflow-hidden">
+      {/* Comments area with fixed height */}
+      <div className="flex-1 mb-2 h-[40vh] overflow-hidden">
         <CommentArea comments={comments} />
       </div>
       
