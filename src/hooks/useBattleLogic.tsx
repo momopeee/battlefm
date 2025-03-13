@@ -314,18 +314,39 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(true);
   };
 
-  // Handle soso heal with updated heal amount
+  // Handle soso heal with updated heal amount and collaborators
   const handleSosoHeal = () => {
     if (isBattleOver) return;
     
+    // Get random collaborators for the healing effect
+    const collaborators = [
+      { name: "ラムダ", effect: 8 },
+      { name: "松嶋こと", effect: 12 },
+      { name: "元銀行マン", effect: 15 },
+      { name: "社会主義の達人", effect: 10 },
+      { name: "ゆうじ", effect: 20 }
+    ];
+    
+    // Randomly select two collaborators
+    const selectedCollaborators = [];
+    const shuffledCollaborators = [...collaborators].sort(() => 0.5 - Math.random());
+    selectedCollaborators.push(shuffledCollaborators[0]);
+    selectedCollaborators.push(shuffledCollaborators[1]);
+    
+    // Calculate total healing amount
+    const healAmount = selectedCollaborators.reduce((total, collab) => total + collab.effect, 0);
+    
     // Add heal comments
     addComment(opponent1.name, "あー、生きるってむずかしいんだよなー、株クラのみんな上がってきてよ");
-    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した。そーそーの体力が20回復した", true);
     
-    // Heal opponent (changed from 30 to 20)
+    // Create collaborator message
+    const collabNames = selectedCollaborators.map(c => c.name).join("と");
+    addComment("システム", `${collabNames}がコラボに参加した。そーそーの体力が${healAmount}回復した`, true);
+    
+    // Heal opponent with dynamic amount
     setOpponent1({
       ...opponent1,
-      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + 20)
+      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + healAmount)
     });
     
     // Start player's turn
