@@ -75,6 +75,34 @@
   }
 }
 
+/* Scrollbar styling */
+@media (min-width: 768px) {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+    border-radius: 3px;
+  }
+}
+
+@media (max-width: 767px) {
+  .scrollbar-thin::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-thin {
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 /* Star Wars text scrolling effect */
 .perspective {
   perspective: 400px;

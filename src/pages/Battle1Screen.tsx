@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
@@ -138,9 +137,9 @@ const Battle1Screen: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.currentHp, opponent1.currentHp]);
 
-  // Check if opponent HP is low to trigger heal mode
+  // Update the HP threshold for soso heal mode
   useEffect(() => {
-    if (opponent1.currentHp <= 30 && !sosoHealMode && !isBattleOver) {
+    if (opponent1.currentHp <= 10 && !sosoHealMode && !isBattleOver) {
       setSosoHealMode(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -316,18 +315,18 @@ const Battle1Screen: React.FC = () => {
     setIsPlayerTurn(true);
   };
 
-  // Handle soso heal
+  // Update soso heal amount to 20
   const handleSosoHeal = () => {
     if (isBattleOver) return;
     
     // Add heal comments
     addComment(opponent1.name, "あー、生きるってむずかしいんだよなー、株クラのみんな上がってきてよ");
-    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した。そーそーの体力が30回復した", true);
+    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した。そーそーの体力が20回復した", true);
     
-    // Heal opponent
+    // Heal opponent (changed from 30 to 20)
     setOpponent1({
       ...opponent1,
-      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + 30)
+      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + 20)
     });
     
     // Reset heal mode
@@ -387,8 +386,8 @@ const Battle1Screen: React.FC = () => {
         <p className="text-sm">対戦時間: {formatTime(battleTimer)}</p>
       </div>
       
-      {/* Health bars */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      {/* Health bars - updated for responsive layout */}
+      <div className="flex gap-4 mb-6">
         <div className="flex-1">
           <HPBar currentHP={player.currentHp} maxHP={player.maxHp} />
         </div>
@@ -443,12 +442,12 @@ const Battle1Screen: React.FC = () => {
       {/* Comments area */}
       <CommentArea comments={comments} />
       
-      {/* Battle actions */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
+      {/* Battle actions - updated button style to oval */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
         <button 
           onClick={handlePlayerAttack} 
           disabled={!isPlayerTurn || isBattleOver}
-          className={`py-3 px-4 rounded-md font-bold ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+          className={`py-3 px-4 rounded-full font-bold ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
         >
           こうげき
         </button>
@@ -456,7 +455,7 @@ const Battle1Screen: React.FC = () => {
         <button 
           onClick={handlePlayerSpecial} 
           disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-          className={`py-3 px-4 rounded-md font-bold ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-battle-pink'}`}
+          className={`py-3 px-4 rounded-full font-bold ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-battle-pink'}`}
         >
           とくぎ
         </button>
@@ -464,7 +463,7 @@ const Battle1Screen: React.FC = () => {
         <button 
           onClick={handleRunAway} 
           disabled={!isPlayerTurn || isBattleOver}
-          className={`py-3 px-4 rounded-md font-bold ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+          className={`py-3 px-4 rounded-full font-bold ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
         >
           にげる
         </button>
@@ -472,22 +471,10 @@ const Battle1Screen: React.FC = () => {
         <button 
           onClick={handleHighball} 
           disabled={!isPlayerTurn || isBattleOver}
-          className={`py-3 px-4 rounded-md font-bold ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+          className={`py-3 px-4 rounded-full font-bold ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
         >
           ハイボール
         </button>
-      </div>
-      
-      {/* External link button */}
-      <div className="mt-4 text-center">
-        <a 
-          href="https://stand.fm/channels/5e85f9834afcd35104858d5a" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="inline-block bg-battle-pink py-2 px-4 rounded-md text-white font-semibold hover:opacity-90 transition-opacity"
-        >
-          フォローする
-        </a>
       </div>
       
       {/* BGM Toggle Button */}
