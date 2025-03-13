@@ -304,7 +304,7 @@ const Battle1Screen: React.FC = () => {
     
     // Add attack comments
     addComment(opponent1.name, attackComment);
-    addComment("システム", `そーそーの攻撃、とおるは${damage}のダメージを受けた`, true);
+    addComment("システム", `そーそーの攻撃、とおるは${damage}のダメージを受け���`, true);
     
     // Apply damage to player
     setPlayer({
@@ -383,7 +383,7 @@ const Battle1Screen: React.FC = () => {
     <div 
       className="min-h-screen flex flex-col h-screen p-4 text-white"
       style={{ 
-        background: 'linear-gradient(90deg, rgba(248, 57, 168, 1), rgba(81, 48, 97, 1))',
+        background: 'linear-gradient(180deg, rgba(212, 50, 144, 1), rgba(119, 3, 175, 1))',
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}
