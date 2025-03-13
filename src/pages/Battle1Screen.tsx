@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
@@ -380,14 +379,21 @@ const Battle1Screen: React.FC = () => {
   };
 
   return (
-    <div className="bg-black min-h-screen p-4 pt-10 text-white">
+    <div className="bg-purple-700 min-h-screen p-4 pt-10 text-white">
       {/* Battle title and timer */}
       <div className="text-center mb-4">
-        <h1 className="text-2xl font-bold mb-2">さよならクソリプそーそー！</h1>
-        <p className="text-sm">対戦時間: {formatTime(battleTimer)}</p>
+        <h1 className="text-2xl font-bold mb-2">バトルタイトルを表示</h1>
+        <div className="flex items-center justify-center gap-4">
+          <img 
+            src={player.icon} 
+            alt={player.name} 
+            className="w-12 h-12 rounded-full"
+          />
+          <p className="text-sm">対戦時間を {formatTime(battleTimer)} 形式で表示</p>
+        </div>
       </div>
       
-      {/* Health bars - updated for responsive layout */}
+      {/* Health bars - updated to match wireframe */}
       <div className="flex gap-4 mb-6">
         <div className="flex-1">
           <HPBar currentHP={player.currentHp} maxHP={player.maxHp} />
@@ -406,49 +412,33 @@ const Battle1Screen: React.FC = () => {
           <img 
             src={player.icon} 
             alt={player.name} 
-            className="w-12 h-12 rounded-full border-2 border-white"
+            className="w-12 h-12 rounded-full"
           />
-          <span className="font-bold">{player.name}</span>
+          <span className="font-bold">ユーザー名を表示</span>
         </div>
         
-        <div className="flex items-center">
-          {sosoHealMode && (
-            <>
-              <img 
-                src="/lovable-uploads/db3fdcd1-853f-40c3-be10-0826c9314e44.png" 
-                alt="ラムダ" 
-                className="w-10 h-10 rounded-full border-2 border-white -mr-2"
-              />
-              <img 
-                src="/lovable-uploads/ef18c553-b423-42de-87e6-f864176df581.png" 
-                alt="松嶋こと" 
-                className="w-10 h-10 rounded-full border-2 border-white -mr-2"
-              />
-            </>
-          )}
-          <div 
-            className="flex items-center gap-2 cursor-pointer" 
-            onClick={() => handleCharacterClick('opponent1')}
-          >
-            <span className="font-bold">{opponent1.name}</span>
-            <img 
-              src={opponent1.icon} 
-              alt={opponent1.name} 
-              className="w-12 h-12 rounded-full border-2 border-white"
-            />
-          </div>
+        <div 
+          className="flex items-center gap-2 cursor-pointer" 
+          onClick={() => handleCharacterClick('opponent1')}
+        >
+          <span className="font-bold">対戦相手名を表示</span>
+          <img 
+            src={opponent1.icon} 
+            alt={opponent1.name} 
+            className="w-12 h-12 rounded-full"
+          />
         </div>
       </div>
       
       {/* Comments area */}
       <CommentArea comments={comments} />
       
-      {/* Battle actions - updated button style to oval */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
+      {/* Battle actions - updated to oval shape and mobile responsive */}
+      <div className="grid grid-cols-4 gap-2 mt-4">
         <button 
           onClick={handlePlayerAttack} 
           disabled={!isPlayerTurn || isBattleOver}
-          className={`py-3 px-4 rounded-full font-bold ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
         >
           こうげき
         </button>
@@ -456,7 +446,7 @@ const Battle1Screen: React.FC = () => {
         <button 
           onClick={handlePlayerSpecial} 
           disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-          className={`py-3 px-4 rounded-full font-bold ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-battle-pink'}`}
+          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-purple-800'}`}
         >
           とくぎ
         </button>
@@ -464,7 +454,7 @@ const Battle1Screen: React.FC = () => {
         <button 
           onClick={handleRunAway} 
           disabled={!isPlayerTurn || isBattleOver}
-          className={`py-3 px-4 rounded-full font-bold ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-purple-800'}`}
         >
           にげる
         </button>
@@ -472,9 +462,25 @@ const Battle1Screen: React.FC = () => {
         <button 
           onClick={handleHighball} 
           disabled={!isPlayerTurn || isBattleOver}
-          className={`py-3 px-4 rounded-full font-bold ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
+          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
         >
           ハイボール
+        </button>
+      </div>
+      
+      {/* Comment input */}
+      <div className="flex gap-2 mt-4">
+        <input
+          type="text"
+          placeholder="コメント"
+          className="flex-1 bg-gray-200 text-black rounded-md px-4 py-2"
+          disabled
+        />
+        <button
+          className="bg-pink-500 text-white rounded-md px-4 py-2"
+          disabled
+        >
+          送信
         </button>
       </div>
       
@@ -493,6 +499,9 @@ const Battle1Screen: React.FC = () => {
           onClose={() => setShowCharacterSheet(false)} 
         />
       )}
+      
+      {/* Audio Player */}
+      <AudioPlayer />
     </div>
   );
 };
