@@ -35,13 +35,14 @@ const StartScreen = () => {
   };
   
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black">
+    <div className="relative min-h-screen overflow-hidden bg-black flex flex-col h-screen" style={{ maxHeight: '100vh', overflowY: 'hidden' }}>
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ 
-          backgroundImage: `url('/lovable-uploads/b24bf037-4b0b-4ae3-9a31-309a4415b998.png')`,
-          backgroundSize: 'cover'
+          backgroundImage: 'url("/lovable-uploads/b24bf037-4b0b-4ae3-9a31-309a4415b998.png")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}
       ></div>
       
