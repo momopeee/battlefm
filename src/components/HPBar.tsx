@@ -11,8 +11,13 @@ const HPBar: React.FC<HPBarProps> = ({ currentHP, maxHP }) => {
   
   return (
     <div className="w-full">
-      <div className="bg-battle-pink text-white rounded-md p-2 flex justify-center">
-        <span className="text-white text-sm">残りHP: {currentHP}</span>
+      <div className="bg-gray-700 rounded-md overflow-hidden">
+        <div 
+          className="bg-battle-pink text-white rounded-md p-2 flex justify-center"
+          style={{ width: `${percentage}%` }}
+        >
+          <span className="text-white text-sm z-10">残りHP: {currentHP}</span>
+        </div>
       </div>
     </div>
   );

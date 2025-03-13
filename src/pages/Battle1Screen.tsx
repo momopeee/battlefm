@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
+import SpecialGauge from '@/components/SpecialGauge';
 import CommentArea from '@/components/CommentArea';
 import CharacterSheet from '@/components/CharacterSheet';
 import AudioPlayer from '@/components/AudioPlayer';
@@ -400,6 +401,19 @@ const Battle1Screen: React.FC = () => {
         </div>
         <div className="flex-1">
           <HPBar currentHP={opponent1.currentHp} maxHP={opponent1.maxHp} />
+        </div>
+      </div>
+      
+      {/* Special attack gauges */}
+      <div className="flex gap-4 mb-2">
+        <div className="flex-1">
+          <SpecialGauge currentValue={attackCount} maxValue={3} />
+        </div>
+        <div className="flex-1">
+          {/* Empty div to maintain layout balance */}
+          <div className="invisible">
+            <SpecialGauge currentValue={0} maxValue={1} />
+          </div>
         </div>
       </div>
       
