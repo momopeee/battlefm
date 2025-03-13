@@ -19,9 +19,9 @@ const CommentArea: React.FC<CommentAreaProps> = ({ comments }) => {
   return (
     <div 
       ref={commentAreaRef}
-      className="rounded-md p-4 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent h-full"
+      className="rounded-md p-2 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent h-full"
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         {comments.map((comment, index) => (
           <div key={index} className={`flex items-start gap-2 ${comment.isSystem ? 'text-white' : 'text-white'}`}>
             {!comment.isSystem && (
@@ -32,18 +32,18 @@ const CommentArea: React.FC<CommentAreaProps> = ({ comments }) => {
                        comment.author === "巨万の富男" ? "/lovable-uploads/974ddb88-2c8c-4955-bf82-0d68af6e6e7f.png" :
                        "/lovable-uploads/656bd67f-53fe-4f15-86f3-0db149cc7285.png"}
                   alt={comment.author}
-                  className="w-8 h-8 rounded-full mt-1"
+                  className="w-6 h-6 rounded-full mt-1"
                 />
                 <div className="flex-1">
-                  <span className="text-[11px] font-bold">{comment.author}</span>
-                  <div className="bg-black/30 p-2 rounded-md mt-1 mb-1">
-                    <p className="text-[12px] font-normal">{comment.text}</p>
+                  <span className="text-[10px] font-bold">{comment.author}</span>
+                  <div className="bg-black/30 p-1 rounded-md mt-1 mb-1">
+                    <p className="text-[11px] font-normal">{comment.text}</p>
                   </div>
                 </div>
               </>
             )}
             {comment.isSystem && (
-              <span className="bg-black/30 w-full p-2 rounded text-[12px] font-normal">{comment.text}</span>
+              <span className="bg-black/30 w-full p-1 rounded text-[11px] font-normal">{comment.text}</span>
             )}
           </div>
         ))}
