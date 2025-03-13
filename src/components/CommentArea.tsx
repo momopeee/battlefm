@@ -19,7 +19,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({ comments }) => {
   return (
     <div 
       ref={commentAreaRef}
-      className="bg-black/70 rounded-md p-4 h-56 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
+      className="bg-black/50 rounded-md p-4 h-56 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
     >
       <div className="flex flex-col gap-2">
         {comments.map((comment, index) => (

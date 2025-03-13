@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import HPBar from '@/components/HPBar';
@@ -379,7 +380,7 @@ const Battle1Screen: React.FC = () => {
   };
 
   return (
-    <div className="bg-purple-700 min-h-screen p-4 pt-10 text-white">
+    <div className="bg-battle-background min-h-screen p-4 pt-10 text-white">
       {/* Battle title and timer */}
       <div className="text-center mb-4">
         <h1 className="text-2xl font-bold mb-2">バトルタイトルを表示</h1>
@@ -393,7 +394,7 @@ const Battle1Screen: React.FC = () => {
         </div>
       </div>
       
-      {/* Health bars - updated to match wireframe */}
+      {/* Health bars - updated to match wireframe exactly */}
       <div className="flex gap-4 mb-6">
         <div className="flex-1">
           <HPBar currentHP={player.currentHp} maxHP={player.maxHp} />
@@ -403,7 +404,7 @@ const Battle1Screen: React.FC = () => {
         </div>
       </div>
       
-      {/* Character info */}
+      {/* Character info - updated to match wireframe exactly */}
       <div className="flex justify-between mb-6">
         <div 
           className="flex items-center gap-2 cursor-pointer" 
@@ -446,7 +447,7 @@ const Battle1Screen: React.FC = () => {
         <button 
           onClick={handlePlayerSpecial} 
           disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-purple-800'}`}
+          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'bg-gray-500' : 'bg-black'}`}
         >
           とくぎ
         </button>
@@ -454,7 +455,7 @@ const Battle1Screen: React.FC = () => {
         <button 
           onClick={handleRunAway} 
           disabled={!isPlayerTurn || isBattleOver}
-          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-purple-800'}`}
+          className={`py-2 px-4 rounded-full font-bold text-white text-sm ${!isPlayerTurn || isBattleOver ? 'bg-gray-500' : 'bg-black'}`}
         >
           にげる
         </button>
@@ -468,7 +469,7 @@ const Battle1Screen: React.FC = () => {
         </button>
       </div>
       
-      {/* Comment input */}
+      {/* Comment input - updated to match wireframe */}
       <div className="flex gap-2 mt-4">
         <input
           type="text"
@@ -500,8 +501,8 @@ const Battle1Screen: React.FC = () => {
         />
       )}
       
-      {/* Audio Player */}
-      <AudioPlayer />
+      {/* Audio Player - fixing the missing src property */}
+      {soundEffect && <AudioPlayer src={soundEffect} />}
     </div>
   );
 };

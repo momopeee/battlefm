@@ -11,7 +11,7 @@ const HPBar: React.FC<HPBarProps> = ({ currentHP, maxHP }) => {
   
   return (
     <div className="w-full">
-      <div className="bg-purple-600 text-white rounded-md p-2 flex justify-center">
+      <div className="bg-battle-pink text-white rounded-md p-2 flex justify-center">
         <span className="text-white text-sm">残りHP: {currentHP}</span>
       </div>
     </div>
