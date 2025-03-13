@@ -137,6 +137,17 @@
   animation: blink 1s infinite;
 }
 
+/* Button click animation */
+@keyframes button-press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.battle-action-button.animate {
+  animation: button-press 0.7s ease;
+}
+
 /* Battle background gradient */
 .original-gradient {
   height: 200px;
