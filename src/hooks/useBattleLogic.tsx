@@ -132,7 +132,7 @@ export const useBattleLogic = () => {
     }
   }, [battleTimer, sosoHealMode, isBattleOver, addComment]);
 
-  // Handle player attack with 50% damage reduction during heal mode
+  // Handle player attack - removed 50% damage reduction
   const handlePlayerAttack = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
@@ -173,12 +173,6 @@ export const useBattleLogic = () => {
     // Normal attack damage calculation
     damage = Math.floor(Math.random() * (player.attackMax - player.attackMin + 1)) + player.attackMin;
     
-    // Apply 50% damage reduction during heal mode
-    if (sosoHealMode) {
-      damage = Math.floor(damage * 0.5);
-      addComment("システム", "そーそーは回復モード中！攻撃が50%カットされた！", true);
-    }
-    
     // Add attack comments
     addComment(player.name, attackComment);
     addComment("システム", `とおるの攻撃、そーそーは${damage}のダメージを受けた`, true);
@@ -193,7 +187,7 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(false);
   };
 
-  // Handle player special attack with 50% damage reduction during heal mode
+  // Handle player special attack - removed 50% damage reduction
   const handlePlayerSpecial = () => {
     if (isBattleOver || !isPlayerTurn || !specialAttackAvailable) return;
     
@@ -202,12 +196,6 @@ export const useBattleLogic = () => {
     
     // Calculate damage (higher than regular attack)
     let damage = Math.floor(Math.random() * (player.specialPower - 30 + 1)) + 30;
-    
-    // Apply 50% damage reduction during heal mode
-    if (sosoHealMode) {
-      damage = Math.floor(damage * 0.5);
-      addComment("システム", "そーそーは回復モード中！攻撃が50%カットされた！", true);
-    }
     
     // Add attack comments
     addComment(player.name, specialComment);
@@ -302,7 +290,7 @@ export const useBattleLogic = () => {
     
     // Add attack comments
     addComment(opponent1.name, attackComment);
-    addComment("システム", `そーそーの攻撃、とおるは${damage}のダメージを受けた`, true);
+    addComment("システム", `そーそーの攻撃、とお���は${damage}のダメージを受けた`, true);
     
     // Apply damage to player
     setPlayer({
@@ -314,17 +302,17 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(true);
   };
 
-  // Handle soso heal with updated heal amount and collaborators
+  // Updated: Handle soso heal with fixed 10 healing points
   const handleSosoHeal = () => {
     if (isBattleOver) return;
     
     // Get random collaborators for the healing effect
     const collaborators = [
-      { name: "ラムダ", effect: 8 },
-      { name: "松嶋こと", effect: 12 },
-      { name: "元銀行マン", effect: 15 },
-      { name: "社会主義の達人", effect: 10 },
-      { name: "ゆうじ", effect: 20 }
+      { name: "ラムダ", effect: 5 },
+      { name: "松嶋こと", effect: 5 },
+      { name: "元銀行マン", effect: 5 },
+      { name: "社会主義の達人", effect: 5 },
+      { name: "ゆうじ", effect: 5 }
     ];
     
     // Randomly select two collaborators
@@ -333,8 +321,8 @@ export const useBattleLogic = () => {
     selectedCollaborators.push(shuffledCollaborators[0]);
     selectedCollaborators.push(shuffledCollaborators[1]);
     
-    // Calculate total healing amount
-    const healAmount = selectedCollaborators.reduce((total, collab) => total + collab.effect, 0);
+    // Fixed heal amount of 10
+    const healAmount = 10;
     
     // Add heal comments
     addComment(opponent1.name, "あー、生きるってむずかしいんだよなー、株クラのみんな上がってきてよ");
@@ -343,7 +331,7 @@ export const useBattleLogic = () => {
     const collabNames = selectedCollaborators.map(c => c.name).join("と");
     addComment("システム", `${collabNames}がコラボに参加した。そーそーの体力が${healAmount}回復した`, true);
     
-    // Heal opponent with dynamic amount
+    // Heal opponent with fixed amount
     setOpponent1({
       ...opponent1,
       currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + healAmount)
