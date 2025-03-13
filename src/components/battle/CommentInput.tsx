@@ -9,8 +9,8 @@ const CommentInput: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (comment.trim()) {
-      // Use the specified listener name instead of player name
-      addComment("巨万の富男＠怪しい者ですが誠実です", comment);
+      // Use the specified listener name
+      addComment("巨万の富男＠怪しい者ですが誠実です", comment, false);
       setComment('');
     }
   };
