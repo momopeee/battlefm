@@ -67,6 +67,7 @@ const Battle1Screen: React.FC = () => {
         player={player}
         opponent={opponent1}
         onCharacterClick={handleCharacterClick}
+        sosoHealMode={sosoHealMode}
       />
       
       {/* Comments area with fixed height */}
