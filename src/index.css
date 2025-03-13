@@ -2,109 +2,84 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
+ 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
+ 
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
+ 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
+ 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
+ 
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
+ 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
+ 
     --radius: 0.5rem;
-    --sidebar-background: 222.2 47.4% 11.2%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 210 40% 98%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 212.7 26.8% 83.9%;
+    
+    --battle-pink: #D43290;
+    --battle-purple: #7703AF;
   }
-
+ 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
+ 
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
+ 
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
+ 
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
+ 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
+ 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
+ 
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
+ 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
+ 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 210 40% 98%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 212.7 26.8% 83.9%;
   }
 }
-
+ 
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
   }
 }
 
-/* Scrollbar styling */
-@media (min-width: 768px) {
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: #4b5563;
-    border-radius: 3px;
-  }
-}
-
-@media (max-width: 767px) {
-  .scrollbar-thin::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .scrollbar-thin {
-    -webkit-overflow-scrolling: touch;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-/* Star Wars text scrolling effect */
+/* Star Wars style text animations */
 .perspective {
   perspective: 400px;
 }
@@ -113,70 +88,24 @@
   transform: rotateX(25deg);
 }
 
-.star-wars-text-content {
-  animation: text-scroll 60s linear infinite;
-  transform: translateY(100%);
+.animate-text-scroll {
+  animation: scrollText 60s linear forwards;
 }
 
-@keyframes text-scroll {
+@keyframes scrollText {
   0% {
-    transform: translateY(100%);
+    transform: translateY(100vh);
   }
   100% {
-    transform: translateY(-100%);
+    transform: translateY(-300vh);
   }
 }
 
-/* Battle animations */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+/* Custom gradient button */
+.bg-battle-pink {
+  background-color: var(--battle-pink);
 }
 
-.animate-blink {
-  animation: blink 1s infinite;
-}
-
-/* Battle background gradient */
-.original-gradient {
-  height: 200px;
-  width: 90%;
-  background-image: linear-gradient(270deg, rgba(124, 238, 255, 1), rgba(201, 100, 250, 1));
-}
-
-/* Battle action button gradient */
-.battle-action-button {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 9999px;
-  padding: 10px 15px;
-  color: #fff;
-  line-height: 1.8;
-  text-decoration: none;
-  font-weight: 500;
-  background: linear-gradient(270deg, #3bade3 0%, #576fe6 25%, #9844b7 51%, #ff357f 100%);
-  background-position: 1% 50%;
-  background-size: 200% auto;
-  transition: all 0.3s ease-out;
-  /* Make buttons oval-shaped by adjusting width */
-  width: 100%;
-  min-width: 70px;
-  max-width: 100%;
-  height: 36px; /* Fixed height to ensure oval shape */
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.battle-action-button:hover:not(:disabled) {
-  color: #fff;
-  background-position: 99% 50%;
-  transform: scale(1.05);
-  box-shadow: 0 15px 15px rgba(87,111,230,0.4);
-}
-
-.battle-action-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.bg-battle-gradient {
+  background-image: linear-gradient(to bottom, var(--battle-pink), var(--battle-purple));
 }

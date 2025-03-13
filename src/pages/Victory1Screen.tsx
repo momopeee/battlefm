@@ -1,102 +1,101 @@
 
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
-import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX } from 'lucide-react';
 
 const Victory1Screen: React.FC = () => {
-  const { 
-    battleTimer, 
-    totalComments, 
-    bgmEnabled, 
-    toggleBgm,
-    handleScreenTransition
-  } = useApp();
-
-  // Format timer display
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  // Calculate battle rating
-  const calculateRating = () => {
-    // Simple algorithm based on time and comments
-    const timeScore = Math.min(100, 300 / (battleTimer || 1) * 50);
-    const commentScore = Math.min(100, totalComments * 5);
-    const totalScore = (timeScore + commentScore) / 2;
+  const { bgmEnabled, toggleBgm, battleTimer, totalComments, handleScreenTransition } = useApp();
+  const navigate = useNavigate();
+  
+  // Determine battle rating based on time and comments
+  const determineBattleRating = (): string => {
+    const time = battleTimer;
+    const comments = totalComments;
     
-    if (totalScore >= 90) return 'S';
-    if (totalScore >= 80) return 'A';
-    if (totalScore >= 70) return 'B';
-    if (totalScore >= 60) return 'C';
-    if (totalScore >= 50) return 'D';
-    return 'E';
+    if (time < 60 && comments > 15) return 'S';
+    if (time < 120 && comments > 10) return 'A';
+    if (time < 180 && comments > 5) return 'B';
+    if (time < 240) return 'C';
+    return 'D';
   };
-
+  
   const handleClose = () => {
     handleScreenTransition('select');
+    navigate('/select');
   };
-
+  
+  const handleFollowClick = () => {
+    window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
+  };
+  
+  const handleLetterClick = () => {
+    window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
+  };
+  
+  useEffect(() => {
+    // Reset game state as needed when entering victory screen
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
   return (
-    <div className="battle-bg min-h-screen p-6 flex flex-col items-center justify-center text-white">
-      <AudioPlayer src="/audios/toru1.mp3" loop autoPlay />
-      
-      <div className="bg-black/30 rounded-lg p-6 w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-center">バトル結果</h1>
+    <div 
+      className="min-h-screen flex flex-col items-center justify-center p-4 text-white"
+      style={{ 
+        background: 'linear-gradient(180deg, rgba(212, 50, 144, 1), rgba(119, 3, 175, 1))',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
+      }}
+    >
+      <div className="w-full max-w-md bg-black/30 backdrop-blur-sm rounded-lg p-6 shadow-xl">
+        <h1 className="text-3xl font-bold text-center mb-6">ライブ終了！</h1>
         
-        <div className="space-y-4 mb-8">
-          <div className="flex justify-between items-center">
-            <span className="text-lg">バトル時間:</span>
-            <span className="text-xl font-bold">{formatTime(battleTimer)}</span>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <span className="text-lg">コメント数:</span>
-            <span className="text-xl font-bold">{totalComments}</span>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <span className="text-lg">バトル評価:</span>
-            <span className="text-3xl font-bold text-battle-pink">{calculateRating()}</span>
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">バトル結果</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white/10 p-3 rounded-md">
+              <p className="text-sm">バトル時間</p>
+              <p className="text-xl font-bold">{Math.floor(battleTimer / 60)}分{battleTimer % 60}秒</p>
+            </div>
+            <div className="bg-white/10 p-3 rounded-md">
+              <p className="text-sm">コメント数</p>
+              <p className="text-xl font-bold">{totalComments}件</p>
+            </div>
+            <div className="bg-white/10 p-3 rounded-md col-span-2">
+              <p className="text-sm">バトル評価</p>
+              <p className="text-3xl font-bold text-center">{determineBattleRating()}</p>
+            </div>
           </div>
         </div>
         
-        <div className="flex flex-col gap-4">
-          <button
-            onClick={handleClose}
-            className="bg-battle-pink py-3 px-4 rounded-md font-bold hover:opacity-90 transition-opacity"
+        <div className="flex flex-col gap-3 mb-4">
+          <button 
+            onClick={handleFollowClick}
+            className="bg-pink-500 text-white rounded-md px-4 py-3 hover:bg-pink-600 transition-colors font-bold"
           >
-            閉じる
+            フォローする
           </button>
-          
-          <div className="flex justify-between">
-            <a 
-              href="https://stand.fm/channels/5e85f9834afcd35104858d5a" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-white/20 py-2 px-4 rounded-md text-white font-semibold hover:bg-white/30 transition-colors flex-1 mr-2 text-center"
-            >
-              フォローする
-            </a>
-            
-            <a 
-              href="https://stand.fm/channels/5e85f9834afcd35104858d5a" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-white/20 py-2 px-4 rounded-md text-white font-semibold hover:bg-white/30 transition-colors flex-1 ml-2 text-center"
-            >
-              レターを送る
-            </a>
-          </div>
+          <button 
+            onClick={handleLetterClick}
+            className="bg-blue-500 text-white rounded-md px-4 py-3 hover:bg-blue-600 transition-colors font-bold"
+          >
+            レターを送る
+          </button>
         </div>
+        
+        <button
+          onClick={handleClose}
+          className="w-full bg-white text-pink-500 rounded-md px-4 py-3 hover:bg-gray-100 transition-colors font-bold"
+        >
+          閉じる
+        </button>
       </div>
       
       {/* BGM Toggle Button */}
       <button
         onClick={toggleBgm}
-        className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
+        className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
       >
         {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
