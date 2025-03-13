@@ -38,9 +38,9 @@ const StartScreen = () => {
     <div className="relative min-h-screen overflow-hidden bg-black">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center z-0 bg-black"
+        className="absolute inset-0 bg-cover bg-center z-0"
         style={{ 
-          backgroundImage: `url('/lovable-uploads/dcbb9d2b-c0be-45f9-b9a3-db7436099f6f.png')`,
+          backgroundImage: `url('/lovable-uploads/b24bf037-4b0b-4ae3-9a31-309a4415b998.png')`,
           backgroundSize: 'cover'
         }}
       ></div>
@@ -49,7 +49,7 @@ const StartScreen = () => {
       {showText && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden perspective">
           <div className="absolute w-full max-w-3xl text-center transform rotate3d">
-            <div className="star-wars-text-content text-white text-lg md:text-xl leading-relaxed animate-text-scroll">
+            <div className="star-wars-text-content text-white text-lg md:text-xl leading-relaxed animate-text-scroll bg-black bg-opacity-30 p-6 rounded">
               <p>
                 ファンキーな世の中をあなたはどう生きますか？
                 <br />
