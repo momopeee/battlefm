@@ -389,7 +389,7 @@ const Battle1Screen: React.FC = () => {
             alt={player.name} 
             className="w-12 h-12 rounded-full"
           />
-          <p className="text-sm">対戦時間を {formatTime(battleTimer)} 形式で表示</p>
+          <p className="text-sm">対戦時間: {formatTime(battleTimer)}</p>
         </div>
       </div>
       
@@ -403,39 +403,33 @@ const Battle1Screen: React.FC = () => {
         </div>
       </div>
       
-      {/* Character info */}
-      <div className="flex justify-between mb-2">
-        <div 
-          className="flex items-center gap-2 cursor-pointer" 
-          onClick={() => handleCharacterClick('player')}
-        >
+      {/* Character info - centered horizontally */}
+      <div className="flex justify-center mb-2">
+        <div className="flex flex-col items-center mr-16 cursor-pointer" onClick={() => handleCharacterClick('player')}>
           <img 
             src={player.icon} 
             alt={player.name} 
-            className="w-12 h-12 rounded-full"
+            className="w-16 h-16 rounded-full"
           />
-          <span className="font-bold">ユーザー名を表示</span>
+          <span className="font-bold mt-1">{player.name}</span>
         </div>
         
-        <div 
-          className="flex items-center gap-2 cursor-pointer" 
-          onClick={() => handleCharacterClick('opponent1')}
-        >
-          <span className="font-bold">対戦相手名を表示</span>
+        <div className="flex flex-col items-center ml-16 cursor-pointer" onClick={() => handleCharacterClick('opponent1')}>
           <img 
             src={opponent1.icon} 
             alt={opponent1.name} 
-            className="w-12 h-12 rounded-full"
+            className="w-16 h-16 rounded-full"
           />
+          <span className="font-bold mt-1">{opponent1.name}</span>
         </div>
       </div>
       
-      {/* Flexible comments area that takes up available space */}
-      <div className="flex-1 mb-2">
+      {/* Comments area with fixed height */}
+      <div className="flex-1 mb-2 h-[40vh] overflow-hidden">
         <CommentArea comments={comments} />
       </div>
       
-      {/* Bottom section with battle actions - stays at bottom */}
+      {/* Battle actions at bottom */}
       <div className="mt-auto">
         {/* Battle actions */}
         <div className="grid grid-cols-4 gap-2 mb-2">
