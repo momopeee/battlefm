@@ -62,7 +62,7 @@ const AppContext = createContext<AppContextType>({
   bgmEnabled: true,
   player: {
     name: 'とおる＠経営参謀',
-    icon: '/lovable-uploads/6b157674-e844-4829-b50a-8f97228e333e.png',
+    icon: '/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png',
     maxHp: 100,
     currentHp: 100,
     attackMin: 15,
@@ -123,7 +123,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [bgmEnabled, setBgmEnabled] = useState(true);
   const [player, setPlayerState] = useState<Character>({
     name: 'とおる＠経営参謀',
-    icon: '/lovable-uploads/6b157674-e844-4829-b50a-8f97228e333e.png',
+    icon: '/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png',
     maxHp: 100,
     currentHp: 100,
     attackMin: 15,
