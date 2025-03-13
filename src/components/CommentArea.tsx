@@ -28,7 +28,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({ comments }) => {
               <>
                 <img 
                   src={comment.author === "とおる＠経営参謀" ? "/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png" : 
-                       comment.author === "そーそー＠狂犬ツイート" ? "/lovable-uploads/5af802e0-9f63-462c-838c-e2b1acbf3c6f.png" : 
+                       comment.author === "そーそー＠狂犬ツイート" ? "/lovable-uploads/b62bfeb2-59a1-4f1b-976a-d026638e0416.png" : 
                        "/lovable-uploads/656bd67f-53fe-4f15-86f3-0db149cc7285.png"}
                   alt={comment.author}
                   className="w-8 h-8 rounded-full mt-1"
