@@ -4,12 +4,13 @@ import { useApp } from '@/context/AppContext';
 
 const CommentInput: React.FC = () => {
   const [comment, setComment] = useState('');
-  const { addComment, player } = useApp();
+  const { addComment } = useApp();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (comment.trim()) {
-      addComment(player.name, comment);
+      // Use the specified listener name instead of player name
+      addComment("巨万の富男＠怪しい者ですが誠実です", comment);
       setComment('');
     }
   };
