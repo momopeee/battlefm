@@ -1,10 +1,9 @@
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 interface BattleActionsProps {
   isPlayerTurn: boolean;
   isBattleOver: boolean;
-  actionInProgress: boolean;
   specialAttackAvailable: boolean;
   onAttack: () => void;
   onSpecial: () => void;
@@ -15,7 +14,6 @@ interface BattleActionsProps {
 const BattleActions: React.FC<BattleActionsProps> = ({
   isPlayerTurn,
   isBattleOver,
-  actionInProgress,
   specialAttackAvailable,
   onAttack,
   onSpecial,
@@ -25,74 +23,48 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   // Function to handle button animation on click
   const handleButtonAnimation = (e: React.MouseEvent<HTMLButtonElement>) => {
     const btn = e.currentTarget;
-    // Remove any existing animation class
     btn.classList.remove('animate');
-    // Force a reflow to ensure animation can be applied again
-    void btn.offsetWidth;
-    // Add animation class
+    void btn.offsetWidth; // Reflowを起こし再アニメーション可能にする
     btn.classList.add('animate');
-    
-    // Clean up animation class after animation completes
-    setTimeout(() => {
-      if (btn && document.body.contains(btn)) {
-        btn.classList.remove('animate');
-      }
-    }, 700);
+    setTimeout(() => btn.classList.remove('animate'), 700);
   };
 
-  // All buttons should be disabled when action is in progress
-  const buttonsDisabled = !isPlayerTurn || isBattleOver || actionInProgress;
+  // Combined click handler for animation and action
+  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>, action: () => void) => {
+    handleButtonAnimation(e);
+    action();
+  };
 
   return (
     <div className="grid grid-cols-4 gap-2 mb-2">
       <button 
-        onClick={(e) => {
-          if (isPlayerTurn && !isBattleOver && !actionInProgress) {
-            handleButtonAnimation(e);
-            onAttack();
-          }
-        }} 
-        disabled={buttonsDisabled}
-        className={`battle-action-button text-xs whitespace-nowrap ${buttonsDisabled ? 'opacity-60' : ''}`}
+        onClick={(e) => handleButtonClick(e, onAttack)} 
+        disabled={!isPlayerTurn || isBattleOver}
+        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
         こうげき
       </button>
       
       <button 
-        onClick={(e) => {
-          if (isPlayerTurn && !isBattleOver && !actionInProgress && specialAttackAvailable) {
-            handleButtonAnimation(e);
-            onSpecial();
-          }
-        }} 
-        disabled={buttonsDisabled || !specialAttackAvailable}
-        className={`battle-action-button text-xs whitespace-nowrap ${buttonsDisabled || !specialAttackAvailable ? 'opacity-60' : ''} ${specialAttackAvailable ? 'bg-pink-500 hover:bg-pink-600' : ''}`}
+        onClick={(e) => handleButtonClick(e, onSpecial)} 
+        disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
+        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''} ${specialAttackAvailable ? 'bg-pink-500 hover:bg-pink-600' : ''}`}
       >
         とくぎ
       </button>
       
       <button 
-        onClick={(e) => {
-          if (isPlayerTurn && !isBattleOver && !actionInProgress) {
-            handleButtonAnimation(e);
-            onRunAway();
-          }
-        }} 
-        disabled={buttonsDisabled}
-        className={`battle-action-button text-xs whitespace-nowrap ${buttonsDisabled ? 'opacity-60' : ''}`}
+        onClick={(e) => handleButtonClick(e, onRunAway)} 
+        disabled={!isPlayerTurn || isBattleOver}
+        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
         にげる
       </button>
       
       <button 
-        onClick={(e) => {
-          if (isPlayerTurn && !isBattleOver && !actionInProgress) {
-            handleButtonAnimation(e);
-            onHighball();
-          }
-        }} 
-        disabled={buttonsDisabled}
-        className={`battle-action-button text-xs whitespace-nowrap ${buttonsDisabled ? 'opacity-60' : ''}`}
+        onClick={(e) => handleButtonClick(e, onHighball)} 
+        disabled={!isPlayerTurn || isBattleOver}
+        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
         ハイボール
       </button>

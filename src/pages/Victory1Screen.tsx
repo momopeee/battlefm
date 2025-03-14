@@ -8,8 +8,7 @@ const Victory1Screen: React.FC = () => {
   const { 
     bgmEnabled, 
     toggleBgm,
-    handleScreenTransition,
-    totalComments
+    handleScreenTransition
   } = useApp();
 
   const handleClose = () => {
@@ -37,7 +36,7 @@ const Victory1Screen: React.FC = () => {
         
         <div className="flex items-center gap-2 mb-4">
           <div className="rounded-full w-5 h-5 flex items-center justify-center border border-gray-300">
-            <span className="text-gray-500 text-sm">{totalComments || 0}</span>
+            <span className="text-gray-500 text-sm">0</span>
           </div>
         </div>
         
