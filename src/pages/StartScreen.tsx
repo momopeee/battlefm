@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -8,6 +8,14 @@ import { Button } from '@/components/ui/button';
 const StartScreen = () => {
   const { handleScreenTransition } = useApp();
   const navigate = useNavigate();
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  useEffect(() => {
+    // Preload the image
+    const img = new Image();
+    img.src = '/lovable-uploads/9ed25f9b-c3ab-40dd-bb40-19e007f9faed.png';
+    img.onload = () => setImageLoaded(true);
+  }, []);
   
   const handleStart = () => {
     handleScreenTransition('battle1');
@@ -15,17 +23,21 @@ const StartScreen = () => {
   };
   
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen w-full overflow-hidden bg-black">
       {/* Background Image */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center"
-        style={{ 
-          backgroundImage: `url('/lovable-uploads/9ed25f9b-c3ab-40dd-bb40-19e007f9faed.png')`,
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-        }}
-      />
+      {imageLoaded && (
+        <div 
+          className="absolute inset-0 z-0"
+          style={{ 
+            backgroundImage: `url('/lovable-uploads/9ed25f9b-c3ab-40dd-bb40-19e007f9faed.png')`,
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            width: '100%',
+            height: '100%'
+          }}
+        />
+      )}
       
       {/* Start Button */}
       <div className="absolute inset-0 z-20 flex items-center justify-center">
