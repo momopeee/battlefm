@@ -1,104 +1,83 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX } from 'lucide-react';
 
 const Victory1Screen: React.FC = () => {
   const { 
-    battleTimer, 
-    totalComments, 
     bgmEnabled, 
     toggleBgm,
     handleScreenTransition
   } = useApp();
-
-  // Format timer display
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  // Calculate battle rating
-  const calculateRating = () => {
-    // Simple algorithm based on time and comments
-    const timeScore = Math.min(100, 300 / (battleTimer || 1) * 50);
-    const commentScore = Math.min(100, totalComments * 5);
-    const totalScore = (timeScore + commentScore) / 2;
-    
-    if (totalScore >= 90) return 'S';
-    if (totalScore >= 80) return 'A';
-    if (totalScore >= 70) return 'B';
-    if (totalScore >= 60) return 'C';
-    if (totalScore >= 50) return 'D';
-    return 'E';
-  };
 
   const handleClose = () => {
     handleScreenTransition('select');
   };
 
   return (
-    <div className="battle-bg min-h-screen p-6 flex flex-col items-center justify-center text-white">
+    <div 
+      className="min-h-screen flex flex-col items-center justify-between bg-white text-gray-800"
+      style={{ 
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
+      }}
+    >
       <AudioPlayer src="/audios/toru1.mp3" loop autoPlay />
       
-      <div className="bg-black/30 rounded-lg p-6 w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-6 text-center">バトル結果</h1>
+      {/* Empty top section for spacing */}
+      <div className="w-full"></div>
+      
+      {/* Main content */}
+      <div className="flex flex-col items-center w-full px-8">
+        <div className="text-center mb-4">
+          <h1 className="text-2xl font-bold">ライブが終了しました</h1>
+          <p className="text-gray-500 mt-2">15:46</p>
+        </div>
         
-        <div className="space-y-4 mb-8">
-          <div className="flex justify-between items-center">
-            <span className="text-lg">バトル時間:</span>
-            <span className="text-xl font-bold">{formatTime(battleTimer)}</span>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <span className="text-lg">コメント数:</span>
-            <span className="text-xl font-bold">{totalComments}</span>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <span className="text-lg">バトル評価:</span>
-            <span className="text-3xl font-bold text-battle-pink">{calculateRating()}</span>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="rounded-full w-5 h-5 flex items-center justify-center border border-gray-300">
+            <span className="text-gray-500 text-sm">0</span>
           </div>
         </div>
         
-        <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4 mt-4 w-full">
+          <div className="flex-shrink-0">
+            <img 
+              src="/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png" 
+              alt="とおる" 
+              className="w-12 h-12 rounded-full object-cover"
+            />
+          </div>
+          
+          <div className="flex-grow">
+            <p className="font-medium">さよならワンマン経営…</p>
+          </div>
+          
           <button
-            onClick={handleClose}
-            className="bg-battle-pink py-3 px-4 rounded-md font-bold hover:opacity-90 transition-opacity"
+            className="bg-pink-500 text-white rounded-full px-4 py-1 text-sm"
           >
-            閉じる
+            フォローする
           </button>
-          
-          <div className="flex justify-between">
-            <a 
-              href="https://stand.fm/channels/5e85f9834afcd35104858d5a" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-white/20 py-2 px-4 rounded-md text-white font-semibold hover:bg-white/30 transition-colors flex-1 mr-2 text-center"
-            >
-              フォローする
-            </a>
-            
-            <a 
-              href="https://stand.fm/channels/5e85f9834afcd35104858d5a" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-white/20 py-2 px-4 rounded-md text-white font-semibold hover:bg-white/30 transition-colors flex-1 ml-2 text-center"
-            >
-              レターを送る
-            </a>
-          </div>
         </div>
+      </div>
+      
+      {/* Bottom input section */}
+      <div className="w-full p-4 space-y-4">
+        <div className="w-full h-12 border border-pink-500 rounded-full"></div>
+        <button
+          onClick={handleClose}
+          className="w-full h-12 bg-pink-500 text-white rounded-full font-bold"
+        >
+          閉じる
+        </button>
       </div>
       
       {/* BGM Toggle Button */}
       <button
         onClick={toggleBgm}
-        className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
+        className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
       >
-        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
+        {bgmEnabled ? <Volume2 size={24} color="gray" /> : <VolumeX size={24} color="gray" />}
       </button>
     </div>
   );

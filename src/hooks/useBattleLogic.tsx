@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useApp, Character } from '@/context/AppContext';
 
@@ -203,7 +202,7 @@ export const useBattleLogic = () => {
     
     // Add attack comments
     addComment(player.name, specialComment);
-    addComment("システム", `とおるのとくぎ！そーそーは${damage}のダメージを受けた！`, true);
+    addComment("システム", `とおるのとくぎ！そー���ーは${damage}のダメージを受けた！`, true);
     
     // Apply damage to opponent
     setOpponent1({
@@ -334,12 +333,16 @@ export const useBattleLogic = () => {
     setTimeout(() => addComment("システム", "とおるは400の経験値を得た、とおるはレベルが上がった", true), 3000);
     setTimeout(() => addComment("システム", "とおるは祝いの美酒に酔いしれた", true), 6000);
     setTimeout(() => addComment("システム", "とおるは祝いの美酒の効果で痛風が悪化した、80のダメージ", true), 9000);
-    setTimeout(() => addComment("システム", "とおるはライブを閉じてしまった", true), 12000);
     
-    // Transition to victory screen after delay
+    // 最後のシステムメッセージから5秒後に遷移
     setTimeout(() => {
-      handleScreenTransition('victory1');
-    }, 15000);
+      addComment("システム", "ライブが終了しました", true);
+      
+      // 5秒後に勝利画面へ遷移
+      setTimeout(() => {
+        handleScreenTransition('victory1');
+      }, 5000);
+    }, 12000);
   };
 
   // Handle defeat - ensure correct screen transition
@@ -353,11 +356,20 @@ export const useBattleLogic = () => {
     setTimeout(() => addComment("システム", "とおるは敗北からも学べる男だった", true), 6000);
     setTimeout(() => addComment("システム", "とおるはレベルが上がった", true), 9000);
     setTimeout(() => addComment("システム", "とおるは敗北の美酒に酔いしれた", true), 12000);
-    setTimeout(() => addComment("システム", "とおるは敗北の美酒の効果で痛風が悪化した、530000のダメージ", true), 15000);
     
-    // Transition to ending B screen after delay
+    // 最後のシステムメッセージから5秒後に遷移
     setTimeout(() => {
-      handleScreenTransition('endingB');
+      addComment("システム", "とおるは敗北の美酒の効果で痛風が悪化した、530000のダメージ", true);
+      
+      // 5秒後に敗北画面へ遷移
+      setTimeout(() => {
+        addComment("システム", "ライブが終了しました", true);
+        
+        // さらに5秒後に敗北画面へ遷移
+        setTimeout(() => {
+          handleScreenTransition('endingB');
+        }, 5000);
+      }, 3000);
     }, 15000);
   };
 
@@ -389,3 +401,4 @@ export const useBattleLogic = () => {
     setShowCharacterSheet
   };
 };
+
