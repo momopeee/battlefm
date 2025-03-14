@@ -9,7 +9,8 @@ const StartScreen = () => {
   const { handleScreenTransition } = useApp();
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imagePath] = useState('/lovable-uploads/9ed25f9b-c3ab-40dd-bb40-19e007f9faed.png');
+  // Use one of the known available images from the project
+  const [imagePath] = useState('/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png');
   
   useEffect(() => {
     // Preload the image
