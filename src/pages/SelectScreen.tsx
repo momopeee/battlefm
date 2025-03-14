@@ -204,7 +204,8 @@ const SelectScreen: React.FC = () => {
         </div>
       )}
 
-      <style jsx global>{`
+      <style>
+        {`
         @keyframes star-wars {
           0% {
             transform: translateY(100vh) rotateX(25deg);
@@ -226,7 +227,8 @@ const SelectScreen: React.FC = () => {
           justify-content: center;
           align-items: center;
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };

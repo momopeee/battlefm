@@ -5,7 +5,7 @@ import { Character } from '@/context/AppContext';
 interface CharacterPortraitsProps {
   player: Character;
   opponent: Character;
-  onCharacterClick: (character: 'player' | 'opponent1') => void;
+  onCharacterClick: (character: 'player' | 'opponent1' | 'opponent2') => void;
   sosoHealMode: boolean;
 }
 
@@ -15,6 +15,10 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
   onCharacterClick,
   sosoHealMode
 }) => {
+  // Determine if we're in battle1 or battle2 based on opponent name
+  const isOpponent2 = opponent.name.includes('ゆうじ');
+  const opponentType = isOpponent2 ? 'opponent2' : 'opponent1';
+  
   return (
     <div className="grid grid-cols-4 mb-2">
       {!sosoHealMode && (
@@ -36,7 +40,7 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
           
           <div 
             className="flex flex-col items-center col-span-1 cursor-pointer" 
-            onClick={() => onCharacterClick('opponent1')}
+            onClick={() => onCharacterClick(opponentType)}
           >
             <img 
               src={opponent.icon} 
@@ -69,7 +73,7 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
           
           <div 
             className="flex flex-col items-center col-span-1 cursor-pointer" 
-            onClick={() => onCharacterClick('opponent1')}
+            onClick={() => onCharacterClick(opponentType)}
           >
             <img 
               src={opponent.icon} 

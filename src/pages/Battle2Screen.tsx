@@ -1,275 +1,334 @@
 
 import React, { useState, useEffect } from 'react';
-import { useApp } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
+import { useApp } from '@/context/AppContext';
+import CommentArea from '@/components/CommentArea';
+import CharacterSheet from '@/components/CharacterSheet';
 import AudioPlayer from '@/components/AudioPlayer';
+import { Volume2, VolumeX } from 'lucide-react';
+
+// Import the battle components
+import PlayerInfo from '@/components/battle/PlayerInfo';
 import CharacterPortraits from '@/components/battle/CharacterPortraits';
 import GaugesDisplay from '@/components/battle/GaugesDisplay';
 import BattleActions from '@/components/battle/BattleActions';
-import PlayerInfo from '@/components/battle/PlayerInfo';
-import CommentArea from '@/components/CommentArea';
 import CommentInput from '@/components/battle/CommentInput';
-import CharacterSheet from '@/components/CharacterSheet';
-import { useBattleLogic } from '@/hooks/useBattleLogic';
 
 const Battle2Screen: React.FC = () => {
   const navigate = useNavigate();
   const { 
     player, 
-    opponent2,
-    bgmEnabled,
+    opponent2, 
+    bgmEnabled, 
+    toggleBgm,
     battleTimer,
-    showCharacterSheet,
-    setShowCharacterSheet,
-    setPlayer,
-    clearComments,
-    addComment,
     comments,
+    attackCount,
+    specialAttackAvailable, 
+    yujiSpecialMode,
+    showCharacterSheet,
     currentCharacterSheet,
-    yujiSpecialMode
+    setShowCharacterSheet,
+    setCurrentCharacterSheet,
+    addComment,
+    clearComments,
+    setAttackCount,
+    setSpecialAttackAvailable,
+    setYujiSpecialMode
   } = useApp();
   
-  const {
-    playerHp,
-    opponentHp,
-    attackCount,
-    specialAttackAvailable,
-    isPlayerTurn,
-    attackInProgress,
-    setPlayerHp,
-    setOpponentHp,
-    handleAttack,
-    handleSpecialAttack,
-    handleDefend
-  } = useBattleLogic(player, opponent2, 'battle2');
-  
+  // Battle state
+  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+  const [isBattleOver, setIsBattleOver] = useState(false);
+  const [playerHp, setPlayerHp] = useState(player.currentHp);
+  const [opponentHp, setOpponentHp] = useState(opponent2.currentHp);
+  const [attackInProgress, setAttackInProgress] = useState(false);
+  const [soundEffect, setSoundEffect] = useState<string | null>(null);
   const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
-  const [showResults, setShowResults] = useState(false);
   
   // Reset battle state on component mount
   useEffect(() => {
     clearComments();
     setPlayerHp(player.currentHp);
     setOpponentHp(opponent2.currentHp);
+    setAttackCount(0);
+    setSpecialAttackAvailable(false);
     
     // Initial system message
     setTimeout(() => {
       addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
       addComment('ゆうじ', 'ようこそ！やまにぃのマネージャー面接へ！実践形式で早速やってみましょう！');
     }, 1000);
-    
-    return () => {
-      // Clean up any battle state
-    };
   }, []);
+  
+  // Handle character sheet display
+  const handleCharacterClick = (character: 'player' | 'opponent2') => {
+    setCurrentCharacterSheet(character);
+    setShowCharacterSheet(true);
+  };
+  
+  // Player attack function
+  const handlePlayerAttack = () => {
+    if (!isPlayerTurn || attackInProgress || isBattleOver) return;
+    
+    setAttackInProgress(true);
+    setSoundEffect('/audios/attack.mp3');
+    
+    // Calculate damage
+    const min = player.attackMin;
+    const max = player.attackMax;
+    const damage = Math.floor(Math.random() * (max - min + 1)) + min;
+    
+    // Apply damage with delay for animation
+    setTimeout(() => {
+      setOpponentHp(prev => Math.max(0, prev - damage));
+      
+      // Update attack count for special meter
+      setAttackCount(prev => prev + 1);
+      if (attackCount + 1 >= 3) {
+        setSpecialAttackAvailable(true);
+      }
+      
+      // Add battle comments
+      addComment('とおる', `経営参謀として的確な分析攻撃！ ${damage}ポイントのダメージ！`);
+      
+      // Check if opponent defeated
+      if (opponentHp - damage <= 0) {
+        handleVictory();
+      } else {
+        // Enemy turn
+        setTimeout(() => {
+          setIsPlayerTurn(false);
+          setAttackInProgress(false);
+          handleEnemyAttack();
+        }, 1000);
+      }
+    }, 500);
+  };
+  
+  // Player special attack
+  const handlePlayerSpecial = () => {
+    if (!isPlayerTurn || attackInProgress || !specialAttackAvailable || isBattleOver) return;
+    
+    setAttackInProgress(true);
+    setSoundEffect('/audios/special.mp3');
+    setSpecialAttackAvailable(false);
+    setAttackCount(0);
+    
+    // Special attack damage
+    const damage = player.specialPower;
+    
+    setTimeout(() => {
+      setOpponentHp(prev => Math.max(0, prev - damage));
+      
+      // Add battle comments
+      addComment('とおる', `特殊技『経営分析』発動！相手の弱点を突く！ ${damage}ポイントの大ダメージ！`);
+      
+      // Check if opponent defeated
+      if (opponentHp - damage <= 0) {
+        handleVictory();
+      } else {
+        // Enemy turn
+        setTimeout(() => {
+          setIsPlayerTurn(false);
+          setAttackInProgress(false);
+          handleEnemyAttack();
+        }, 1000);
+      }
+    }, 500);
+  };
+  
+  // Handle enemy attack
+  const handleEnemyAttack = () => {
+    if (isBattleOver) return;
+    
+    setAttackInProgress(true);
+    
+    // Special attack if HP is low
+    if (opponentHp < opponent2.maxHp * 0.3 && !yujiSpecialMode) {
+      setSoundEffect('/audios/enemy_special.mp3');
+      setYujiSpecialMode(true);
+      
+      addComment('ゆうじ', '陽気なおじさんスペシャル！おじさんトークタイム！');
+      
+      setTimeout(() => {
+        const damage = opponent2.specialPower;
+        setPlayerHp(prev => Math.max(0, prev - damage));
+        
+        addComment('ゆうじ', '「私のウェディングプランナーとしての経験からいうと〜」');
+        
+        // Check if player defeated
+        if (playerHp - damage <= 0) {
+          handleDefeat();
+        } else {
+          // Player's turn
+          setTimeout(() => {
+            setIsPlayerTurn(true);
+            setAttackInProgress(false);
+          }, 1000);
+        }
+      }, 1500);
+    } else {
+      // Regular attack
+      setSoundEffect('/audios/enemy_attack.mp3');
+      
+      // Calculate damage
+      const min = opponent2.attackMin;
+      const max = opponent2.attackMax;
+      const damage = Math.floor(Math.random() * (max - min + 1)) + min;
+      
+      setTimeout(() => {
+        setPlayerHp(prev => Math.max(0, prev - damage));
+        
+        addComment('ゆうじ', `陽気な営業トーク攻撃！ ${damage}ポイントのダメージ！`);
+        
+        // Check if player defeated
+        if (playerHp - damage <= 0) {
+          handleDefeat();
+        } else {
+          // Player's turn
+          setTimeout(() => {
+            setIsPlayerTurn(true);
+            setAttackInProgress(false);
+          }, 1000);
+        }
+      }, 500);
+    }
+  };
+  
+  // Handle running away
+  const handleRunAway = () => {
+    if (!isPlayerTurn || attackInProgress || isBattleOver) return;
+    
+    addComment('システム', 'とおるは逃げ出した！しかしゆうじのトークに囲まれて逃げられない！', true);
+  };
+  
+  // Handle highball offer
+  const handleHighball = () => {
+    if (!isPlayerTurn || attackInProgress || isBattleOver) return;
+    
+    addComment('とおる', 'ハイボール飲みませんか？');
+    addComment('ゆうじ', 'おっ！いいねぇ～。ハイボール大好き！');
+    
+    // Heal opponent slightly
+    setTimeout(() => {
+      const healAmount = 5;
+      setOpponentHp(prev => Math.min(opponent2.maxHp, prev + healAmount));
+      addComment('システム', `ゆうじのHPが${healAmount}回復した！陽気さが増した！`, true);
+    }, 1000);
+  };
+  
+  // Handle victory
+  const handleVictory = () => {
+    setIsBattleOver(true);
+    setBattleResult('victory');
+    addComment('システム', 'とおるの勝利！マネージャー面接に合格しました！', true);
+    addComment('ゆうじ', 'おー！すごいすごい！やまにぃのマネージャーにピッタリだね！');
+    
+    // Navigate to ending
+    setTimeout(() => {
+      navigate('/endingA');
+    }, 15000);
+  };
+  
+  // Handle defeat
+  const handleDefeat = () => {
+    setIsBattleOver(true);
+    setBattleResult('defeat');
+    addComment('システム', 'とおるの敗北...マネージャー面接に落ちました...', true);
+    addComment('ゆうじ', 'うーん、残念！もう少し接客スキルを磨こう！また挑戦してね！');
+    
+    // Navigate to ending
+    setTimeout(() => {
+      navigate('/endingB');
+    }, 15000);
+  };
   
   // Check for battle end conditions
   useEffect(() => {
-    if (playerHp <= 0) {
-      setBattleResult('defeat');
-      setShowResults(true);
-      
-      // Navigate to ending screen after delay
-      setTimeout(() => {
-        navigate('/endingB');
-      }, 15000);
-    } else if (opponentHp <= 0) {
-      setBattleResult('victory');
-      setShowResults(true);
-      
-      // Navigate to ending screen after delay
-      setTimeout(() => {
-        navigate('/endingA');
-      }, 15000);
+    if (playerHp <= 0 && !isBattleOver) {
+      handleDefeat();
+    } else if (opponentHp <= 0 && !isBattleOver) {
+      handleVictory();
     }
-  }, [playerHp, opponentHp, navigate]);
+  }, [playerHp, opponentHp]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-white font-hiragino relative">
-      {/* Background audio */}
-      <AudioPlayer src="/audios/battle.mp3" loop autoPlay />
+    <div 
+      className="min-h-screen flex flex-col h-screen p-4 text-white"
+      style={{ 
+        background: 'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
+      }}
+    >
+      {/* Top section with title and timer */}
+      <PlayerInfo 
+        name={player.name} 
+        icon={player.icon}
+        battleTimer={battleTimer}
+      />
       
-      {/* Battle timer and info display */}
-      <div className="p-2 border-b border-gray-700 flex justify-between items-center">
-        <div className="text-sm">バトル時間: {battleTimer}秒</div>
-        <div className="text-sm">
-          攻撃回数: {attackCount} | 特殊攻撃: {specialAttackAvailable ? '使用可能' : '充電中'}
-        </div>
+      {/* Health and special gauges */}
+      <GaugesDisplay 
+        player={{...player, currentHp: playerHp}}
+        opponent={{...opponent2, currentHp: opponentHp}}
+        attackCount={attackCount}
+        sosoHealMode={false}
+      />
+      
+      {/* Character portraits */}
+      <CharacterPortraits 
+        player={{...player, currentHp: playerHp}}
+        opponent={{...opponent2, currentHp: opponentHp}}
+        onCharacterClick={handleCharacterClick}
+        sosoHealMode={false}
+      />
+      
+      {/* Comments area with fixed height */}
+      <div className="flex-1 mb-2 h-[25vh] overflow-hidden">
+        <CommentArea comments={comments} />
       </div>
       
-      {/* Main battle area */}
-      <div className="flex-1 flex flex-col md:flex-row">
-        {/* Left side - Battle visuals */}
-        <div className="w-full md:w-2/3 p-4 flex flex-col">
-          {/* Character portraits */}
-          <div className="flex justify-between mb-4">
-            <div className={`transition-all duration-300 ${isPlayerTurn ? 'scale-110' : 'opacity-70'}`}>
-              <img 
-                src={player.icon} 
-                alt={player.name} 
-                className="w-32 h-32 object-cover rounded-lg shadow-lg"
-              />
-              <p className="text-center mt-2">{player.name}</p>
-            </div>
-            
-            <div className={`transition-all duration-300 ${!isPlayerTurn ? 'scale-110' : 'opacity-70'}`}>
-              <img 
-                src={opponent2.icon} 
-                alt={opponent2.name} 
-                className={`w-32 h-32 object-cover rounded-lg shadow-lg ${attackInProgress || yujiSpecialMode ? 'animate-pulse' : ''}`}
-              />
-              <p className="text-center mt-2">{opponent2.name}</p>
-            </div>
-          </div>
-          
-          {/* HP gauges */}
-          <div className="mb-6">
-            <div className="mb-4">
-              <div className="flex justify-between mb-1">
-                <span>{player.name} HP</span>
-                <span>{playerHp} / {player.maxHp}</span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-4">
-                <div 
-                  className="bg-green-500 h-4 rounded-full transition-all duration-300" 
-                  style={{ width: `${(playerHp / player.maxHp) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex justify-between mb-1">
-                <span>{opponent2.name} HP</span>
-                <span>{opponentHp} / {opponent2.maxHp}</span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-4">
-                <div 
-                  className="bg-red-500 h-4 rounded-full transition-all duration-300" 
-                  style={{ width: `${(opponentHp / opponent2.maxHp) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Battle actions */}
-          <div className="mt-auto">
-            <div className="grid grid-cols-3 gap-4">
-              <button
-                onClick={handleAttack}
-                disabled={!isPlayerTurn || attackInProgress || !!battleResult}
-                className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                攻撃
-              </button>
-              
-              <button
-                onClick={handleSpecialAttack}
-                disabled={!isPlayerTurn || attackInProgress || !specialAttackAvailable || !!battleResult}
-                className="bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                特殊攻撃
-              </button>
-              
-              <button
-                onClick={handleDefend}
-                disabled={!isPlayerTurn || attackInProgress || !!battleResult}
-                className="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                防御
-              </button>
-            </div>
-          </div>
-        </div>
+      {/* Battle actions at bottom */}
+      <div className="mt-auto">
+        {/* Battle actions buttons */}
+        <BattleActions 
+          isPlayerTurn={isPlayerTurn}
+          isBattleOver={isBattleOver}
+          specialAttackAvailable={specialAttackAvailable}
+          onAttack={handlePlayerAttack}
+          onSpecial={handlePlayerSpecial}
+          onRunAway={handleRunAway}
+          onHighball={handleHighball}
+        />
         
-        {/* Right side - Comments */}
-        <div className="w-full md:w-1/3 border-t md:border-t-0 md:border-l border-gray-700 flex flex-col">
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {comments.map((comment, index) => (
-              <div 
-                key={index} 
-                className={`p-3 rounded-lg ${
-                  comment.isSystem 
-                    ? 'bg-gray-700 text-center' 
-                    : 'bg-gray-800'
-                }`}
-              >
-                {!comment.isSystem && (
-                  <div className="font-bold mb-1">{comment.author}</div>
-                )}
-                <div className={comment.isSystem ? 'text-yellow-300 font-bold' : ''}>{comment.text}</div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="border-t border-gray-700 p-4">
-            <input
-              type="text"
-              placeholder={!!battleResult || attackInProgress ? "コメント入力不可" : "コメントを入力..."}
-              disabled={!!battleResult || attackInProgress}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 disabled:opacity-50"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim() !== '') {
-                  addComment('とおる', (e.target as HTMLInputElement).value);
-                  (e.target as HTMLInputElement).value = '';
-                }
-              }}
-            />
-          </div>
-        </div>
+        {/* Comment input - always at bottom */}
+        <CommentInput />
       </div>
       
-      {/* Character sheet modal */}
+      {/* BGM Toggle Button */}
+      <button
+        onClick={toggleBgm}
+        className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
+      >
+        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
+      </button>
+      
+      {/* Character Sheet Popup */}
       {showCharacterSheet && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-800 rounded-lg max-w-md w-full p-6">
-            <h2 className="text-2xl font-bold mb-4">キャラクター情報</h2>
-            
-            {currentCharacterSheet === 'player' && (
-              <div>
-                <div className="flex items-center mb-4">
-                  <img src={player.icon} alt={player.name} className="w-16 h-16 object-cover rounded-lg mr-4" />
-                  <div>
-                    <h3 className="text-xl font-bold">{player.name}</h3>
-                    <p>HP: {player.maxHp}</p>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <p>攻撃力: {player.attackMin}～{player.attackMax}</p>
-                  <p>特殊攻撃: {player.specialPower}</p>
-                  <p>特性: 経営参謀としての分析力を活かした助言で相手の弱点を突く</p>
-                </div>
-              </div>
-            )}
-            
-            {currentCharacterSheet === 'opponent2' && (
-              <div>
-                <div className="flex items-center mb-4">
-                  <img src={opponent2.icon} alt={opponent2.name} className="w-16 h-16 object-cover rounded-lg mr-4" />
-                  <div>
-                    <h3 className="text-xl font-bold">{opponent2.name}</h3>
-                    <p>HP: {opponent2.maxHp}</p>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <p>攻撃力: {opponent2.attackMin}～{opponent2.attackMax}</p>
-                  <p>特殊攻撃: {opponent2.specialPower}</p>
-                  <p>特性: 陽気なキャラクターと無限のトークで相手を疲弊させる</p>
-                </div>
-              </div>
-            )}
-            
-            <button
-              onClick={() => setShowCharacterSheet(false)}
-              className="mt-6 w-full bg-gray-700 hover:bg-gray-600 py-2 rounded-md"
-            >
-              閉じる
-            </button>
-          </div>
-        </div>
+        <CharacterSheet 
+          character={currentCharacterSheet} 
+          onClose={() => setShowCharacterSheet(false)} 
+        />
       )}
       
+      {/* Audio Player */}
+      {soundEffect && <AudioPlayer src={soundEffect} />}
+      
       {/* Battle results overlay */}
-      {showResults && (
+      {battleResult && (
         <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-50">
           <div className="text-center p-8 rounded-lg">
             <h2 className="text-4xl font-bold mb-4">
