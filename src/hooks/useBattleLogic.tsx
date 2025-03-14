@@ -75,7 +75,10 @@ export const useBattleLogic = () => {
     // Reset player and opponent stats
     setPlayer({
       ...player,
-      currentHp: player.maxHp
+      currentHp: player.maxHp,
+      attackMin: 15,  // Set attack min to 15
+      attackMax: 30,  // Set attack max to 30
+      specialPower: 50 // Special attack power to 30-50
     });
     
     setOpponent1({
@@ -133,7 +136,7 @@ export const useBattleLogic = () => {
     }
   }, [battleTimer, sosoHealMode, isBattleOver, addComment]);
 
-  // Handle player attack - removed 50% damage reduction
+  // Handle player attack - damage range 15-30
   const handlePlayerAttack = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
@@ -171,7 +174,7 @@ export const useBattleLogic = () => {
       return;
     }
     
-    // Normal attack damage calculation
+    // Normal attack damage calculation - 15 to 30 damage
     damage = Math.floor(Math.random() * (player.attackMax - player.attackMin + 1)) + player.attackMin;
     
     // Add attack comments
@@ -188,15 +191,15 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(false);
   };
 
-  // Handle player special attack - removed 50% damage reduction
+  // Handle player special attack - 30 to 50 damage
   const handlePlayerSpecial = () => {
     if (isBattleOver || !isPlayerTurn || !specialAttackAvailable) return;
     
     // Get random special attack comment
     const specialComment = playerSpecialComments[Math.floor(Math.random() * playerSpecialComments.length)];
     
-    // Calculate damage (higher than regular attack)
-    let damage = Math.floor(Math.random() * (player.specialPower - 30 + 1)) + 30;
+    // Calculate damage (30-50 range)
+    let damage = Math.floor(Math.random() * 21) + 30; // 30-50 damage
     
     // Add attack comments
     addComment(player.name, specialComment);
@@ -216,7 +219,7 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(false);
   };
 
-  // Handle running away
+  // Handle running away - updated with new comment
   const handleRunAway = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
@@ -234,7 +237,7 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(false);
   };
 
-  // Handle drinking highball
+  // Handle drinking highball - updated with new logic
   const handleHighball = () => {
     if (isBattleOver || !isPlayerTurn) return;
     

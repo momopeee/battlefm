@@ -48,7 +48,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       <button 
         onClick={(e) => handleButtonClick(e, onSpecial)} 
         disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''}`}
+        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''} ${specialAttackAvailable ? 'bg-pink-500 hover:bg-pink-600' : ''}`}
       >
         とくぎ
       </button>
