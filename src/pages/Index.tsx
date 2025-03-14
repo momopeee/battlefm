@@ -6,13 +6,13 @@ const Index = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Immediately redirect to the start screen
-    navigate('/');
+    // リダイレクト先を /start に変更
+    navigate('/start');
   }, [navigate]);
   
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <p>Redirecting...</p>
+      <p>ゲームを開始しています...</p>
     </div>
   );
 };
