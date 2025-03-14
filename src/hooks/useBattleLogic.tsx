@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useApp, Character } from '@/context/AppContext';
 
@@ -326,7 +325,7 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(true);
   };
 
-  // Handle victory - ensure correct screen transition
+  // Handle victory - updated to ensure correct screen transition
   const handleVictory = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
@@ -360,7 +359,7 @@ export const useBattleLogic = () => {
     }, 12000);
   };
 
-  // Handle defeat - ensure correct screen transition
+  // Handle defeat - updated to ensure correct screen transition
   const handleDefeat = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
