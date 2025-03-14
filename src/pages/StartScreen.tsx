@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 const StartScreen = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
   const [showText, setShowText] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -23,6 +24,17 @@ const StartScreen = () => {
       navigate('/battle1');
     }, 61000); // 60s for animation + 1s initial delay
     
+    // Preload the background image
+    const img = new Image();
+    img.src = '/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png';
+    img.onload = () => {
+      setImageLoaded(true);
+      console.log('Background image loaded successfully');
+    };
+    img.onerror = (e) => {
+      console.error('Error loading background image:', e);
+    };
+    
     return () => {
       clearTimeout(timer);
       clearTimeout(navigateTimer);
@@ -36,16 +48,24 @@ const StartScreen = () => {
   
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 z-0" 
-        style={{
-          backgroundImage: "url('/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.7
+      {/* Background Image - using img tag instead of background-image */}
+      <img 
+        src="/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png"
+        alt="Background"
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        style={{ opacity: 0.7 }}
+        onError={(e) => {
+          console.error('Image failed to load');
+          e.currentTarget.style.display = 'none';
         }}
-      ></div>
+      />
+      
+      {/* Display loading or error message if image not loaded */}
+      {!imageLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center z-5 text-white">
+          Loading background image...
+        </div>
+      )}
       
       {/* Dark overlay for better text readability */}
       <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
