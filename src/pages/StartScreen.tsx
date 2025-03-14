@@ -11,6 +11,9 @@ const StartScreen = () => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
   
+  // Define the background image URL
+  const backgroundImageUrl = "https://pbs.twimg.com/profile_images/1343537293798199296/is99I-hS_400x400.jpg";
+  
   useEffect(() => {
     // Start the intro text scrolling animation after a delay
     const timer = setTimeout(() => {
@@ -26,7 +29,7 @@ const StartScreen = () => {
     
     // Preload the background image
     const img = new Image();
-    img.src = '/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png';
+    img.src = backgroundImageUrl;
     img.onload = () => {
       setImageLoaded(true);
       console.log('Background image loaded successfully');
@@ -39,7 +42,7 @@ const StartScreen = () => {
       clearTimeout(timer);
       clearTimeout(navigateTimer);
     };
-  }, [navigate, handleScreenTransition]);
+  }, [navigate, handleScreenTransition, backgroundImageUrl]);
   
   const handleSkip = () => {
     handleScreenTransition('battle1');
@@ -48,9 +51,9 @@ const StartScreen = () => {
   
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
-      {/* Background Image - using img tag instead of background-image */}
+      {/* Background Image */}
       <img 
-        src="/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png"
+        src={backgroundImageUrl}
         alt="Background"
         className="absolute inset-0 w-full h-full object-cover z-0"
         style={{ opacity: 0.7 }}
