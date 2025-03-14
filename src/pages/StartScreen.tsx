@@ -36,22 +36,24 @@ const StartScreen = () => {
   
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
-      {/* Background Image */}
+      {/* Background Image - Using a different approach to ensure it displays */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+        className="absolute inset-0 z-0"
         style={{ 
           backgroundImage: `url('/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png')`,
           backgroundSize: 'cover',
-          opacity: 0.8 // Slightly dimmed to ensure text is readable
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          opacity: 0.7
         }}
       ></div>
       
-      {/* Overlay to improve text readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-40 z-0"></div>
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black bg-opacity-50 z-0"></div>
       
       {/* Star Wars style scrolling text */}
       {showText && (
-        <div className="absolute inset-0 flex items-center justify-center overflow-hidden perspective">
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden perspective z-10">
           <div className="absolute w-full max-w-3xl text-center transform rotate3d">
             <div className="star-wars-text-content text-white text-lg md:text-xl leading-relaxed animate-text-scroll bg-black bg-opacity-30 p-6 rounded">
               <p>
@@ -110,7 +112,7 @@ const StartScreen = () => {
         </div>
       )}
       
-      {/* BGM Toggle Button */}
+      {/* BGM Toggle Button - Increased z-index */}
       <button
         onClick={toggleBgm}
         className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
@@ -118,7 +120,7 @@ const StartScreen = () => {
         {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
       
-      {/* Skip Button */}
+      {/* Skip Button - Increased z-index */}
       <Button
         onClick={handleSkip}
         className="absolute bottom-8 right-6 z-20 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white flex items-center gap-2"
