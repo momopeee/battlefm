@@ -20,7 +20,7 @@ const StartScreen = () => {
       console.error("Background image failed to load");
       setBackgroundError(true);
     };
-    img.src = '/startBG-.JPG';
+    img.src = '/lovable-uploads/a251eb4f-0aa1-4ccc-8a15-6871b76f4b59.png';
     
     // Start the intro text scrolling animation after a delay
     const timer = setTimeout(() => {
@@ -57,7 +57,7 @@ const StartScreen = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ 
-          backgroundImage: backgroundError ? 'none' : `url('/startBG-.JPG')`,
+          backgroundImage: backgroundError ? 'none' : `url('/lovable-uploads/a251eb4f-0aa1-4ccc-8a15-6871b76f4b59.png')`,
           backgroundSize: 'cover',
           backgroundColor: backgroundError ? '#000' : 'transparent'
         }}
