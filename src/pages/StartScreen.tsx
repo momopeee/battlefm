@@ -8,20 +8,9 @@ import { Button } from '@/components/ui/button';
 const StartScreen = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
   const [showText, setShowText] = useState(false);
-  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
-  const [backgroundError, setBackgroundError] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Preload the background image to check if it exists
-    const img = new Image();
-    img.onload = () => setBackgroundLoaded(true);
-    img.onerror = () => {
-      console.error("Background image failed to load");
-      setBackgroundError(true);
-    };
-    img.src = '/lovable-uploads/a251eb4f-0aa1-4ccc-8a15-6871b76f4b59.png';
-    
     // Start the intro text scrolling animation after a delay
     const timer = setTimeout(() => {
       setShowText(true);
@@ -45,29 +34,8 @@ const StartScreen = () => {
     navigate('/battle1');
   };
   
-  // For debugging purposes
-  useEffect(() => {
-    console.log("Background loaded:", backgroundLoaded);
-    console.log("Background error:", backgroundError);
-  }, [backgroundLoaded, backgroundError]);
-  
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ 
-          backgroundImage: backgroundError ? 'none' : `url('/lovable-uploads/a251eb4f-0aa1-4ccc-8a15-6871b76f4b59.png')`,
-          backgroundSize: 'cover',
-          backgroundColor: backgroundError ? '#000' : 'transparent'
-        }}
-      ></div>
-      
-      {/* Fallback background if image fails to load */}
-      {backgroundError && (
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900 to-black z-0"></div>
-      )}
-      
       {/* Star Wars style scrolling text */}
       {showText && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden perspective">
