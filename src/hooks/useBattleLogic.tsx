@@ -1,46 +1,15 @@
+
 import { useState, useEffect } from 'react';
 import { useApp, Character } from '@/context/AppContext';
-
-// Attack comments for player
-const playerAttackComments = [
-  "さよならワンマン経営！",
-  "経営チームを作るんだ！",
-  "基礎的人間能力が大事だ！",
-  "短期より中長期の持続可能性！",
-  "光あれば影あり…だが攻める！",
-  "とりあえず寝ないことを決めた",
-  "３億円の個人保証にハンコを押して腹をくくった",
-  "変化を受け入れる企業と個人にコミットします",
-  "経営者の人生観を大切にし、社員さんの一人一人の価値観やポテンシャルも大切にする",
-  "自分の考えもしっかりと持った強い通訳者として経営者と社員の間に入る",
-  "最小エネルギーで最大効果を狙える戦略を好む",
-  "短期利益だけじゃなく中長期的な視点で永続的な利益を重視する",
-  "お金だけでなく人の心を大切にする",
-  "基本笑顔で優しく、安全安心な場を大切にするが、時には厳しくもあり",
-  "ロジックと感覚（お客さんの感覚）の両方を同じくらい大切にする",
-  "これからの時代は基礎的人間能力と基礎的ビジネス能力を伸ばす時代",
-  "スペシャリストになるな、ジェネラリストを目指せ！！"
-];
-
-// Special attack comments for player
-const playerSpecialComments = [
-  "自分の想いの赴くままに目の前の事を全力で楽しんでたらこんな変態になりました",
-  "ファンキーな世の中になっても生きていける基礎的人間能力と基礎的仕事能力を手に入れよう",
-  "漢たるもの、背中で語れ！！！ぅぅぅぅううおおおおおお！！！！くらえ！円月殺法！！！"
-];
-
-// Attack comments for opponent1 (soso)
-const opponent1AttackComments = [
-  "消費税一律30%とかにすれば全て解決する",
-  "マジでこいつのフォロワヤバイ奴しかおらんな",
-  "国民皆保険ごとなくせよバカやろう💢",
-  "貧乏な移民を追い出し、金持ちにビザを買わせる",
-  "真面目に働いていれば万作にはならない",
-  "なかなか一つにまとまらない経済学者がほぼ全員反対するもの: 軽減税率",
-  "老人が全て〇ねば全部解決するのに",
-  "そろそろ米国株開いたかな？",
-  "上原には本当にいいご飯屋さんが多くて嬉しい"
-];
+import { 
+  performPlayerAttack, 
+  performPlayerSpecial, 
+  performRunAway, 
+  performHighball,
+  performOpponentAttack,
+  performSosoHeal
+} from '@/utils/battleActions';
+import { handleVictory, handleDefeat } from '@/utils/battleResults';
 
 export const useBattleLogic = () => {
   const { 
@@ -118,10 +87,10 @@ export const useBattleLogic = () => {
       
       if (player.currentHp <= 0) {
         // Player lost
-        handleDefeat();
+        handleDefeat(addComment, setSoundEffect, handleScreenTransition);
       } else if (opponent1.currentHp <= 0) {
         // Player won
-        handleVictory();
+        handleVictory(addComment, setSoundEffect, handleScreenTransition);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,7 +104,7 @@ export const useBattleLogic = () => {
     }
   }, [battleTimer, sosoHealMode, isBattleOver, addComment]);
 
-  // Handle player attack - damage range 15-30
+  // Handle player attack
   const handlePlayerAttack = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
@@ -148,229 +117,101 @@ export const useBattleLogic = () => {
       setSpecialAttackAvailable(true);
     }
     
-    // Get random attack comment
-    const attackComment = playerAttackComments[Math.floor(Math.random() * playerAttackComments.length)];
+    // Perform the attack
+    const result = performPlayerAttack(player, opponent1, highballMode, addComment);
     
-    // Calculate damage
-    let damage;
+    setPlayer(result.updatedPlayer);
+    setOpponent1(result.updatedOpponent);
     
+    // Reset highball mode if it was active
     if (highballMode) {
-      // Special handling for highball mode
-      addComment(player.name, "え？ちょっとまって、なに？なに？ちょっとまって？えっ？");
-      addComment("システム", "何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた", true);
-      
-      // Player damages himself
-      setPlayer({
-        ...player,
-        currentHp: Math.max(0, player.currentHp - 10)
-      });
-      
-      // Reset highball mode
       setHighballMode(false);
-      
-      // End player's turn
-      setIsPlayerTurn(false);
-      return;
     }
     
-    // Normal attack damage calculation - 15 to 30 damage
-    damage = Math.floor(Math.random() * (player.attackMax - player.attackMin + 1)) + player.attackMin;
-    
-    // Add attack comments
-    addComment(player.name, attackComment);
-    addComment("システム", `とおるの攻撃、そーそーは${damage}のダメージを受けた`, true);
-    
-    // Apply damage to opponent
-    setOpponent1({
-      ...opponent1,
-      currentHp: Math.max(0, opponent1.currentHp - damage)
-    });
-    
     // End player's turn
-    setIsPlayerTurn(false);
+    if (result.endTurn) {
+      setIsPlayerTurn(false);
+    }
   };
 
-  // Handle player special attack - 30 to 50 damage
+  // Handle player special attack
   const handlePlayerSpecial = () => {
     if (isBattleOver || !isPlayerTurn || !specialAttackAvailable) return;
     
-    // Get random special attack comment
-    const specialComment = playerSpecialComments[Math.floor(Math.random() * playerSpecialComments.length)];
+    // Perform special attack
+    const result = performPlayerSpecial(player, opponent1, addComment);
     
-    // Calculate damage (30-50 range)
-    let damage = Math.floor(Math.random() * 21) + 30; // 30-50 damage
-    
-    // Add attack comments
-    addComment(player.name, specialComment);
-    addComment("システム", `とおるのとくぎ！そー���ーは${damage}のダメージを受けた！`, true);
-    
-    // Apply damage to opponent
-    setOpponent1({
-      ...opponent1,
-      currentHp: Math.max(0, opponent1.currentHp - damage)
-    });
+    setOpponent1(result.updatedOpponent);
     
     // Reset special attack availability and count
     setSpecialAttackAvailable(false);
     setAttackCount(0);
     
     // End player's turn
-    setIsPlayerTurn(false);
+    if (result.endTurn) {
+      setIsPlayerTurn(false);
+    }
   };
 
-  // Handle running away - updated with new comment
+  // Handle running away
   const handleRunAway = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
-    // Add escape comment
-    addComment(player.name, "逃げよう...");
-    addComment("システム", "とおるは逃げようとしたが、漢として本当に逃げていいのか、逃げた先にいったい何がある？ここで逃げたら俺は一生逃げ続ける。不毛でも立ち向かわなければならない。無駄だとしても、踏ん張らなければあかん時があるやろ！！と思いなおし、自分の頬を思いっきりビンタした。とおるは10のダメージを受けた。", true);
+    // Perform run away action
+    const result = performRunAway(player, addComment);
     
-    // Player damages himself
-    setPlayer({
-      ...player,
-      currentHp: Math.max(0, player.currentHp - 10)
-    });
+    setPlayer(result.updatedPlayer);
     
     // End player's turn
-    setIsPlayerTurn(false);
+    if (result.endTurn) {
+      setIsPlayerTurn(false);
+    }
   };
 
-  // Handle drinking highball - updated with new logic
+  // Handle drinking highball
   const handleHighball = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
-    // Check if player's HP is less than half
-    if (player.currentHp < player.maxHp / 2) {
-      // Full recovery when HP is low
-      addComment(player.name, "ぐびぐび、うへぇ～、もう一杯お願いします。メガで。");
-      addComment("システム", "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
-      
-      // Restore player's HP
-      setPlayer({
-        ...player,
-        currentHp: player.maxHp
-      });
-    } else {
-      // Normal highball effect
-      addComment(player.name, "ぐびぐび、うへぇ～、もう一杯お願いします。メガで。");
-      
-      // Random highball effect
-      const highballEffects = [
-        "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
-        "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
-        "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
-      ];
-      
-      const effectIdx = Math.floor(Math.random() * highballEffects.length);
-      addComment("システム", highballEffects[effectIdx], true);
-      
-      // Player damages himself
-      setPlayer({
-        ...player,
-        currentHp: Math.max(0, player.currentHp - 10)
-      });
-      
-      // Set highball mode if drinking made player confused
-      if (effectIdx === 2) {
-        setHighballMode(true);
-      }
-    }
+    // Perform highball action
+    const result = performHighball(player, addComment);
+    
+    setPlayer(result.updatedPlayer);
+    setHighballMode(result.highballMode);
     
     // End player's turn
-    setIsPlayerTurn(false);
+    if (result.endTurn) {
+      setIsPlayerTurn(false);
+    }
   };
 
   // Handle opponent's attack
   const handleOpponentAttack = () => {
     if (isBattleOver) return;
     
-    // Get random attack comment
-    const attackComment = opponent1AttackComments[Math.floor(Math.random() * opponent1AttackComments.length)];
+    // Perform opponent attack
+    const result = performOpponentAttack(player, opponent1, addComment);
     
-    // Calculate damage
-    const damage = Math.floor(Math.random() * (opponent1.attackMax - opponent1.attackMin + 1)) + opponent1.attackMin;
-    
-    // Add attack comments
-    addComment(opponent1.name, attackComment);
-    addComment("システム", `そーそーの攻撃、とおるは${damage}のダメージを受けた`, true);
-    
-    // Apply damage to player
-    setPlayer({
-      ...player,
-      currentHp: Math.max(0, player.currentHp - damage)
-    });
+    setPlayer(result.updatedPlayer);
     
     // Start player's turn
-    setIsPlayerTurn(true);
+    if (result.endTurn) {
+      setIsPlayerTurn(true);
+    }
   };
 
-  // Handle soso heal with fixed 10 points
+  // Handle soso heal
   const handleSosoHeal = () => {
     if (isBattleOver) return;
     
-    // Add heal comments
-    addComment(opponent1.name, "あー、生きるってむずかしいんだよなー、株クラのみんな上がってきてよ");
-    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した。そーそーの体力が10回復した", true);
+    // Perform soso heal
+    const result = performSosoHeal(opponent1, addComment);
     
-    // Heal opponent - fixed at 10 points
-    setOpponent1({
-      ...opponent1,
-      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + 10)
-    });
+    setOpponent1(result.updatedOpponent);
     
     // Start player's turn
-    setIsPlayerTurn(true);
-  };
-
-  // Handle victory - ensure correct screen transition
-  const handleVictory = () => {
-    setSoundEffect("/audios/syouri.mp3");
-    
-    // Add victory comments
-    addComment("システム", "とおるが勝利した、そーそーは破れかぶれになってクソリプを量産してしまった", true);
-    
-    setTimeout(() => addComment("システム", "とおるは400の経験値を得た、とおるはレベルが上がった", true), 3000);
-    setTimeout(() => addComment("システム", "とおるは祝いの美酒に酔いしれた", true), 6000);
-    setTimeout(() => addComment("システム", "とおるは祝いの美酒の効果で痛風が悪化した、80のダメージ", true), 9000);
-    
-    // 最後のシステムメッセージから5秒後に遷移
-    setTimeout(() => {
-      addComment("システム", "ライブが終了しました", true);
-      
-      // 5秒後に勝利画面へ遷移
-      setTimeout(() => {
-        handleScreenTransition('victory1');
-      }, 5000);
-    }, 12000);
-  };
-
-  // Handle defeat - ensure correct screen transition
-  const handleDefeat = () => {
-    setSoundEffect("/audios/orehamou.mp3");
-    
-    // Add defeat comments
-    addComment("システム", "とおるが敗北した、そーそーは歯止めが利かなくなってしまった", true);
-    
-    setTimeout(() => addComment("システム", "とおるは4000の経験値を得た", true), 3000);
-    setTimeout(() => addComment("システム", "とおるは敗北からも学べる男だった", true), 6000);
-    setTimeout(() => addComment("システム", "とおるはレベルが上がった", true), 9000);
-    setTimeout(() => addComment("システム", "とおるは敗北の美酒に酔いしれた", true), 12000);
-    
-    // 最後のシステムメッセージから5秒後に遷移
-    setTimeout(() => {
-      addComment("システム", "とおるは敗北の美酒の効果で痛風が悪化した、530000のダメージ", true);
-      
-      // 5秒後に敗北画面へ遷移
-      setTimeout(() => {
-        addComment("システム", "ライブが終了しました", true);
-        
-        // さらに5秒後に敗北画面へ遷移
-        setTimeout(() => {
-          handleScreenTransition('endingB');
-        }, 5000);
-      }, 3000);
-    }, 15000);
+    if (result.endTurn) {
+      setIsPlayerTurn(true);
+    }
   };
 
   // Handle character sheet display
@@ -401,4 +242,3 @@ export const useBattleLogic = () => {
     setShowCharacterSheet
   };
 };
-
