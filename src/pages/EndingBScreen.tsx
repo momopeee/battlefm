@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useApp } from '@/context/AppContext';
-import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX } from 'lucide-react';
 
 const EndingBScreen: React.FC = () => {
@@ -27,8 +26,6 @@ const EndingBScreen: React.FC = () => {
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
       }}
     >
-      <AudioPlayer src="/audios/orehamou.mp3" loop={false} autoPlay />
-      
       <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold mb-6">敗北...</h1>
         

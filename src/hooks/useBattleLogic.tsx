@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useApp, Character } from '@/context/AppContext';
 
@@ -60,7 +61,6 @@ export const useBattleLogic = () => {
   } = useApp();
 
   const [isBattleOver, setIsBattleOver] = useState(false);
-  const [soundEffect, setSoundEffect] = useState<string | null>(null);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleStarted, setIsBattleStarted] = useState(false);
 
@@ -90,7 +90,7 @@ export const useBattleLogic = () => {
     setHighballMode(false);
     setSosoHealMode(false);
     
-    addComment("��ステム", "バトル開始！ さよならクソリプそーそー！", true);
+    addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
     
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -326,8 +326,6 @@ export const useBattleLogic = () => {
 
   // Handle victory - ensure correct screen transition
   const handleVictory = () => {
-    setSoundEffect("/audios/syouri.mp3");
-    
     // Add victory comments
     addComment("システム", "とおるが勝利した、そーそーは破れかぶれになってクソリプを量産してしまった", true);
     
@@ -359,8 +357,6 @@ export const useBattleLogic = () => {
 
   // Handle defeat - ensure correct screen transition
   const handleDefeat = () => {
-    setSoundEffect("/audios/orehamou.mp3");
-    
     // Add defeat comments
     addComment("システム", "とおるが敗北した、そーそーは歯止めが利かなくなってしまった", true);
     
@@ -408,7 +404,6 @@ export const useBattleLogic = () => {
     opponent1,
     battleTimer,
     isBattleOver,
-    soundEffect,
     isPlayerTurn,
     attackCount,
     sosoHealMode,
