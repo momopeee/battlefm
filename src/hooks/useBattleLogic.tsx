@@ -1,6 +1,8 @@
 
 import { useState, useEffect } from 'react';
-import { useApp, Character } from '@/context/AppContext';
+import { useUI } from '@/context/UIContext';
+import { useCharacter } from '@/context/CharacterContext';
+import { useBattle } from '@/context/BattleContext';
 import { 
   performPlayerAttack, 
   performPlayerSpecial, 
@@ -12,9 +14,14 @@ import {
 import { handleVictory, handleDefeat } from '@/utils/battleResults';
 
 export const useBattleLogic = () => {
+  const { handleScreenTransition } = useUI();
   const { 
     player, setPlayer,
     opponent1, setOpponent1,
+    showCharacterSheet, setShowCharacterSheet,
+    currentCharacterSheet, setCurrentCharacterSheet,
+  } = useCharacter();
+  const {
     battleTimer,
     resetBattleTimer,
     startBattleTimer,
@@ -23,10 +30,7 @@ export const useBattleLogic = () => {
     attackCount, setAttackCount,
     highballMode, setHighballMode,
     sosoHealMode, setSosoHealMode,
-    showCharacterSheet, setShowCharacterSheet,
-    currentCharacterSheet, setCurrentCharacterSheet,
-    handleScreenTransition
-  } = useApp();
+  } = useBattle();
 
   const [isBattleOver, setIsBattleOver] = useState(false);
   const [soundEffect, setSoundEffect] = useState<string | null>(null);
@@ -102,7 +106,7 @@ export const useBattleLogic = () => {
       setSosoHealMode(true);
       addComment("システム", "そーそーのとくぎがはつどうした！", true);
     }
-  }, [battleTimer, sosoHealMode, isBattleOver, addComment]);
+  }, [battleTimer, sosoHealMode, isBattleOver, addComment, setSosoHealMode]);
 
   // Handle player attack
   const handlePlayerAttack = () => {
