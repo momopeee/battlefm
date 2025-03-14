@@ -1,17 +1,13 @@
-
 import { useState, useCallback } from 'react';
 import { useUI } from '@/context/UIContext';
 import { useCharacter } from '@/context/CharacterContext';
 import { useBattle } from '@/context/BattleContext';
 import { 
-  performPlayerAttack, 
-  performPlayerSpecial, 
-  performRunAway, 
-  performHighball,
   performOpponentAttack,
   performSosoHeal
 } from '@/utils/battleActions';
 import { useBattleEffects } from './useBattleEffects';
+import { usePlayerActions } from './usePlayerActions';
 
 export const useBattleLogic = () => {
   const { handleScreenTransition } = useUI();
@@ -66,7 +62,7 @@ export const useBattleLogic = () => {
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
   });
 
-  // Define handler functions using useCallback to prevent unnecessary re-renders
+  // Define opponent handler functions
   const handleOpponentAttack = useCallback(() => {
     if (isBattleOver) return;
     
@@ -95,7 +91,7 @@ export const useBattleLogic = () => {
     }
   }, [opponent1, isBattleOver, addComment, setOpponent1, setIsPlayerTurn]);
 
-  // Use our new custom hook for battle effects
+  // Use the battle effects hook
   useBattleEffects({
     player,
     opponent1,
@@ -112,85 +108,28 @@ export const useBattleLogic = () => {
     handleSosoHeal
   });
 
-  // Handle player attack
-  const handlePlayerAttack = () => {
-    if (isBattleOver || !isPlayerTurn) return;
-    
-    // Increase attack count for special attack
-    const newAttackCount = attackCount + 1;
-    setAttackCount(newAttackCount);
-    
-    // Enable special attack after 3 regular attacks
-    if (newAttackCount >= 3 && !specialAttackAvailable) {
-      setSpecialAttackAvailable(true);
-    }
-    
-    // Perform the attack
-    const result = performPlayerAttack(player, opponent1, highballMode, addComment);
-    
-    setPlayer(result.updatedPlayer);
-    setOpponent1(result.updatedOpponent);
-    
-    // Reset highball mode if it was active
-    if (highballMode) {
-      setHighballMode(false);
-    }
-    
-    // End player's turn
-    if (result.endTurn) {
-      setIsPlayerTurn(false);
-    }
-  };
-
-  // Handle player special attack
-  const handlePlayerSpecial = () => {
-    if (isBattleOver || !isPlayerTurn || !specialAttackAvailable) return;
-    
-    // Perform special attack
-    const result = performPlayerSpecial(player, opponent1, addComment);
-    
-    setOpponent1(result.updatedOpponent);
-    
-    // Reset special attack availability and count
-    setSpecialAttackAvailable(false);
-    setAttackCount(0);
-    
-    // End player's turn
-    if (result.endTurn) {
-      setIsPlayerTurn(false);
-    }
-  };
-
-  // Handle running away
-  const handleRunAway = () => {
-    if (isBattleOver || !isPlayerTurn) return;
-    
-    // Perform run away action
-    const result = performRunAway(player, addComment);
-    
-    setPlayer(result.updatedPlayer);
-    
-    // End player's turn
-    if (result.endTurn) {
-      setIsPlayerTurn(false);
-    }
-  };
-
-  // Handle drinking highball
-  const handleHighball = () => {
-    if (isBattleOver || !isPlayerTurn) return;
-    
-    // Perform highball action
-    const result = performHighball(player, addComment);
-    
-    setPlayer(result.updatedPlayer);
-    setHighballMode(result.highballMode);
-    
-    // End player's turn
-    if (result.endTurn) {
-      setIsPlayerTurn(false);
-    }
-  };
+  // Use the player actions hook
+  const {
+    handlePlayerAttack,
+    handlePlayerSpecial,
+    handleRunAway,
+    handleHighball
+  } = usePlayerActions({
+    player,
+    opponent: opponent1,
+    isBattleOver,
+    isPlayerTurn,
+    highballMode,
+    attackCount,
+    specialAttackAvailable,
+    setPlayer,
+    setOpponent: setOpponent1,
+    setIsPlayerTurn,
+    setAttackCount,
+    setSpecialAttackAvailable,
+    setHighballMode,
+    addComment
+  });
 
   // Handle character sheet display
   const handleCharacterClick = (character: 'player' | 'opponent1') => {
