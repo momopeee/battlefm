@@ -6,7 +6,7 @@ const Index = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // リダイレクト先を /start に変更
+    // Redirect to the start screen
     navigate('/start');
   }, [navigate]);
   
