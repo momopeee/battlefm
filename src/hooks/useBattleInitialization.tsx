@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Character } from '@/context/CharacterContext';
 
 interface UseBattleInitializationProps {
@@ -33,8 +33,17 @@ export const useBattleInitialization = ({
   addComment,
   setIsBattleStarted
 }: UseBattleInitializationProps) => {
+  // Use ref to track if initialization has already happened
+  const hasInitialized = useRef(false);
+
   // Initialize battle when component mounts
   useEffect(() => {
+    // Skip if already initialized
+    if (hasInitialized.current) return;
+    
+    // Mark as initialized
+    hasInitialized.current = true;
+    
     clearComments();
     resetBattleTimer();
     startBattleTimer();
@@ -60,19 +69,10 @@ export const useBattleInitialization = ({
     setSosoHealMode(false);
     
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
-  }, [
-    player, 
-    opponent, 
-    setPlayer, 
-    setOpponent, 
-    clearComments, 
-    resetBattleTimer, 
-    startBattleTimer, 
-    setAttackCount, 
-    setSpecialAttackAvailable, 
-    setHighballMode, 
-    setSosoHealMode, 
-    addComment, 
-    setIsBattleStarted
-  ]); // Add proper dependencies for the useEffect hook
+    
+    // Return cleanup function
+    return () => {
+      hasInitialized.current = false;
+    };
+  }, []); // Empty dependency array to ensure it only runs once
 };

@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useUI } from '@/context/UIContext';
 import { useCharacter } from '@/context/CharacterContext';
 import { useBattle } from '@/context/BattleContext';
@@ -67,7 +67,7 @@ export const useBattleLogic = () => {
         setActionInProgress(false);
       }, 800);
     }
-  }, [player, opponent1, isBattleOver, actionInProgress, addComment, setPlayer, setIsPlayerTurn]);
+  }, [player, opponent1, isBattleOver, actionInProgress, addComment, setPlayer]);
 
   // Handle soso heal logic
   const handleSosoHeal = useCallback(() => {
@@ -83,7 +83,7 @@ export const useBattleLogic = () => {
         setActionInProgress(false);
       }, 800);
     }
-  }, [opponent1, isBattleOver, actionInProgress, addComment, setOpponent1, setIsPlayerTurn]);
+  }, [opponent1, isBattleOver, actionInProgress, addComment, setOpponent1]);
 
   // Apply battle effects (opponent turn, battle over check, soso heal mode)
   useBattleEffects({
@@ -130,18 +130,17 @@ export const useBattleLogic = () => {
   });
 
   // Handle character click to show character sheet
-  const handleCharacterClick = (character: 'player' | 'opponent1' | 'opponent2') => {
+  const handleCharacterClick = useCallback((character: 'player' | 'opponent1' | 'opponent2') => {
     setCurrentCharacterSheet(character);
     setShowCharacterSheet(true);
-  };
+  }, [setCurrentCharacterSheet, setShowCharacterSheet]);
 
   // Clean up battle resources when component unmounts
   useEffect(() => {
     return () => {
-      clearComments();
-      resetBattleTimer();
+      // No state updates in cleanup to prevent memory leaks
     };
-  }, [clearComments, resetBattleTimer]);
+  }, []);
 
   return {
     player,

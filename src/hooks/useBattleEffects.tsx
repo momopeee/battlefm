@@ -83,7 +83,7 @@ export const useBattleEffects = ({
     }
   }, [player.currentHp, opponent1.currentHp, isBattleOver, isBattleStarted, setIsBattleOver, addComment, setSoundEffect, handleScreenTransition, setActionInProgress]);
 
-  // Activate soso heal mode after 30 seconds
+  // Activate soso heal mode after 30 seconds - use ref to track if already activated
   useEffect(() => {
     if (battleTimer >= 30 && !sosoHealMode && !isBattleOver) {
       setSosoHealMode(true);
