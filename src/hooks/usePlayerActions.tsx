@@ -74,15 +74,16 @@ export const usePlayerActions = ({
     
     // End player's turn
     if (result.endTurn) {
-      // Small delay to ensure UI updates and animations complete
       setTimeout(() => {
         setIsPlayerTurn(false);
-      }, 500);
+        // Critical: reset actionInProgress after turn ends but before opponent acts
+        setActionInProgress(false);
+      }, 1000);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
       setTimeout(() => {
         setActionInProgress(false);
-      }, 500);
+      }, 1000);
     }
   }, [
     player, 
@@ -121,15 +122,16 @@ export const usePlayerActions = ({
     
     // End player's turn
     if (result.endTurn) {
-      // Small delay to ensure UI updates and animations complete
       setTimeout(() => {
         setIsPlayerTurn(false);
-      }, 500);
+        // Critical: reset actionInProgress after turn ends but before opponent acts
+        setActionInProgress(false);
+      }, 1000);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
       setTimeout(() => {
         setActionInProgress(false);
-      }, 500);
+      }, 1000);
     }
   }, [
     player, 
@@ -160,15 +162,16 @@ export const usePlayerActions = ({
     
     // End player's turn
     if (result.endTurn) {
-      // Small delay to ensure UI updates and animations complete
       setTimeout(() => {
         setIsPlayerTurn(false);
-      }, 500);
+        // Critical: reset actionInProgress after turn ends but before opponent acts
+        setActionInProgress(false);
+      }, 1000);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
       setTimeout(() => {
         setActionInProgress(false);
-      }, 500);
+      }, 1000);
     }
   }, [
     player, 
@@ -196,15 +199,16 @@ export const usePlayerActions = ({
     
     // End player's turn
     if (result.endTurn) {
-      // Small delay to ensure UI updates and animations complete
       setTimeout(() => {
         setIsPlayerTurn(false);
-      }, 500);
+        // Critical: reset actionInProgress after turn ends but before opponent acts
+        setActionInProgress(false);
+      }, 1000);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
       setTimeout(() => {
         setActionInProgress(false);
-      }, 500);
+      }, 1000);
     }
   }, [
     player, 

@@ -38,24 +38,15 @@ const BattleActions: React.FC<BattleActionsProps> = ({
     }, 700);
   };
 
-  // Combined click handler for animation and action
-  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>, action: () => void) => {
-    // Prevent double clicks
-    e.preventDefault();
-    
-    // Apply animation
-    handleButtonAnimation(e);
-    
-    // Execute the action immediately if it's player's turn and battle is not over
-    if (isPlayerTurn && !isBattleOver) {
-      action();
-    }
-  };
-
   return (
     <div className="grid grid-cols-4 gap-2 mb-2">
       <button 
-        onClick={(e) => handleButtonClick(e, onAttack)} 
+        onClick={(e) => {
+          handleButtonAnimation(e);
+          if (isPlayerTurn && !isBattleOver) {
+            onAttack();
+          }
+        }} 
         disabled={!isPlayerTurn || isBattleOver}
         className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
@@ -63,7 +54,12 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       </button>
       
       <button 
-        onClick={(e) => handleButtonClick(e, onSpecial)} 
+        onClick={(e) => {
+          handleButtonAnimation(e);
+          if (isPlayerTurn && !isBattleOver && specialAttackAvailable) {
+            onSpecial();
+          }
+        }} 
         disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
         className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''} ${specialAttackAvailable ? 'bg-pink-500 hover:bg-pink-600' : ''}`}
       >
@@ -71,7 +67,12 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       </button>
       
       <button 
-        onClick={(e) => handleButtonClick(e, onRunAway)} 
+        onClick={(e) => {
+          handleButtonAnimation(e);
+          if (isPlayerTurn && !isBattleOver) {
+            onRunAway();
+          }
+        }} 
         disabled={!isPlayerTurn || isBattleOver}
         className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
@@ -79,7 +80,12 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       </button>
       
       <button 
-        onClick={(e) => handleButtonClick(e, onHighball)} 
+        onClick={(e) => {
+          handleButtonAnimation(e);
+          if (isPlayerTurn && !isBattleOver) {
+            onHighball();
+          }
+        }} 
         disabled={!isPlayerTurn || isBattleOver}
         className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
