@@ -57,7 +57,7 @@ const StartScreen = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ 
-          backgroundImage: backgroundError ? 'none' : `url('${process.env.PUBLIC_URL || ''}/startBG-.JPG')`,
+          backgroundImage: backgroundError ? 'none' : `url('/startBG-.JPG')`,
           backgroundSize: 'cover',
           backgroundColor: backgroundError ? '#000' : 'transparent'
         }}
