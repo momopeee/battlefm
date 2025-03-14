@@ -1,16 +1,19 @@
 
 import React, { useEffect, useState } from 'react';
-import { Play, ImageOff, Loader } from 'lucide-react';
+import { Play, ImageOff, Loader, Volume2, VolumeX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
+import { Toggle } from '@/components/ui/toggle';
+import BgmPlayer from '@/components/BgmPlayer';
 
 const StartScreen = () => {
-  const { handleScreenTransition } = useApp();
+  const { handleScreenTransition, bgmEnabled, toggleBgm } = useApp();
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showIntro, setShowIntro] = useState(true);
   
   // Main image and fallback image paths
   const mainImagePath = '/lovable-uploads/a8179cdd-effe-4cd5-8294-5aefb2355108.png';
@@ -48,12 +51,65 @@ const StartScreen = () => {
   }, [currentImage, mainImagePath, fallbackImagePath]);
   
   const handleStart = () => {
+    setShowIntro(false);
     handleScreenTransition('battle1');
     navigate('/battle1');
   };
+
+  // Star Wars intro text content
+  const introText = `
+    ファンキーな世の中をあなたはどう生きますか？
+    <br>
+    一つの業種を一生涯やる必要がない自由な空気
+    <br>
+    嫌な上司に我慢することなく転職できる環境
+    <br>
+    大企業が良いとか中小企業がダメだとか
+    <br>
+    ステレオタイプの価値観からの開放
+    <br>
+    昔の成功体験ばかりを語るバブル世代の衰退
+    <br>
+    家族のためにと自分の人生を押し殺す美学からの開放
+    <br>
+    なんだかワクワクしますね。
+    <br>
+    ニヤニヤが止まりません。
+    <br>
+    ファンキーな世の中ですが
+    <br>
+    どう捉えるか、どう生きるかは
+    <br>
+    あなた次第なんです。
+    <br>
+    そうなんです。
+    <br>
+    あなたやあなたの会社に
+    <br>
+    実力さえあれば実は楽しい世の中なんです。
+    <br>
+    ファンキーな世の中を楽しめる
+    <br>
+    実力を身につけましょう。
+  `;
   
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black">
+      {/* BGM Player */}
+      <BgmPlayer src="/bgm-start.mp3" />
+      
+      {/* Sound Toggle */}
+      <div className="absolute top-4 right-4 z-30">
+        <Toggle 
+          pressed={bgmEnabled} 
+          onPressedChange={toggleBgm}
+          className="p-2 backdrop-blur-sm bg-black/20 hover:bg-black/40 rounded-full"
+          aria-label="Toggle sound"
+        >
+          {bgmEnabled ? <Volume2 className="text-white" /> : <VolumeX className="text-white" />}
+        </Toggle>
+      </div>
+      
       {/* Loading indicator */}
       {isLoading && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-white">
@@ -77,6 +133,20 @@ const StartScreen = () => {
           alt="Background"
           className="absolute inset-0 z-0 w-full h-full object-cover"
         />
+      )}
+      
+      {/* Star Wars style text intro */}
+      {showIntro && imageLoaded && (
+        <div className="absolute inset-0 z-20 overflow-hidden perspective">
+          <div className="w-full h-full flex justify-center">
+            <div className="rotate3d relative w-full max-w-2xl">
+              <div 
+                className="absolute bottom-0 left-0 right-0 text-center text-white font-hiragino text-xl p-8 star-wars-text-content"
+                dangerouslySetInnerHTML={{ __html: introText.replace(/<br>/g, '<br>') }}
+              />
+            </div>
+          </div>
+        </div>
       )}
       
       {/* Start button */}
