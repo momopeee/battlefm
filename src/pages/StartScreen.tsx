@@ -8,20 +8,9 @@ import { Button } from '@/components/ui/button';
 const StartScreen = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
   const [showText, setShowText] = useState(false);
-  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
-  const [backgroundError, setBackgroundError] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Preload the background image to check if it exists
-    const img = new Image();
-    img.onload = () => setBackgroundLoaded(true);
-    img.onerror = () => {
-      console.error("Background image failed to load");
-      setBackgroundError(true);
-    };
-    img.src = '/lovable-uploads/a251eb4f-0aa1-4ccc-8a15-6871b76f4b59.png';
-    
     // Start the intro text scrolling animation after a delay
     const timer = setTimeout(() => {
       setShowText(true);
@@ -45,32 +34,20 @@ const StartScreen = () => {
     navigate('/battle1');
   };
   
-  // For debugging purposes
-  useEffect(() => {
-    console.log("Background loaded:", backgroundLoaded);
-    console.log("Background error:", backgroundError);
-  }, [backgroundLoaded, backgroundError]);
-  
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black">
-      {/* Background Image */}
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Layer 3 (Bottom): Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center z-0"
+        className="absolute inset-0 z-0 bg-cover bg-center"
         style={{ 
-          backgroundImage: backgroundError ? 'none' : `url('/lovable-uploads/a251eb4f-0aa1-4ccc-8a15-6871b76f4b59.png')`,
+          backgroundImage: `url('/lovable-uploads/36af8791-0acd-4be7-97e0-e939b77e61af.png')`,
           backgroundSize: 'cover',
-          backgroundColor: backgroundError ? '#000' : 'transparent'
         }}
       ></div>
       
-      {/* Fallback background if image fails to load */}
-      {backgroundError && (
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900 to-black z-0"></div>
-      )}
-      
-      {/* Star Wars style scrolling text */}
+      {/* Layer 2 (Middle): Star Wars style scrolling text */}
       {showText && (
-        <div className="absolute inset-0 flex items-center justify-center overflow-hidden perspective">
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden perspective z-10">
           <div className="absolute w-full max-w-3xl text-center transform rotate3d">
             <div className="star-wars-text-content text-white text-lg md:text-xl leading-relaxed animate-text-scroll bg-black bg-opacity-30 p-6 rounded">
               <p>
@@ -129,23 +106,28 @@ const StartScreen = () => {
         </div>
       )}
       
-      {/* BGM Toggle Button */}
-      <button
-        onClick={toggleBgm}
-        className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
-      >
-        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
-      </button>
-      
-      {/* Skip Button */}
-      <Button
-        onClick={handleSkip}
-        className="absolute bottom-8 right-6 z-20 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white flex items-center gap-2"
-        variant="ghost"
-      >
-        <span>スキップ</span>
-        <SkipForward size={18} />
-      </Button>
+      {/* Layer 1 (Top): Control Buttons */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        <div className="relative w-full h-full">
+          {/* BGM Toggle Button */}
+          <button
+            onClick={toggleBgm}
+            className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors pointer-events-auto"
+          >
+            {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
+          </button>
+          
+          {/* Skip Button */}
+          <Button
+            onClick={handleSkip}
+            className="absolute bottom-8 right-6 z-20 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white flex items-center gap-2 pointer-events-auto"
+            variant="ghost"
+          >
+            <span>スキップ</span>
+            <SkipForward size={18} />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
