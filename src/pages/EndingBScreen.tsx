@@ -21,17 +21,15 @@ const EndingBScreen: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col p-4 justify-center items-center text-white"
+      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
       style={{ 
-        background: 'linear-gradient(180deg, rgba(30, 30, 30, 1), rgba(10, 10, 10, 1))',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundImage: 'url("/lovable-uploads/5d7a23ab-451e-4a7b-80e4-e649fc0a04aa.png")',
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
       }}
     >
       <AudioPlayer src="/audios/orehamou.mp3" loop={false} autoPlay />
       
-      <div className="bg-black/50 rounded-lg p-8 max-w-md w-full text-center">
+      <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold mb-6">敗北...</h1>
         
         <p className="mb-8 text-lg">

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX } from 'lucide-react';
@@ -21,17 +21,15 @@ const EndingAScreen: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col p-4 justify-center items-center text-white"
+      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
       style={{ 
-        background: 'linear-gradient(180deg, rgba(233, 77, 132, 0.8), rgba(156, 39, 176, 0.8))',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundImage: 'url("/lovable-uploads/3a40abae-e601-4662-8d22-bc33a5ff7e0f.png")',
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
       }}
     >
       <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
       
-      <div className="bg-black/50 rounded-lg p-8 max-w-md w-full text-center">
+      <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold mb-6">完全勝利！</h1>
         
         <p className="mb-8 text-lg">
