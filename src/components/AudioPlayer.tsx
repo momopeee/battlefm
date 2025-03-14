@@ -32,7 +32,29 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, loop = false, autoPlay =
     }
   }, [bgmEnabled, src]);
   
-  // Ensure the src path is properly formed
+  // Log loading events for debugging
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    
+    const handleError = (e: ErrorEvent) => {
+      console.error("Audio loading error:", e);
+    };
+    
+    const handleLoadedData = () => {
+      console.log("Audio loaded successfully:", src);
+    };
+    
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('loadeddata', handleLoadedData);
+    
+    return () => {
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('loadeddata', handleLoadedData);
+    };
+  }, [src]);
+  
+  // Ensure the src path is properly formed - handle both absolute and relative paths
   const audioSrc = src.startsWith('http') 
     ? src 
     : src.startsWith('/') 
