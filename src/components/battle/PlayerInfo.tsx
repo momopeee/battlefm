@@ -22,7 +22,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer }) => {
         <img 
           src={icon} 
           alt={name} 
-          className="w-11 h-11 rounded-full"
+          className="w-8 h-8 rounded-full"
         />
         <div className="flex flex-col items-start">
           <span className="text-[11px]">{name}</span>
