@@ -23,25 +23,35 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   // Function to handle button animation on click
   const handleButtonAnimation = (e: React.MouseEvent<HTMLButtonElement>) => {
     const btn = e.currentTarget;
+    // Remove any existing animation class
     btn.classList.remove('animate');
-    void btn.offsetWidth; // Trigger reflow to enable re-animation
+    // Force a reflow to ensure animation can be applied again
+    void btn.offsetWidth;
+    // Add animation class
     btn.classList.add('animate');
     
-    // Use setTimeout to remove the animation class after it completes
+    // Clean up animation class after animation completes
     setTimeout(() => {
-      if (btn) btn.classList.remove('animate');
+      if (btn && document.body.contains(btn)) {
+        btn.classList.remove('animate');
+      }
     }, 700);
   };
 
   // Combined click handler for animation and action
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>, action: () => void) => {
+    // Prevent double clicks
+    e.preventDefault();
+    
+    // Apply animation
     handleButtonAnimation(e);
     
-    // Call the action after a slight delay to let the animation start
-    // This ensures the action is still called even if the animation is interrupted
+    // Execute the action with a slight delay to ensure UI responsiveness
     setTimeout(() => {
-      action();
-    }, 50);
+      if (isPlayerTurn && !isBattleOver) {
+        action();
+      }
+    }, 100);
   };
 
   return (
