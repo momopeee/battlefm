@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -428,11 +429,11 @@ const Battle2Screen: React.FC = () => {
         sosoHealMode={false}
       />
       
-      {/* Yuji special mode indicator */}
+      {/* Yuji special mode indicator - Updated text here */}
       {specialModeActive && (
         <div className="absolute top-1/4 left-0 right-0 flex justify-center">
           <div className="animate-pulse text-yellow-300 text-xl font-bold bg-black/50 px-4 py-2 rounded-full">
-            ゆうじ確変中！
+            ゆうじ、クラファン中！！
           </div>
         </div>
       )}
