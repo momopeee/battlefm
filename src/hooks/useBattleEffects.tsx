@@ -19,6 +19,7 @@ interface UseBattleEffectsProps {
   setSoundEffect: (sound: string | null) => void;
   handleOpponentAttack: () => void;
   handleSosoHeal: () => void;
+  setActionInProgress: (inProgress: boolean) => void;
 }
 
 export const useBattleEffects = ({
@@ -35,13 +36,17 @@ export const useBattleEffects = ({
   addComment,
   setSoundEffect,
   handleOpponentAttack,
-  handleSosoHeal
+  handleSosoHeal,
+  setActionInProgress
 }: UseBattleEffectsProps) => {
   const { handleScreenTransition } = useUI();
 
   // Handle opponent's turn
   useEffect(() => {
     if (!isPlayerTurn && isBattleStarted && !isBattleOver && !actionInProgress) {
+      // Set action in progress when opponent's turn is about to start
+      setActionInProgress(true);
+      
       const opponentTimer = setTimeout(() => {
         if (sosoHealMode) {
           handleSosoHeal();
@@ -52,7 +57,7 @@ export const useBattleEffects = ({
       
       return () => clearTimeout(opponentTimer);
     }
-  }, [isPlayerTurn, isBattleStarted, isBattleOver, sosoHealMode, actionInProgress, handleOpponentAttack, handleSosoHeal]);
+  }, [isPlayerTurn, isBattleStarted, isBattleOver, sosoHealMode, actionInProgress, handleOpponentAttack, handleSosoHeal, setActionInProgress]);
 
   // Check for battle over conditions
   useEffect(() => {
@@ -76,4 +81,11 @@ export const useBattleEffects = ({
       addComment("システム", "そーそーのとくぎがはつどうした！", true);
     }
   }, [battleTimer, sosoHealMode, isBattleOver, addComment, setSosoHealMode]);
+
+  // Ensure actionInProgress is reset if battle is over
+  useEffect(() => {
+    if (isBattleOver && actionInProgress) {
+      setActionInProgress(false);
+    }
+  }, [isBattleOver, actionInProgress, setActionInProgress]);
 };

@@ -1,4 +1,3 @@
-
 import { useCallback } from 'react';
 import { Character } from '@/context/CharacterContext';
 import { 
@@ -78,7 +77,6 @@ export const usePlayerActions = ({
       // Small delay to ensure UI updates and animations complete
       setTimeout(() => {
         setIsPlayerTurn(false);
-        // Don't reset actionInProgress here, let the opponent action reset it
       }, 500);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
@@ -126,7 +124,6 @@ export const usePlayerActions = ({
       // Small delay to ensure UI updates and animations complete
       setTimeout(() => {
         setIsPlayerTurn(false);
-        // Don't reset actionInProgress here, let the opponent action reset it
       }, 500);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
@@ -166,7 +163,6 @@ export const usePlayerActions = ({
       // Small delay to ensure UI updates and animations complete
       setTimeout(() => {
         setIsPlayerTurn(false);
-        // Don't reset actionInProgress here, let the opponent action reset it
       }, 500);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
@@ -203,7 +199,6 @@ export const usePlayerActions = ({
       // Small delay to ensure UI updates and animations complete
       setTimeout(() => {
         setIsPlayerTurn(false);
-        // Don't reset actionInProgress here, let the opponent action reset it
       }, 500);
     } else {
       // If for some reason the turn doesn't end, reset the action flag

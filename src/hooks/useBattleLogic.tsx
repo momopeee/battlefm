@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { useUI } from '@/context/UIContext';
 import { useCharacter } from '@/context/CharacterContext';
@@ -34,10 +33,8 @@ export const useBattleLogic = () => {
   const [soundEffect, setSoundEffect] = useState<string | null>(null);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleStarted, setIsBattleStarted] = useState(false);
-  // Add a flag to track if an action is in progress
   const [actionInProgress, setActionInProgress] = useState(false);
 
-  // Use the battle initialization hook
   useBattleInitialization({
     player,
     opponent: opponent1,
@@ -54,23 +51,20 @@ export const useBattleLogic = () => {
     setIsBattleStarted
   });
 
-  // Define opponent handler functions
   const handleOpponentAttack = useCallback(() => {
     if (isBattleOver || actionInProgress) return;
     
     setActionInProgress(true);
     
-    // Perform opponent attack
     const result = performOpponentAttack(player, opponent1, addComment);
     
     setPlayer(result.updatedPlayer);
     
-    // Start player's turn
     if (result.endTurn) {
       setTimeout(() => {
         setIsPlayerTurn(true);
         setActionInProgress(false);
-      }, 800); // Add delay to ensure animations complete before allowing next action
+      }, 800);
     }
   }, [player, opponent1, isBattleOver, actionInProgress, addComment, setPlayer, setIsPlayerTurn]);
 
@@ -79,21 +73,18 @@ export const useBattleLogic = () => {
     
     setActionInProgress(true);
     
-    // Perform soso heal
     const result = performSosoHeal(opponent1, addComment);
     
     setOpponent1(result.updatedOpponent);
     
-    // Start player's turn
     if (result.endTurn) {
       setTimeout(() => {
         setIsPlayerTurn(true);
         setActionInProgress(false);
-      }, 800); // Add delay to ensure animations complete before allowing next action
+      }, 800);
     }
   }, [opponent1, isBattleOver, actionInProgress, addComment, setOpponent1, setIsPlayerTurn]);
 
-  // Use the battle effects hook
   useBattleEffects({
     player,
     opponent1,
@@ -108,10 +99,10 @@ export const useBattleLogic = () => {
     addComment,
     setSoundEffect,
     handleOpponentAttack,
-    handleSosoHeal
+    handleSosoHeal,
+    setActionInProgress
   });
 
-  // Use the player actions hook with the actionInProgress flag
   const {
     handlePlayerAttack,
     handlePlayerSpecial,
@@ -136,7 +127,6 @@ export const useBattleLogic = () => {
     addComment
   });
 
-  // Handle character sheet display
   const handleCharacterClick = (character: 'player' | 'opponent1') => {
     setCurrentCharacterSheet(character);
     setShowCharacterSheet(true);

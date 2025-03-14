@@ -46,12 +46,10 @@ const BattleActions: React.FC<BattleActionsProps> = ({
     // Apply animation
     handleButtonAnimation(e);
     
-    // Execute the action with a slight delay to ensure UI responsiveness
-    setTimeout(() => {
-      if (isPlayerTurn && !isBattleOver) {
-        action();
-      }
-    }, 100);
+    // Execute the action immediately if it's player's turn and battle is not over
+    if (isPlayerTurn && !isBattleOver) {
+      action();
+    }
   };
 
   return (
