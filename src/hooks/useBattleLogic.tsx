@@ -131,13 +131,6 @@ export const useBattleLogic = () => {
     setShowCharacterSheet(true);
   }, [setCurrentCharacterSheet, setShowCharacterSheet]);
 
-  // Clean up battle resources when component unmounts
-  useEffect(() => {
-    return () => {
-      // No state updates in cleanup to prevent memory leaks
-    };
-  }, []);
-
   return {
     player,
     opponent1,
@@ -157,6 +150,7 @@ export const useBattleLogic = () => {
     handleRunAway,
     handleHighball,
     handleCharacterClick,
-    setShowCharacterSheet
+    setShowCharacterSheet,
+    actionInProgress // Export this to BattleActions if needed
   };
 };

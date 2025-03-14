@@ -6,7 +6,7 @@ import { handleVictory, handleDefeat } from '@/utils/battleResults';
 
 interface UseBattleEffectsProps {
   player: Character;
-  opponent1: Character;  // Renamed from opponent1 to opponent for clarity
+  opponent1: Character;
   battleTimer: number;
   isPlayerTurn: boolean;
   isBattleStarted: boolean;
@@ -46,15 +46,15 @@ export const useBattleEffects = ({
     let opponentTimer: NodeJS.Timeout;
     
     if (!isPlayerTurn && isBattleStarted && !isBattleOver && !actionInProgress) {
+      setActionInProgress(true); // Immediately set action in progress
+      
       opponentTimer = setTimeout(() => {
-        setActionInProgress(true);
-        
         if (sosoHealMode) {
           handleSosoHeal();
         } else {
           handleOpponentAttack();
         }
-      }, 1500);
+      }, 1000);
       
       return () => clearTimeout(opponentTimer);
     }
@@ -83,7 +83,7 @@ export const useBattleEffects = ({
     }
   }, [player.currentHp, opponent1.currentHp, isBattleOver, isBattleStarted, setIsBattleOver, addComment, setSoundEffect, handleScreenTransition, setActionInProgress]);
 
-  // Activate soso heal mode after 30 seconds - use ref to track if already activated
+  // Activate soso heal mode after 30 seconds
   useEffect(() => {
     if (battleTimer >= 30 && !sosoHealMode && !isBattleOver) {
       setSosoHealMode(true);

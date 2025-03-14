@@ -78,10 +78,11 @@ export const usePlayerActions = ({
     setTimeout(() => {
       if (result.endTurn) {
         setIsPlayerTurn(false);
+      } else {
+        // If turn doesn't end, make sure to reset actionInProgress
+        setActionInProgress(false);
       }
-      // Always reset the action flag to ensure buttons become active again
-      setActionInProgress(false);
-    }, 1000);
+    }, 800);
   }, [
     player, 
     opponent, 
@@ -121,10 +122,11 @@ export const usePlayerActions = ({
     setTimeout(() => {
       if (result.endTurn) {
         setIsPlayerTurn(false);
+      } else {
+        // If turn doesn't end, make sure to reset actionInProgress
+        setActionInProgress(false);
       }
-      // Always reset the action flag to ensure buttons become active again
-      setActionInProgress(false);
-    }, 1000);
+    }, 800);
   }, [
     player, 
     opponent, 
@@ -156,10 +158,11 @@ export const usePlayerActions = ({
     setTimeout(() => {
       if (result.endTurn) {
         setIsPlayerTurn(false);
+      } else {
+        // If turn doesn't end, make sure to reset actionInProgress
+        setActionInProgress(false);
       }
-      // Always reset the action flag to ensure buttons become active again
-      setActionInProgress(false);
-    }, 1000);
+    }, 800);
   }, [
     player, 
     isBattleOver, 
@@ -188,10 +191,11 @@ export const usePlayerActions = ({
     setTimeout(() => {
       if (result.endTurn) {
         setIsPlayerTurn(false);
+      } else {
+        // If turn doesn't end, make sure to reset actionInProgress
+        setActionInProgress(false);
       }
-      // Always reset the action flag to ensure buttons become active again
-      setActionInProgress(false);
-    }, 1000);
+    }, 800);
   }, [
     player, 
     isBattleOver, 
