@@ -9,13 +9,20 @@ const StartScreen = () => {
   const { handleScreenTransition } = useApp();
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imagePath] = useState('/lovable-uploads/9ed25f9b-c3ab-40dd-bb40-19e007f9faed.png');
   
   useEffect(() => {
     // Preload the image
     const img = new Image();
-    img.src = '/lovable-uploads/9ed25f9b-c3ab-40dd-bb40-19e007f9faed.png';
-    img.onload = () => setImageLoaded(true);
-  }, []);
+    img.src = imagePath;
+    img.onload = () => {
+      console.log('Image loaded successfully:', imagePath);
+      setImageLoaded(true);
+    };
+    img.onerror = (e) => {
+      console.error('Error loading image:', e);
+    };
+  }, [imagePath]);
   
   const handleStart = () => {
     handleScreenTransition('battle1');
@@ -24,20 +31,14 @@ const StartScreen = () => {
   
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black">
-      {/* Background Image */}
-      {imageLoaded && (
-        <div 
-          className="absolute inset-0 z-0"
-          style={{ 
-            backgroundImage: `url('/lovable-uploads/9ed25f9b-c3ab-40dd-bb40-19e007f9faed.png')`,
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            width: '100%',
-            height: '100%'
-          }}
-        />
-      )}
+      {/* Background Image - using img tag instead of background-image */}
+      <img 
+        src={imagePath}
+        alt="Background"
+        className="absolute inset-0 z-0 w-full h-full object-cover"
+        style={{ display: imageLoaded ? 'block' : 'none' }}
+        onLoad={() => console.log('Image rendered on screen')}
+      />
       
       {/* Start Button */}
       <div className="absolute inset-0 z-20 flex items-center justify-center">
