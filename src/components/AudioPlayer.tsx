@@ -8,7 +8,7 @@ interface AudioPlayerProps {
   autoPlay?: boolean;
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, loop = false, autoPlay = false }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, loop = false, autoPlay = true }) => {
   const { bgmEnabled } = useApp();
   const audioRef = useRef<HTMLAudioElement>(null);
   
@@ -18,33 +18,33 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, loop = false, autoPlay =
     
     if (bgmEnabled) {
       audio.volume = 0.5;
-      audio.play().catch(error => {
-        console.error("Audio play failed:", error);
-      });
+      
+      // Add a small delay before playing to ensure the audio is loaded
+      const playTimer = setTimeout(() => {
+        audio.play().catch(error => {
+          console.error("Audio play failed:", error);
+        });
+      }, 100);
+      
+      return () => clearTimeout(playTimer);
     } else {
       audio.pause();
     }
-    
-    // Log when audio is loaded
-    audio.onloadeddata = () => {
-      console.log("Audio loaded successfully:", src);
-    };
-    
-    // Log any errors
-    audio.onerror = (e) => {
-      console.error("Audio loading error:", e);
-    };
   }, [bgmEnabled, src]);
   
-  // Determine if the source is a URL or a local path
-  const audioSrc = src.startsWith('http') ? src : src;
+  // Ensure the src path is properly formed
+  const audioSrc = src.startsWith('http') 
+    ? src 
+    : src.startsWith('/') 
+      ? src.substring(1) // Remove leading slash if present
+      : src;
   
   return (
     <audio 
       ref={audioRef}
       src={audioSrc}
       loop={loop}
-      autoPlay={autoPlay && bgmEnabled}
+      preload="auto"
       className="hidden"
     />
   );
