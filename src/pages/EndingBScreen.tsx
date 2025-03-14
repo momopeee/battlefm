@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX } from 'lucide-react';

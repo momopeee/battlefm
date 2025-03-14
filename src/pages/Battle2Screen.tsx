@@ -81,11 +81,12 @@ const Battle2Screen: React.FC = () => {
     
     // Apply damage with delay for animation
     setTimeout(() => {
-      setOpponentHp(prevHp => Math.max(0, prevHp - damage));
+      setOpponentHp(Math.max(0, opponentHp - damage));
       
       // Update attack count for special meter
-      setAttackCount(prevCount => prevCount + 1);
-      if (attackCount + 1 >= 3) {
+      const newAttackCount = attackCount + 1;
+      setAttackCount(newAttackCount);
+      if (newAttackCount >= 3) {
         setSpecialAttackAvailable(true);
       }
       
@@ -119,7 +120,7 @@ const Battle2Screen: React.FC = () => {
     const damage = player.specialPower;
     
     setTimeout(() => {
-      setOpponentHp(prevHp => Math.max(0, prevHp - damage));
+      setOpponentHp(Math.max(0, opponentHp - damage));
       
       // Add battle comments
       addComment('とおる', `特殊技『経営分析』発動！相手の弱点を突く！ ${damage}ポイントの大ダメージ！`);
@@ -153,7 +154,7 @@ const Battle2Screen: React.FC = () => {
       
       setTimeout(() => {
         const damage = opponent2.specialPower;
-        setPlayerHp(prevHp => Math.max(0, prevHp - damage));
+        setPlayerHp(Math.max(0, playerHp - damage));
         
         addComment('ゆうじ', '「私のウェディングプランナーとしての経験からいうと〜」');
         
@@ -178,7 +179,7 @@ const Battle2Screen: React.FC = () => {
       const damage = Math.floor(Math.random() * (max - min + 1)) + min;
       
       setTimeout(() => {
-        setPlayerHp(prevHp => Math.max(0, prevHp - damage));
+        setPlayerHp(Math.max(0, playerHp - damage));
         
         addComment('ゆうじ', `陽気な営業トーク攻撃！ ${damage}ポイントのダメージ！`);
         
@@ -213,7 +214,7 @@ const Battle2Screen: React.FC = () => {
     // Heal opponent slightly
     setTimeout(() => {
       const healAmount = 5;
-      setOpponentHp(prev => Math.min(opponent2.maxHp, prev + healAmount));
+      setOpponentHp(Math.min(opponent2.maxHp, opponentHp + healAmount));
       addComment('システム', `ゆうじのHPが${healAmount}回復した！陽気さが増した！`, true);
     }, 1000);
   };
