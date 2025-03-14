@@ -20,7 +20,7 @@ const StartScreen = () => {
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center"
         style={{ 
-          backgroundImage: `url('/lovable-uploads/ad93bc34-dc9e-49ed-98f0-e8f4baa493b3.png')`,
+          backgroundImage: `url('/lovable-uploads/9ed25f9b-c3ab-40dd-bb40-19e007f9faed.png')`,
           backgroundSize: 'cover',
         }}
       ></div>
