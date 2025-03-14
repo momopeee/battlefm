@@ -21,9 +21,11 @@ const StartScreen = () => {
         className="absolute inset-0 z-0 bg-cover bg-center"
         style={{ 
           backgroundImage: `url('/lovable-uploads/9ed25f9b-c3ab-40dd-bb40-19e007f9faed.png')`,
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
         }}
-      ></div>
+      />
       
       {/* Start Button */}
       <div className="absolute inset-0 z-20 flex items-center justify-center">

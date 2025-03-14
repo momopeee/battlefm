@@ -7,7 +7,7 @@ const Index = () => {
   
   useEffect(() => {
     // Redirect to the start screen
-    navigate('/start');
+    navigate('/start', { replace: true });
   }, [navigate]);
   
   return (
