@@ -15,6 +15,9 @@ const StartScreen = () => {
   // Define the background image URL
   const backgroundImageUrl = "https://pbs.twimg.com/profile_images/1343537293798199296/is99I-hS_400x400.jpg";
   
+  // Define an external MP3 URL (sample music from a CDN)
+  const openingBgmUrl = "https://cdn.freesound.org/previews/414/414348_5121236-lq.mp3";
+  
   useEffect(() => {
     // Start the intro text scrolling animation after a delay
     const timer = setTimeout(() => {
@@ -53,7 +56,7 @@ const StartScreen = () => {
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
       {/* BGM Audio Player */}
-      <AudioPlayer src="/audios/opening.mp3" loop autoPlay />
+      <AudioPlayer src={openingBgmUrl} loop autoPlay />
       
       {/* Background Image */}
       <img 

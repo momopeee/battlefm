@@ -24,12 +24,25 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, loop = false, autoPlay =
     } else {
       audio.pause();
     }
+    
+    // Log when audio is loaded
+    audio.onloadeddata = () => {
+      console.log("Audio loaded successfully:", src);
+    };
+    
+    // Log any errors
+    audio.onerror = (e) => {
+      console.error("Audio loading error:", e);
+    };
   }, [bgmEnabled, src]);
+  
+  // Determine if the source is a URL or a local path
+  const audioSrc = src.startsWith('http') ? src : src;
   
   return (
     <audio 
       ref={audioRef}
-      src={src}
+      src={audioSrc}
       loop={loop}
       autoPlay={autoPlay && bgmEnabled}
       className="hidden"
