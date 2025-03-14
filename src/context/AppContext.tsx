@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Define types for our app
@@ -81,7 +80,7 @@ const AppContext = createContext<AppContextType>({
   },
   opponent2: {
     name: 'ゆうじ＠陽気なおじさん',
-    icon: '/lovable-uploads/87eeca18-7288-449e-b4dc-8a6b2d6ad9a9.png',
+    icon: '/lovable-uploads/988ea3ef-2efe-4616-a292-04d0d01fb33c.png',
     maxHp: 100,
     currentHp: 100,
     attackMin: 15,
@@ -142,7 +141,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const [opponent2, setOpponent2State] = useState<Character>({
     name: 'ゆうじ＠陽気なおじさん',
-    icon: '/lovable-uploads/87eeca18-7288-449e-b4dc-8a6b2d6ad9a9.png',
+    icon: '/lovable-uploads/988ea3ef-2efe-4616-a292-04d0d01fb33c.png',
     maxHp: 100,
     currentHp: 100,
     attackMin: 15,

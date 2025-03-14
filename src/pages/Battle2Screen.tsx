@@ -62,7 +62,7 @@ const Battle2Screen: React.FC = () => {
   }, []);
   
   // Handle character sheet display
-  const handleCharacterClick = (character: 'player' | 'opponent2') => {
+  const handleCharacterClick = (character: 'player' | 'opponent1' | 'opponent2') => {
     setCurrentCharacterSheet(character);
     setShowCharacterSheet(true);
   };
@@ -81,10 +81,10 @@ const Battle2Screen: React.FC = () => {
     
     // Apply damage with delay for animation
     setTimeout(() => {
-      setOpponentHp(prev => Math.max(0, prev - damage));
+      setOpponentHp(prevHp => Math.max(0, prevHp - damage));
       
       // Update attack count for special meter
-      setAttackCount(prev => prev + 1);
+      setAttackCount(prevCount => prevCount + 1);
       if (attackCount + 1 >= 3) {
         setSpecialAttackAvailable(true);
       }
@@ -119,7 +119,7 @@ const Battle2Screen: React.FC = () => {
     const damage = player.specialPower;
     
     setTimeout(() => {
-      setOpponentHp(prev => Math.max(0, prev - damage));
+      setOpponentHp(prevHp => Math.max(0, prevHp - damage));
       
       // Add battle comments
       addComment('とおる', `特殊技『経営分析』発動！相手の弱点を突く！ ${damage}ポイントの大ダメージ！`);
@@ -153,7 +153,7 @@ const Battle2Screen: React.FC = () => {
       
       setTimeout(() => {
         const damage = opponent2.specialPower;
-        setPlayerHp(prev => Math.max(0, prev - damage));
+        setPlayerHp(prevHp => Math.max(0, prevHp - damage));
         
         addComment('ゆうじ', '「私のウェディングプランナーとしての経験からいうと〜」');
         
@@ -178,7 +178,7 @@ const Battle2Screen: React.FC = () => {
       const damage = Math.floor(Math.random() * (max - min + 1)) + min;
       
       setTimeout(() => {
-        setPlayerHp(prev => Math.max(0, prev - damage));
+        setPlayerHp(prevHp => Math.max(0, prevHp - damage));
         
         addComment('ゆうじ', `陽気な営業トーク攻撃！ ${damage}ポイントのダメージ！`);
         
