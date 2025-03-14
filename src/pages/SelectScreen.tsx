@@ -166,9 +166,9 @@ const SelectScreen: React.FC = () => {
           
           {/* Flashing image during alarm */}
           {assaultAlarm && (
-            <div className="absolute inset-0 z-10 animate-blink">
+            <div className="absolute inset-0 z-10 animate-pulse">
               <img 
-                src="/lovable-uploads/656bd67f-53fe-4f15-86f3-0db149cc7285.png"
+                src="/lovable-uploads/b8514c40-5c0b-49c1-895e-c1ca519e36cb.png"
                 alt="ゆうじ"
                 className="w-full h-full object-cover"
               />
@@ -179,25 +179,23 @@ const SelectScreen: React.FC = () => {
           {assaultText && (
             <>
               <img 
-                src="/lovable-uploads/656bd67f-53fe-4f15-86f3-0db149cc7285.png"
+                src="/lovable-uploads/b8514c40-5c0b-49c1-895e-c1ca519e36cb.png"
                 alt="ゆうじ"
                 className="absolute inset-0 w-full h-full object-cover z-0"
               />
               
-              <div className="absolute inset-0 z-10 flex items-center justify-center perspective">
-                <div className="w-full max-w-lg px-4 rotate3d">
-                  <div className="star-wars-text-content text-red-500 font-bold text-xl text-center">
-                    <p className="mb-8">
-                      うぇーい！ゆうじの陽気なおじさんです！！
-                      <br /><br />
-                      って、それはただの俺のおじさんやないかい！！
-                      <br /><br />
-                      陽気なおじさん＠ゆうじです！
-                      <br /><br />
-                      今日はやまにいに、経営について指南してやりますから、
-                      <br /><br />
-                      皆さん、どうぞよろしくウェイで～す！！
-                    </p>
+              <div className="absolute inset-0 z-10 flex items-center justify-center overflow-hidden">
+                <div className="w-full text-center star-wars-crawl">
+                  <div className="text-red-500 font-bold text-xl text-center animate-star-wars">
+                    <p>うぇーい！ゆうじの陽気なおじさんです！！</p>
+                    <br />
+                    <p>って、それはただの俺のおじさんやないかい！！</p>
+                    <br />
+                    <p>陽気なおじさん＠ゆうじです！</p>
+                    <br />
+                    <p>今日はやまにいに、経営について指南してやりますから、</p>
+                    <br />
+                    <p>皆さん、どうぞよろしくウェイで～す！！</p>
                   </div>
                 </div>
               </div>
@@ -205,6 +203,30 @@ const SelectScreen: React.FC = () => {
           )}
         </div>
       )}
+
+      <style jsx global>{`
+        @keyframes star-wars {
+          0% {
+            transform: translateY(100vh) rotateX(25deg);
+          }
+          100% {
+            transform: translateY(-100vh) rotateX(25deg);
+          }
+        }
+        
+        .animate-star-wars {
+          animation: star-wars 12s linear;
+        }
+        
+        .star-wars-crawl {
+          perspective: 400px;
+          overflow: hidden;
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      `}</style>
     </div>
   );
 };
