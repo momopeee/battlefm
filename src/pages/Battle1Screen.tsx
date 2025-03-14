@@ -3,7 +3,6 @@ import React from 'react';
 import { useApp } from '@/context/AppContext';
 import CommentArea from '@/components/CommentArea';
 import CharacterSheet from '@/components/CharacterSheet';
-import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX } from 'lucide-react';
 
 // Import the new components

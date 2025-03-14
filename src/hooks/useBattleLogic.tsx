@@ -63,6 +63,7 @@ export const useBattleLogic = () => {
   const [isBattleOver, setIsBattleOver] = useState(false);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleStarted, setIsBattleStarted] = useState(false);
+  const [transitionScheduled, setTransitionScheduled] = useState(false);
 
   // Initialize battle when component mounts
   useEffect(() => {
@@ -89,6 +90,7 @@ export const useBattleLogic = () => {
     setSpecialAttackAvailable(false);
     setHighballMode(false);
     setSosoHealMode(false);
+    setTransitionScheduled(false);
     
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
     
@@ -113,7 +115,7 @@ export const useBattleLogic = () => {
 
   // Check for battle over conditions
   useEffect(() => {
-    if ((player.currentHp <= 0 || opponent1.currentHp <= 0) && !isBattleOver) {
+    if ((player.currentHp <= 0 || opponent1.currentHp <= 0) && !isBattleOver && !transitionScheduled) {
       setIsBattleOver(true);
       
       if (player.currentHp <= 0) {
@@ -326,6 +328,9 @@ export const useBattleLogic = () => {
 
   // Handle victory - ensure correct screen transition
   const handleVictory = () => {
+    // Mark that we've already scheduled a transition
+    setTransitionScheduled(true);
+    
     // Add victory comments
     addComment("システム", "とおるが勝利した、そーそーは破れかぶれになってクソリプを量産してしまった", true);
     
@@ -357,6 +362,9 @@ export const useBattleLogic = () => {
 
   // Handle defeat - ensure correct screen transition
   const handleDefeat = () => {
+    // Mark that we've already scheduled a transition
+    setTransitionScheduled(true);
+    
     // Add defeat comments
     addComment("システム", "とおるが敗北した、そーそーは歯止めが利かなくなってしまった", true);
     

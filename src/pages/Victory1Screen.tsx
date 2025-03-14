@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useApp } from '@/context/AppContext';
-import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX } from 'lucide-react';
 
 const Victory1Screen: React.FC = () => {
@@ -22,8 +21,6 @@ const Victory1Screen: React.FC = () => {
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
       }}
     >
-      <AudioPlayer src="/audios/toru1.mp3" loop autoPlay />
-      
       {/* Empty top section for spacing */}
       <div className="w-full"></div>
       
