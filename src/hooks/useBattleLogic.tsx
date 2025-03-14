@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { useUI } from '@/context/UIContext';
 import { useCharacter } from '@/context/CharacterContext';
@@ -8,6 +9,7 @@ import {
 } from '@/utils/battleActions';
 import { useBattleEffects } from './useBattleEffects';
 import { usePlayerActions } from './usePlayerActions';
+import { useBattleInitialization } from './useBattleInitialization';
 
 export const useBattleLogic = () => {
   const { handleScreenTransition } = useUI();
@@ -33,33 +35,21 @@ export const useBattleLogic = () => {
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleStarted, setIsBattleStarted] = useState(false);
 
-  // Initialize battle when component mounts
-  useState(() => {
-    clearComments();
-    resetBattleTimer();
-    startBattleTimer();
-    setIsBattleStarted(true);
-    
-    // Reset player and opponent stats
-    setPlayer({
-      ...player,
-      currentHp: player.maxHp,
-      attackMin: 15,  // Set attack min to 15
-      attackMax: 30,  // Set attack max to 30
-      specialPower: 50 // Special attack power to 30-50
-    });
-    
-    setOpponent1({
-      ...opponent1,
-      currentHp: opponent1.maxHp
-    });
-    
-    setAttackCount(0);
-    setSpecialAttackAvailable(false);
-    setHighballMode(false);
-    setSosoHealMode(false);
-    
-    addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
+  // Use the battle initialization hook
+  useBattleInitialization({
+    player,
+    opponent: opponent1,
+    setPlayer,
+    setOpponent: setOpponent1,
+    clearComments,
+    resetBattleTimer,
+    startBattleTimer,
+    setAttackCount,
+    setSpecialAttackAvailable,
+    setHighballMode,
+    setSosoHealMode,
+    addComment,
+    setIsBattleStarted
   });
 
   // Define opponent handler functions
