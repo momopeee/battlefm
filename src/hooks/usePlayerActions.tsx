@@ -74,17 +74,14 @@ export const usePlayerActions = ({
       setHighballMode(false);
     }
     
-    // End player's turn
-    if (result.endTurn) {
-      setTimeout(() => {
+    // End player's turn with a small delay
+    setTimeout(() => {
+      if (result.endTurn) {
         setIsPlayerTurn(false);
-      }, 1000);
-    } else {
-      // If for some reason the turn doesn't end, reset the action flag
-      setTimeout(() => {
-        setActionInProgress(false);
-      }, 1000);
-    }
+      }
+      // Always reset the action flag to ensure buttons become active again
+      setActionInProgress(false);
+    }, 1000);
   }, [
     player, 
     opponent, 
@@ -120,17 +117,14 @@ export const usePlayerActions = ({
     setSpecialAttackAvailable(false);
     setAttackCount(0);
     
-    // End player's turn
-    if (result.endTurn) {
-      setTimeout(() => {
+    // End player's turn with a small delay
+    setTimeout(() => {
+      if (result.endTurn) {
         setIsPlayerTurn(false);
-      }, 1000);
-    } else {
-      // If for some reason the turn doesn't end, reset the action flag
-      setTimeout(() => {
-        setActionInProgress(false);
-      }, 1000);
-    }
+      }
+      // Always reset the action flag to ensure buttons become active again
+      setActionInProgress(false);
+    }, 1000);
   }, [
     player, 
     opponent, 
@@ -158,17 +152,14 @@ export const usePlayerActions = ({
     
     setPlayer(result.updatedPlayer);
     
-    // End player's turn
-    if (result.endTurn) {
-      setTimeout(() => {
+    // End player's turn with a small delay
+    setTimeout(() => {
+      if (result.endTurn) {
         setIsPlayerTurn(false);
-      }, 1000);
-    } else {
-      // If for some reason the turn doesn't end, reset the action flag
-      setTimeout(() => {
-        setActionInProgress(false);
-      }, 1000);
-    }
+      }
+      // Always reset the action flag to ensure buttons become active again
+      setActionInProgress(false);
+    }, 1000);
   }, [
     player, 
     isBattleOver, 
@@ -193,17 +184,14 @@ export const usePlayerActions = ({
     setPlayer(result.updatedPlayer);
     setHighballMode(result.highballMode);
     
-    // End player's turn
-    if (result.endTurn) {
-      setTimeout(() => {
+    // End player's turn with a small delay
+    setTimeout(() => {
+      if (result.endTurn) {
         setIsPlayerTurn(false);
-      }, 1000);
-    } else {
-      // If for some reason the turn doesn't end, reset the action flag
-      setTimeout(() => {
-        setActionInProgress(false);
-      }, 1000);
-    }
+      }
+      // Always reset the action flag to ensure buttons become active again
+      setActionInProgress(false);
+    }, 1000);
   }, [
     player, 
     isBattleOver, 

@@ -42,8 +42,8 @@ const BattleActions: React.FC<BattleActionsProps> = ({
     <div className="grid grid-cols-4 gap-2 mb-2">
       <button 
         onClick={(e) => {
-          handleButtonAnimation(e);
           if (isPlayerTurn && !isBattleOver) {
+            handleButtonAnimation(e);
             onAttack();
           }
         }} 
@@ -55,8 +55,8 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       
       <button 
         onClick={(e) => {
-          handleButtonAnimation(e);
           if (isPlayerTurn && !isBattleOver && specialAttackAvailable) {
+            handleButtonAnimation(e);
             onSpecial();
           }
         }} 
@@ -68,8 +68,8 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       
       <button 
         onClick={(e) => {
-          handleButtonAnimation(e);
           if (isPlayerTurn && !isBattleOver) {
+            handleButtonAnimation(e);
             onRunAway();
           }
         }} 
@@ -81,8 +81,8 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       
       <button 
         onClick={(e) => {
-          handleButtonAnimation(e);
           if (isPlayerTurn && !isBattleOver) {
+            handleButtonAnimation(e);
             onHighball();
           }
         }} 

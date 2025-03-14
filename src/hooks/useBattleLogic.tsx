@@ -55,35 +55,31 @@ export const useBattleLogic = () => {
 
   // Handle opponent attack logic
   const handleOpponentAttack = useCallback(() => {
-    if (isBattleOver || actionInProgress) return;
+    if (isBattleOver) return;
     
     const result = performOpponentAttack(player, opponent1, addComment);
     
     setPlayer(result.updatedPlayer);
     
-    if (result.endTurn) {
-      setTimeout(() => {
-        setIsPlayerTurn(true);
-        setActionInProgress(false);
-      }, 800);
-    }
-  }, [player, opponent1, isBattleOver, actionInProgress, addComment, setPlayer]);
+    setTimeout(() => {
+      setIsPlayerTurn(true);
+      setActionInProgress(false);
+    }, 800);
+  }, [player, opponent1, isBattleOver, addComment, setPlayer, setIsPlayerTurn, setActionInProgress]);
 
   // Handle soso heal logic
   const handleSosoHeal = useCallback(() => {
-    if (isBattleOver || actionInProgress) return;
+    if (isBattleOver) return;
     
     const result = performSosoHeal(opponent1, addComment);
     
     setOpponent1(result.updatedOpponent);
     
-    if (result.endTurn) {
-      setTimeout(() => {
-        setIsPlayerTurn(true);
-        setActionInProgress(false);
-      }, 800);
-    }
-  }, [opponent1, isBattleOver, actionInProgress, addComment, setOpponent1]);
+    setTimeout(() => {
+      setIsPlayerTurn(true);
+      setActionInProgress(false);
+    }, 800);
+  }, [opponent1, isBattleOver, addComment, setOpponent1, setIsPlayerTurn, setActionInProgress]);
 
   // Apply battle effects (opponent turn, battle over check, soso heal mode)
   useBattleEffects({
