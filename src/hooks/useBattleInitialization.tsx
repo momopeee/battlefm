@@ -46,7 +46,7 @@ export const useBattleInitialization = ({
       currentHp: player.maxHp,
       attackMin: 15,  // Set attack min to 15
       attackMax: 30,  // Set attack max to 30
-      specialPower: 50 // Special attack power to 30-50
+      specialPower: 50 // Special attack power to 50
     });
     
     setOpponent({
@@ -60,5 +60,19 @@ export const useBattleInitialization = ({
     setSosoHealMode(false);
     
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
-  }, []); // Empty dependency array means this runs once on mount
+  }, [
+    player, 
+    opponent, 
+    setPlayer, 
+    setOpponent, 
+    clearComments, 
+    resetBattleTimer, 
+    startBattleTimer, 
+    setAttackCount, 
+    setSpecialAttackAvailable, 
+    setHighballMode, 
+    setSosoHealMode, 
+    addComment, 
+    setIsBattleStarted
+  ]); // Add proper dependencies for the useEffect hook
 };

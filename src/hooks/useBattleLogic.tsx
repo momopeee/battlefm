@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+
+import { useState, useCallback, useEffect } from 'react';
 import { useUI } from '@/context/UIContext';
 import { useCharacter } from '@/context/CharacterContext';
 import { useBattle } from '@/context/BattleContext';
@@ -35,6 +36,7 @@ export const useBattleLogic = () => {
   const [isBattleStarted, setIsBattleStarted] = useState(false);
   const [actionInProgress, setActionInProgress] = useState(false);
 
+  // Initialize battle when component mounts
   useBattleInitialization({
     player,
     opponent: opponent1,
@@ -51,10 +53,9 @@ export const useBattleLogic = () => {
     setIsBattleStarted
   });
 
+  // Handle opponent attack logic
   const handleOpponentAttack = useCallback(() => {
     if (isBattleOver || actionInProgress) return;
-    
-    setActionInProgress(true);
     
     const result = performOpponentAttack(player, opponent1, addComment);
     
@@ -68,10 +69,9 @@ export const useBattleLogic = () => {
     }
   }, [player, opponent1, isBattleOver, actionInProgress, addComment, setPlayer, setIsPlayerTurn]);
 
+  // Handle soso heal logic
   const handleSosoHeal = useCallback(() => {
     if (isBattleOver || actionInProgress) return;
-    
-    setActionInProgress(true);
     
     const result = performSosoHeal(opponent1, addComment);
     
@@ -85,6 +85,7 @@ export const useBattleLogic = () => {
     }
   }, [opponent1, isBattleOver, actionInProgress, addComment, setOpponent1, setIsPlayerTurn]);
 
+  // Apply battle effects (opponent turn, battle over check, soso heal mode)
   useBattleEffects({
     player,
     opponent1,
@@ -103,6 +104,7 @@ export const useBattleLogic = () => {
     setActionInProgress
   });
 
+  // Player actions (attack, special, run away, highball)
   const {
     handlePlayerAttack,
     handlePlayerSpecial,
@@ -127,10 +129,19 @@ export const useBattleLogic = () => {
     addComment
   });
 
-  const handleCharacterClick = (character: 'player' | 'opponent1') => {
+  // Handle character click to show character sheet
+  const handleCharacterClick = (character: 'player' | 'opponent1' | 'opponent2') => {
     setCurrentCharacterSheet(character);
     setShowCharacterSheet(true);
   };
+
+  // Clean up battle resources when component unmounts
+  useEffect(() => {
+    return () => {
+      clearComments();
+      resetBattleTimer();
+    };
+  }, [clearComments, resetBattleTimer]);
 
   return {
     player,

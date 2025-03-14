@@ -1,3 +1,4 @@
+
 import { useCallback } from 'react';
 import { Character } from '@/context/CharacterContext';
 import { 
@@ -59,6 +60,7 @@ export const usePlayerActions = ({
     // Enable special attack after 3 regular attacks
     if (newAttackCount >= 3 && !specialAttackAvailable) {
       setSpecialAttackAvailable(true);
+      addComment("システム", "とおるのとくぎが使えるようになった！", true);
     }
     
     // Perform the attack
@@ -76,8 +78,6 @@ export const usePlayerActions = ({
     if (result.endTurn) {
       setTimeout(() => {
         setIsPlayerTurn(false);
-        // Critical: reset actionInProgress after turn ends but before opponent acts
-        setActionInProgress(false);
       }, 1000);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
@@ -124,8 +124,6 @@ export const usePlayerActions = ({
     if (result.endTurn) {
       setTimeout(() => {
         setIsPlayerTurn(false);
-        // Critical: reset actionInProgress after turn ends but before opponent acts
-        setActionInProgress(false);
       }, 1000);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
@@ -164,8 +162,6 @@ export const usePlayerActions = ({
     if (result.endTurn) {
       setTimeout(() => {
         setIsPlayerTurn(false);
-        // Critical: reset actionInProgress after turn ends but before opponent acts
-        setActionInProgress(false);
       }, 1000);
     } else {
       // If for some reason the turn doesn't end, reset the action flag
@@ -201,8 +197,6 @@ export const usePlayerActions = ({
     if (result.endTurn) {
       setTimeout(() => {
         setIsPlayerTurn(false);
-        // Critical: reset actionInProgress after turn ends but before opponent acts
-        setActionInProgress(false);
       }, 1000);
     } else {
       // If for some reason the turn doesn't end, reset the action flag

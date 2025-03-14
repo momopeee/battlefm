@@ -6,7 +6,7 @@ import { handleVictory, handleDefeat } from '@/utils/battleResults';
 
 interface UseBattleEffectsProps {
   player: Character;
-  opponent1: Character;
+  opponent1: Character;  // Renamed from opponent1 to opponent for clarity
   battleTimer: number;
   isPlayerTurn: boolean;
   isBattleStarted: boolean;
@@ -45,25 +45,20 @@ export const useBattleEffects = ({
   useEffect(() => {
     let opponentTimer: NodeJS.Timeout;
     
-    if (!isPlayerTurn && isBattleStarted && !isBattleOver) {
+    if (!isPlayerTurn && isBattleStarted && !isBattleOver && !actionInProgress) {
       opponentTimer = setTimeout(() => {
+        setActionInProgress(true);
+        
         if (sosoHealMode) {
           handleSosoHeal();
         } else {
           handleOpponentAttack();
         }
-        
-        // Set player's turn again and reset actionInProgress after a delay
-        setTimeout(() => {
-          if (!isBattleOver) {
-            setActionInProgress(false);
-          }
-        }, 1000);
       }, 1500);
       
       return () => clearTimeout(opponentTimer);
     }
-  }, [isPlayerTurn, isBattleStarted, isBattleOver, sosoHealMode, handleOpponentAttack, handleSosoHeal, setActionInProgress]);
+  }, [isPlayerTurn, isBattleStarted, isBattleOver, sosoHealMode, actionInProgress, handleOpponentAttack, handleSosoHeal, setActionInProgress]);
 
   // Add a safety effect to reset actionInProgress if battle is over
   useEffect(() => {
@@ -74,7 +69,7 @@ export const useBattleEffects = ({
 
   // Check for battle over conditions
   useEffect(() => {
-    if ((player.currentHp <= 0 || opponent1.currentHp <= 0) && !isBattleOver) {
+    if ((player.currentHp <= 0 || opponent1.currentHp <= 0) && !isBattleOver && isBattleStarted) {
       setIsBattleOver(true);
       setActionInProgress(false);
       
@@ -86,7 +81,7 @@ export const useBattleEffects = ({
         handleVictory(addComment, setSoundEffect, handleScreenTransition);
       }
     }
-  }, [player.currentHp, opponent1.currentHp, isBattleOver, setIsBattleOver, addComment, setSoundEffect, handleScreenTransition, setActionInProgress]);
+  }, [player.currentHp, opponent1.currentHp, isBattleOver, isBattleStarted, setIsBattleOver, addComment, setSoundEffect, handleScreenTransition, setActionInProgress]);
 
   // Activate soso heal mode after 30 seconds
   useEffect(() => {

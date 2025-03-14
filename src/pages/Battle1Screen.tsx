@@ -4,6 +4,7 @@ import { useApp } from '@/context/AppContext';
 import CommentArea from '@/components/CommentArea';
 import CharacterSheet from '@/components/CharacterSheet';
 import AudioPlayer from '@/components/AudioPlayer';
+import BgmPlayer from '@/components/BgmPlayer';
 import { Volume2, VolumeX } from 'lucide-react';
 
 // Import the new components
@@ -47,6 +48,9 @@ const Battle1Screen: React.FC = () => {
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
       }}
     >
+      {/* BGM Player */}
+      <BgmPlayer src="/audios/battle.mp3" />
+      
       {/* Top section with title and timer */}
       <PlayerInfo 
         name={player.name} 
