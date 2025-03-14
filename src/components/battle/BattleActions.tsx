@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 
 interface BattleActionsProps {
   isPlayerTurn: boolean;
@@ -24,15 +24,24 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   const handleButtonAnimation = (e: React.MouseEvent<HTMLButtonElement>) => {
     const btn = e.currentTarget;
     btn.classList.remove('animate');
-    void btn.offsetWidth; // Reflowを起こし再アニメーション可能にする
+    void btn.offsetWidth; // Trigger reflow to enable re-animation
     btn.classList.add('animate');
-    setTimeout(() => btn.classList.remove('animate'), 700);
+    
+    // Use setTimeout to remove the animation class after it completes
+    setTimeout(() => {
+      if (btn) btn.classList.remove('animate');
+    }, 700);
   };
 
   // Combined click handler for animation and action
   const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>, action: () => void) => {
     handleButtonAnimation(e);
-    action();
+    
+    // Call the action after a slight delay to let the animation start
+    // This ensures the action is still called even if the animation is interrupted
+    setTimeout(() => {
+      action();
+    }, 50);
   };
 
   return (
