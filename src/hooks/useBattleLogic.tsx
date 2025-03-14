@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useUI } from '@/context/UIContext';
 import { useCharacter } from '@/context/CharacterContext';
 import { useBattle } from '@/context/BattleContext';
@@ -11,7 +11,7 @@ import {
   performOpponentAttack,
   performSosoHeal
 } from '@/utils/battleActions';
-import { handleVictory, handleDefeat } from '@/utils/battleResults';
+import { useBattleEffects } from './useBattleEffects';
 
 export const useBattleLogic = () => {
   const { handleScreenTransition } = useUI();
@@ -38,7 +38,7 @@ export const useBattleLogic = () => {
   const [isBattleStarted, setIsBattleStarted] = useState(false);
 
   // Initialize battle when component mounts
-  useEffect(() => {
+  useState(() => {
     clearComments();
     resetBattleTimer();
     startBattleTimer();
@@ -64,49 +64,53 @@ export const useBattleLogic = () => {
     setSosoHealMode(false);
     
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
+  });
+
+  // Define handler functions using useCallback to prevent unnecessary re-renders
+  const handleOpponentAttack = useCallback(() => {
+    if (isBattleOver) return;
     
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Handle opponent's turn
-  useEffect(() => {
-    if (!isPlayerTurn && isBattleStarted && !isBattleOver) {
-      const opponentTimer = setTimeout(() => {
-        if (sosoHealMode) {
-          handleSosoHeal();
-        } else {
-          handleOpponentAttack();
-        }
-      }, 1500);
-      
-      return () => clearTimeout(opponentTimer);
+    // Perform opponent attack
+    const result = performOpponentAttack(player, opponent1, addComment);
+    
+    setPlayer(result.updatedPlayer);
+    
+    // Start player's turn
+    if (result.endTurn) {
+      setIsPlayerTurn(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlayerTurn, isBattleStarted, isBattleOver, sosoHealMode]);
+  }, [player, opponent1, isBattleOver, addComment, setPlayer, setIsPlayerTurn]);
 
-  // Check for battle over conditions
-  useEffect(() => {
-    if ((player.currentHp <= 0 || opponent1.currentHp <= 0) && !isBattleOver) {
-      setIsBattleOver(true);
-      
-      if (player.currentHp <= 0) {
-        // Player lost
-        handleDefeat(addComment, setSoundEffect, handleScreenTransition);
-      } else if (opponent1.currentHp <= 0) {
-        // Player won
-        handleVictory(addComment, setSoundEffect, handleScreenTransition);
-      }
+  const handleSosoHeal = useCallback(() => {
+    if (isBattleOver) return;
+    
+    // Perform soso heal
+    const result = performSosoHeal(opponent1, addComment);
+    
+    setOpponent1(result.updatedOpponent);
+    
+    // Start player's turn
+    if (result.endTurn) {
+      setIsPlayerTurn(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [player.currentHp, opponent1.currentHp]);
+  }, [opponent1, isBattleOver, addComment, setOpponent1, setIsPlayerTurn]);
 
-  // Updated: Activate soso heal mode after 30 seconds
-  useEffect(() => {
-    if (battleTimer >= 30 && !sosoHealMode && !isBattleOver) {
-      setSosoHealMode(true);
-      addComment("システム", "そーそーのとくぎがはつどうした！", true);
-    }
-  }, [battleTimer, sosoHealMode, isBattleOver, addComment, setSosoHealMode]);
+  // Use our new custom hook for battle effects
+  useBattleEffects({
+    player,
+    opponent1,
+    battleTimer,
+    isPlayerTurn,
+    isBattleStarted,
+    isBattleOver,
+    sosoHealMode,
+    setSosoHealMode,
+    setIsBattleOver,
+    addComment,
+    setSoundEffect,
+    handleOpponentAttack,
+    handleSosoHeal
+  });
 
   // Handle player attack
   const handlePlayerAttack = () => {
@@ -185,36 +189,6 @@ export const useBattleLogic = () => {
     // End player's turn
     if (result.endTurn) {
       setIsPlayerTurn(false);
-    }
-  };
-
-  // Handle opponent's attack
-  const handleOpponentAttack = () => {
-    if (isBattleOver) return;
-    
-    // Perform opponent attack
-    const result = performOpponentAttack(player, opponent1, addComment);
-    
-    setPlayer(result.updatedPlayer);
-    
-    // Start player's turn
-    if (result.endTurn) {
-      setIsPlayerTurn(true);
-    }
-  };
-
-  // Handle soso heal
-  const handleSosoHeal = () => {
-    if (isBattleOver) return;
-    
-    // Perform soso heal
-    const result = performSosoHeal(opponent1, addComment);
-    
-    setOpponent1(result.updatedOpponent);
-    
-    // Start player's turn
-    if (result.endTurn) {
-      setIsPlayerTurn(true);
     }
   };
 
