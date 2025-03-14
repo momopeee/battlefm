@@ -12,46 +12,40 @@ const StartScreen = () => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Main image with fallback options
+  // Main image and fallback image paths
   const mainImagePath = '/lovable-uploads/a8179cdd-effe-4cd5-8294-5aefb2355108.png';
   const fallbackImagePath = '/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png';
   
-  const [imagePath, setImagePath] = useState(mainImagePath);
+  const [currentImage, setCurrentImage] = useState(mainImagePath);
   
   useEffect(() => {
-    // Reset states when trying a new image
+    // Reset loading states
     setIsLoading(true);
     setImageError(false);
     setImageLoaded(false);
     
-    // Create an image element to check if it loads successfully
-    const img = document.createElement('img');
-    img.src = imagePath;
+    // Create a new image element to check if it loads
+    const img = new Image();
+    img.src = currentImage;
     
     img.onload = () => {
-      console.log('Image loaded successfully:', imagePath);
+      console.log('Image loaded successfully:', currentImage);
       setImageLoaded(true);
       setIsLoading(false);
     };
     
-    img.onerror = (e) => {
-      console.error('Error loading image:', e);
+    img.onerror = () => {
+      console.error('Failed to load image:', currentImage);
       setImageError(true);
       setIsLoading(false);
       
-      // If main image fails, try fallback image
-      if (imagePath === mainImagePath) {
+      // If main image fails, try fallback
+      if (currentImage === mainImagePath) {
         console.log('Trying fallback image');
-        setImagePath(fallbackImagePath);
+        setCurrentImage(fallbackImagePath);
       }
     };
-    
-    return () => {
-      // Clean up
-      img.onload = null;
-      img.onerror = null;
-    };
-  }, [imagePath]);
+  }, [currentImage, mainImagePath, fallbackImagePath]);
   
   const handleStart = () => {
     handleScreenTransition('battle1');
@@ -60,7 +54,7 @@ const StartScreen = () => {
   
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black">
-      {/* Loading state */}
+      {/* Loading indicator */}
       {isLoading && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-white">
           <Loader size={48} className="animate-spin mb-4" />
@@ -68,25 +62,24 @@ const StartScreen = () => {
         </div>
       )}
       
-      {/* Error state with Image icon */}
-      {imageError && !isLoading && imagePath === fallbackImagePath && (
+      {/* Error message */}
+      {imageError && !isLoading && currentImage === fallbackImagePath && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-white">
           <ImageOff size={48} className="mb-4 text-red-500" />
           <p>画像を読み込めませんでした</p>
         </div>
       )}
       
-      {/* Background Image - only show when loaded */}
+      {/* Background image */}
       {imageLoaded && (
         <img 
-          src={imagePath}
+          src={currentImage}
           alt="Background"
           className="absolute inset-0 z-0 w-full h-full object-cover"
-          onLoad={() => console.log('Image rendered on screen')}
         />
       )}
       
-      {/* Start Button - show even if image failed */}
+      {/* Start button */}
       <div className="absolute inset-0 z-20 flex items-center justify-center">
         <Button
           onClick={handleStart}
