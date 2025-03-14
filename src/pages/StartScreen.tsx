@@ -36,6 +36,19 @@ const StartScreen = () => {
   
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+        style={{ 
+          backgroundImage: `url('/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png')`,
+          backgroundSize: 'cover',
+          opacity: 0.8 // Slightly dimmed to ensure text is readable
+        }}
+      ></div>
+      
+      {/* Overlay to improve text readability */}
+      <div className="absolute inset-0 bg-black bg-opacity-40 z-0"></div>
+      
       {/* Star Wars style scrolling text */}
       {showText && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden perspective">
