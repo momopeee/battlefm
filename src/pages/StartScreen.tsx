@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Play } from 'lucide-react';
+import { Play, Image, ImageOff, Loader } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
@@ -9,20 +9,47 @@ const StartScreen = () => {
   const { handleScreenTransition } = useApp();
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Use the newly provided image
-  const [imagePath] = useState('/lovable-uploads/a8179cdd-effe-4cd5-8294-5aefb2355108.png');
+  // Main image with fallback options
+  const mainImagePath = '/lovable-uploads/a8179cdd-effe-4cd5-8294-5aefb2355108.png';
+  const fallbackImagePath = '/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png';
+  
+  const [imagePath, setImagePath] = useState(mainImagePath);
   
   useEffect(() => {
+    // Reset states when trying a new image
+    setIsLoading(true);
+    setImageError(false);
+    setImageLoaded(false);
+    
     // Preload the image
     const img = new Image();
     img.src = imagePath;
+    
     img.onload = () => {
       console.log('Image loaded successfully:', imagePath);
       setImageLoaded(true);
+      setIsLoading(false);
     };
+    
     img.onerror = (e) => {
       console.error('Error loading image:', e);
+      setImageError(true);
+      setIsLoading(false);
+      
+      // If main image fails, try fallback image
+      if (imagePath === mainImagePath) {
+        console.log('Trying fallback image');
+        setImagePath(fallbackImagePath);
+      }
+    };
+    
+    return () => {
+      // Clean up
+      img.onload = null;
+      img.onerror = null;
     };
   }, [imagePath]);
   
@@ -33,16 +60,33 @@ const StartScreen = () => {
   
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black">
-      {/* Background Image - using img tag instead of background-image */}
-      <img 
-        src={imagePath}
-        alt="Background"
-        className="absolute inset-0 z-0 w-full h-full object-cover"
-        style={{ display: imageLoaded ? 'block' : 'none' }}
-        onLoad={() => console.log('Image rendered on screen')}
-      />
+      {/* Loading state */}
+      {isLoading && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-white">
+          <Loader size={48} className="animate-spin mb-4" />
+          <p>読み込み中...</p>
+        </div>
+      )}
       
-      {/* Start Button */}
+      {/* Error state with Image icon */}
+      {imageError && !isLoading && imagePath === fallbackImagePath && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black text-white">
+          <ImageOff size={48} className="mb-4 text-red-500" />
+          <p>画像を読み込めませんでした</p>
+        </div>
+      )}
+      
+      {/* Background Image - only show when loaded */}
+      {imageLoaded && (
+        <img 
+          src={imagePath}
+          alt="Background"
+          className="absolute inset-0 z-0 w-full h-full object-cover"
+          onLoad={() => console.log('Image rendered on screen')}
+        />
+      )}
+      
+      {/* Start Button - show even if image failed */}
       <div className="absolute inset-0 z-20 flex items-center justify-center">
         <Button
           onClick={handleStart}
