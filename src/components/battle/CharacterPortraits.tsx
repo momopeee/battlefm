@@ -31,7 +31,7 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
             <img 
               src={player.icon} 
               alt={player.name} 
-              className="w-11 h-11 rounded-full"
+              className="w-12 h-12 rounded-full"
             />
             <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
               {player.name.length > 5 ? `${player.name.substring(0, 5)}...` : player.name}
@@ -45,7 +45,7 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
             <img 
               src={opponent.icon} 
               alt={opponent.name} 
-              className="w-11 h-11 rounded-full"
+              className="w-12 h-12 rounded-full"
             />
             <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
               {opponent.name.length > 5 ? `${opponent.name.substring(0, 5)}...` : opponent.name}
@@ -64,7 +64,7 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
             <img 
               src={player.icon} 
               alt={player.name} 
-              className="w-11 h-11 rounded-full"
+              className="w-12 h-12 rounded-full"
             />
             <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
               {player.name.length > 5 ? `${player.name.substring(0, 5)}...` : player.name}
@@ -78,7 +78,7 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
             <img 
               src={opponent.icon} 
               alt={opponent.name} 
-              className="w-11 h-11 rounded-full"
+              className="w-12 h-12 rounded-full"
             />
             <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
               {opponent.name.length > 5 ? `${opponent.name.substring(0, 5)}...` : opponent.name}
@@ -89,7 +89,7 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
             <img 
               src="/lovable-uploads/a9d33020-6655-47eb-919f-1417c213722e.png" 
               alt="ラムダ" 
-              className="w-11 h-11 rounded-full"
+              className="w-12 h-12 rounded-full"
             />
             <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
               ラムダ
@@ -100,7 +100,7 @@ const CharacterPortraits: React.FC<CharacterPortraitsProps> = ({
             <img 
               src="/lovable-uploads/ecbf0b74-7dad-4ec2-bdf6-1ec0a1bed255.png" 
               alt="松嶋こと" 
-              className="w-11 h-11 rounded-full"
+              className="w-12 h-12 rounded-full"
             />
             <span className="font-bold mt-1 truncate w-20 text-center text-[10px]">
               松嶋こと
