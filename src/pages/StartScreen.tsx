@@ -36,11 +36,15 @@ const StartScreen = () => {
   
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
-      {/* Background Image - Fixed approach with img tag */}
-      <img 
-        src="/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png"
-        alt="Background"
-        className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 z-0"
+        style={{ 
+          backgroundImage: `url('/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.7
+        }}
       />
       
       {/* Dark overlay for better text readability */}
@@ -107,7 +111,7 @@ const StartScreen = () => {
         </div>
       )}
       
-      {/* BGM Toggle Button - Increased z-index */}
+      {/* BGM Toggle Button */}
       <button
         onClick={toggleBgm}
         className="absolute top-6 right-6 z-30 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
@@ -115,7 +119,7 @@ const StartScreen = () => {
         {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
       
-      {/* Skip Button - Increased z-index */}
+      {/* Skip Button */}
       <Button
         onClick={handleSkip}
         className="absolute bottom-8 right-6 z-30 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white flex items-center gap-2"
