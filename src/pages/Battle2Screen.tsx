@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -45,6 +44,9 @@ const Battle2Screen: React.FC = () => {
   const [attackInProgress, setAttackInProgress] = useState(false);
   const [soundEffect, setSoundEffect] = useState<string | null>(null);
   const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
+  const [yujiInSpecialMode, setYujiInSpecialMode] = useState(false);
+  const [specialModeTimer, setSpecialModeTimer] = useState(0);
+  const [specialModeActive, setSpecialModeActive] = useState(false);
   
   // Reset battle state on component mount
   useEffect(() => {
@@ -53,6 +55,10 @@ const Battle2Screen: React.FC = () => {
     setOpponentHp(opponent2.currentHp);
     setAttackCount(0);
     setSpecialAttackAvailable(false);
+    setYujiSpecialMode(false);
+    setYujiInSpecialMode(false);
+    setSpecialModeTimer(0);
+    setSpecialModeActive(false);
     
     // Initial system message
     setTimeout(() => {
@@ -61,10 +67,103 @@ const Battle2Screen: React.FC = () => {
     }, 1000);
   }, []);
   
+  // Yuji's attack comments
+  const yujiAttackComments = [
+    "しいたけ しか勝たん！！俺はしいたけ占いしか信じてないんすよ～",
+    "年収1000万目指します、まじで",
+    "「やればやるほど、楽しくなっていく」今まさにそんな状態！",
+    "佐川の集荷呼ぶだけでこんなに難しいなんて・・・",
+    "僕は常にかゆいところに手が届く存在でありたい",
+    "2025年以降の目標を立てて、めっちゃワクワクした！",
+    "今日の予定？タイミー"
+  ];
+  
+  // Victory comments array
+  const victoryComments = [
+    "とおるが勝利した、ゆうじは拗ねてタムタムにLINEをした",
+    "タムタムからの返事がない、ゆうじはリコさんにLINEをした",
+    "リコさんからの返事がない",
+    "ゆうじは殻に閉じこもってしまった",
+    "その後、風のうわさでゆうじが米国大統領に当選したと聞いた",
+    "とおるはゆうじを倒した。",
+    "でも本当は、ゆうじを倒したくなかった。",
+    "永遠にゆうじとの戯れをつづけたかった。",
+    "だが、とおるはゆうじを倒してしまった。",
+    "この戦いに勝利者はいない",
+    "とおるは一人涙して、今日もハイボールを飲む、とおるの心に7兆のダメージ"
+  ];
+  
+  // Defeat comments array
+  const defeatComments = [
+    "とおるが敗北した、ゆうじは調子にのってしまった",
+    "とおるは5億の経験値を得た",
+    "とおるは敗北からも学べる男だった",
+    "とおるはレベルが7000上がった",
+    "だが、ゆうじはどんどん悪い方向に成長した",
+    "とおるは危機感を覚えた",
+    "あの時俺が本気でぶん殴って目を覚まさせてやればこんなことには・・・",
+    "とおるは悔やんだ、そしてハイボールを飲んだ",
+    "夜空に輝く星の瞬きが、今日だけはいつもよりも多く感じた"
+  ];
+  
   // Handle character sheet display
   const handleCharacterClick = (character: 'player' | 'opponent1' | 'opponent2') => {
     setCurrentCharacterSheet(character);
     setShowCharacterSheet(true);
+  };
+  
+  // Check for Yuji's special mode activation
+  useEffect(() => {
+    if (opponentHp <= 30 && !yujiInSpecialMode && !isBattleOver && !specialModeActive) {
+      // Activate Yuji's special mode
+      activateYujiSpecialMode();
+    }
+  }, [opponentHp, yujiInSpecialMode, isBattleOver, specialModeActive]);
+  
+  // Manage Yuji's special mode timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    
+    if (specialModeActive && !isBattleOver) {
+      interval = setInterval(() => {
+        setSpecialModeTimer(prev => {
+          const newTime = prev + 1;
+          if (newTime >= 40) {
+            // End special mode after 40 seconds
+            setSpecialModeActive(false);
+            addComment('システム', 'ゆうじ確変モードが終了した', true);
+            return 0;
+          }
+          return newTime;
+        });
+      }, 1000);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [specialModeActive, isBattleOver]);
+  
+  // Activate Yuji's special mode
+  const activateYujiSpecialMode = () => {
+    setYujiInSpecialMode(true);
+    setYujiSpecialMode(true);
+    
+    addComment('ゆうじ', 'もう一回デザフェス出るから、みんなお金で応援して！！お願い！！');
+    
+    setTimeout(() => {
+      addComment('システム', 'ゆうじはクラウドファンディングを発動した', true);
+      addComment('システム', 'ゆうじのHPゲージが満タンになった', true);
+      
+      // Restore Yuji's HP
+      setOpponentHp(opponent2.maxHp);
+      
+      setTimeout(() => {
+        addComment('システム', 'ゆうじ確変モードに突入', true);
+        addComment('システム', 'ゆうじは特性「のれんに腕押し」を発動した', true);
+        setSpecialModeActive(true);
+      }, 1000);
+    }, 1000);
   };
   
   // Player attack function
@@ -81,7 +180,13 @@ const Battle2Screen: React.FC = () => {
     
     // Apply damage with delay for animation
     setTimeout(() => {
-      setOpponentHp(Math.max(0, opponentHp - damage));
+      // Check if Yuji is in special mode
+      if (specialModeActive) {
+        addComment('システム', 'ゆうじはのれんに腕押しを発動した。とおるの言葉は響かない。ゆうじは0ダメージを受けた。', true);
+      } else {
+        setOpponentHp(Math.max(0, opponentHp - damage));
+        addComment('とおる', `経営参謀として的確な分析攻撃！ ${damage}ポイントのダメージ！`);
+      }
       
       // Update attack count for special meter
       const newAttackCount = attackCount + 1;
@@ -90,11 +195,8 @@ const Battle2Screen: React.FC = () => {
         setSpecialAttackAvailable(true);
       }
       
-      // Add battle comments
-      addComment('とおる', `経営参謀として的確な分析攻撃！ ${damage}ポイントのダメージ！`);
-      
       // Check if opponent defeated
-      if (opponentHp - damage <= 0) {
+      if (opponentHp - damage <= 0 && !specialModeActive) {
         handleVictory();
       } else {
         // Enemy turn
@@ -120,13 +222,16 @@ const Battle2Screen: React.FC = () => {
     const damage = player.specialPower;
     
     setTimeout(() => {
-      setOpponentHp(Math.max(0, opponentHp - damage));
-      
-      // Add battle comments
-      addComment('とおる', `特殊技『経営分析』発動！相手の弱点を突く！ ${damage}ポイントの大ダメージ！`);
+      // Check if Yuji is in special mode
+      if (specialModeActive) {
+        addComment('システム', 'ゆうじはのれんに腕押しを発動した。とおるの言葉は響かない。ゆうじは0ダメージを受けた。', true);
+      } else {
+        setOpponentHp(Math.max(0, opponentHp - damage));
+        addComment('とおる', `特殊技『経営分析』発動！相手の弱点を突く！ ${damage}ポイントの大ダメージ！`);
+      }
       
       // Check if opponent defeated
-      if (opponentHp - damage <= 0) {
+      if (opponentHp - damage <= 0 && !specialModeActive) {
         handleVictory();
       } else {
         // Enemy turn
@@ -145,18 +250,21 @@ const Battle2Screen: React.FC = () => {
     
     setAttackInProgress(true);
     
-    // Special attack if HP is low
-    if (opponentHp < opponent2.maxHp * 0.3 && !yujiSpecialMode) {
+    // Special attack if in special mode
+    if (specialModeActive) {
       setSoundEffect('/audios/enemy_special.mp3');
-      setYujiSpecialMode(true);
       
-      addComment('ゆうじ', '陽気なおじさんスペシャル！おじさんトークタイム！');
+      // Get random attack comment
+      const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
+      addComment('ゆうじ', attackComment);
+      
+      // Calculate special mode damage (higher)
+      const damage = Math.floor(Math.random() * (opponent2.attackMax + 10 - opponent2.attackMin) + opponent2.attackMin);
       
       setTimeout(() => {
-        const damage = opponent2.specialPower;
         setPlayerHp(Math.max(0, playerHp - damage));
         
-        addComment('ゆうじ', '「私のウェディングプランナーとしての経験からいうと〜」');
+        addComment('システム', `確変モード中！ゆうじの言葉が突き刺さる！ ${damage}ポイントの大ダメージ！`, true);
         
         // Check if player defeated
         if (playerHp - damage <= 0) {
@@ -168,10 +276,20 @@ const Battle2Screen: React.FC = () => {
             setAttackInProgress(false);
           }, 1000);
         }
-      }, 1500);
+      }, 500);
+    } else if (opponentHp < opponent2.maxHp * 0.3 && !yujiInSpecialMode) {
+      // This would be for first activation, but we already handle it in useEffect
+      // Keeping this condition branch for clarity
+      setTimeout(() => {
+        setIsPlayerTurn(true);
+        setAttackInProgress(false);
+      }, 1000);
     } else {
       // Regular attack
       setSoundEffect('/audios/enemy_attack.mp3');
+      
+      // Get random attack comment
+      const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
       
       // Calculate damage
       const min = opponent2.attackMin;
@@ -181,7 +299,8 @@ const Battle2Screen: React.FC = () => {
       setTimeout(() => {
         setPlayerHp(Math.max(0, playerHp - damage));
         
-        addComment('ゆうじ', `陽気な営業トーク攻撃！ ${damage}ポイントのダメージ！`);
+        addComment('ゆうじ', attackComment);
+        addComment('システム', `ゆうじの陽気なトークが突き刺さる！ ${damage}ポイントのダメージ！`, true);
         
         // Check if player defeated
         if (playerHp - damage <= 0) {
@@ -219,37 +338,59 @@ const Battle2Screen: React.FC = () => {
     }, 1000);
   };
   
+  // Display victory comments sequentially
+  const showVictoryComments = () => {
+    victoryComments.forEach((comment, index) => {
+      setTimeout(() => {
+        addComment('システム', comment, true);
+        
+        // After all comments are shown, transition to ending
+        if (index === victoryComments.length - 1) {
+          setTimeout(() => {
+            navigate('/endingA');
+          }, 3000);
+        }
+      }, index * 3000); // Show each comment with a 3-second delay
+    });
+  };
+  
+  // Display defeat comments sequentially
+  const showDefeatComments = () => {
+    defeatComments.forEach((comment, index) => {
+      setTimeout(() => {
+        addComment('システム', comment, true);
+        
+        // After all comments are shown, transition to ending
+        if (index === defeatComments.length - 1) {
+          setTimeout(() => {
+            navigate('/endingC');
+          }, 3000);
+        }
+      }, index * 3000); // Show each comment with a 3-second delay
+    });
+  };
+  
   // Handle victory
   const handleVictory = () => {
     setIsBattleOver(true);
     setBattleResult('victory');
-    addComment('システム', 'とおるの勝利！マネージャー面接に合格しました！', true);
-    addComment('ゆうじ', 'おー！すごいすごい！やまにぃのマネージャーにピッタリだね！');
-    
-    // Navigate to ending
-    setTimeout(() => {
-      navigate('/endingA');
-    }, 15000);
+    setSoundEffect('/audios/syouri.mp3');
+    showVictoryComments();
   };
   
   // Handle defeat
   const handleDefeat = () => {
     setIsBattleOver(true);
     setBattleResult('defeat');
-    addComment('システム', 'とおるの敗北...マネージャー面接に落ちました...', true);
-    addComment('ゆうじ', 'うーん、残念！もう少し接客スキルを磨こう！また挑戦してね！');
-    
-    // Navigate to ending
-    setTimeout(() => {
-      navigate('/endingB');
-    }, 15000);
+    setSoundEffect('/audios/orehamou.mp3');
+    showDefeatComments();
   };
   
   // Check for battle end conditions
   useEffect(() => {
     if (playerHp <= 0 && !isBattleOver) {
       handleDefeat();
-    } else if (opponentHp <= 0 && !isBattleOver) {
+    } else if (opponentHp <= 0 && !specialModeActive && !isBattleOver) {
       handleVictory();
     }
   }, [playerHp, opponentHp]);
@@ -286,6 +427,15 @@ const Battle2Screen: React.FC = () => {
         onCharacterClick={handleCharacterClick}
         sosoHealMode={false}
       />
+      
+      {/* Yuji special mode indicator */}
+      {specialModeActive && (
+        <div className="absolute top-1/4 left-0 right-0 flex justify-center">
+          <div className="animate-pulse text-yellow-300 text-xl font-bold bg-black/50 px-4 py-2 rounded-full">
+            ゆうじ確変中！
+          </div>
+        </div>
+      )}
       
       {/* Comments area with fixed height */}
       <div className="flex-1 mb-2 h-[25vh] overflow-hidden">
