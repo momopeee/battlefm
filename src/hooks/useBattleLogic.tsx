@@ -127,13 +127,13 @@ export const useBattleLogic = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.currentHp, opponent1.currentHp]);
 
-  // Updated: Activate soso heal mode after 30 seconds
+  // Updated: Activate soso heal mode when HP falls below 20 (changed from timer-based)
   useEffect(() => {
-    if (battleTimer >= 30 && !sosoHealMode && !isBattleOver) {
+    if (opponent1.currentHp <= 20 && !sosoHealMode && !isBattleOver) {
       setSosoHealMode(true);
-      addComment("システム", "そーそーのとくぎがはつどうした！", true);
+      addComment("システム", "そーそーがとくぎ「強制コラボ召喚」を発動した", true);
     }
-  }, [battleTimer, sosoHealMode, isBattleOver, addComment]);
+  }, [opponent1.currentHp, sosoHealMode, isBattleOver, addComment]);
 
   // Handle player attack - damage range 15-30
   const handlePlayerAttack = () => {
@@ -202,7 +202,7 @@ export const useBattleLogic = () => {
     
     // Add attack comments
     addComment(player.name, specialComment);
-    addComment("システム", `とおるのとくぎ！そー���ーは${damage}のダメージを受けた！`, true);
+    addComment("システム", `とおるのとくぎ！そーそーは${damage}のダメージを受けた！`, true);
     
     // Apply damage to opponent
     setOpponent1({
@@ -305,13 +305,14 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(true);
   };
 
-  // Handle soso heal with fixed 10 points
+  // Handle soso heal with fixed 10 points and updated comments
   const handleSosoHeal = () => {
     if (isBattleOver) return;
     
     // Add heal comments
-    addComment(opponent1.name, "あー、生きるってむずかしいんだよなー、株クラのみんな上がってきてよ");
-    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した。そーそーの体力が10回復した", true);
+    addComment(opponent1.name, "あー、生きるのってむずかしいんだよなー、株クラのみんなも上がろうよ");
+    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した", true);
+    addComment("システム", "そーそーの体力が10回復した", true);
     
     // Heal opponent - fixed at 10 points
     setOpponent1({
@@ -401,4 +402,3 @@ export const useBattleLogic = () => {
     setShowCharacterSheet
   };
 };
-
