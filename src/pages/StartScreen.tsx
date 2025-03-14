@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Play, Image, ImageOff, Loader } from 'lucide-react';
+import { Play, ImageOff, Loader } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
@@ -24,8 +24,8 @@ const StartScreen = () => {
     setImageError(false);
     setImageLoaded(false);
     
-    // Preload the image
-    const img = new Image();
+    // Create an image element to check if it loads successfully
+    const img = document.createElement('img');
     img.src = imagePath;
     
     img.onload = () => {
