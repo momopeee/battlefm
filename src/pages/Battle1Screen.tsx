@@ -21,7 +21,6 @@ const Battle1Screen: React.FC = () => {
     opponent1,
     battleTimer,
     isBattleOver,
-    soundEffect,
     isPlayerTurn,
     attackCount,
     sosoHealMode,
@@ -107,9 +106,6 @@ const Battle1Screen: React.FC = () => {
           onClose={() => setShowCharacterSheet(false)} 
         />
       )}
-      
-      {/* Audio Player */}
-      {soundEffect && <AudioPlayer src={soundEffect} />}
     </div>
   );
 };
