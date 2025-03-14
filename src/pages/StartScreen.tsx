@@ -4,6 +4,7 @@ import { Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
+import AudioPlayer from '@/components/AudioPlayer';
 
 const StartScreen = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
@@ -51,6 +52,9 @@ const StartScreen = () => {
   
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
+      {/* BGM Audio Player */}
+      <AudioPlayer src="/audios/opening.mp3" loop autoPlay />
+      
       {/* Background Image */}
       <img 
         src={backgroundImageUrl}
