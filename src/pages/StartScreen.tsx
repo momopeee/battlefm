@@ -37,14 +37,10 @@ const StartScreen = () => {
   return (
     <div className="relative min-h-screen overflow-hidden bg-black">
       {/* Background Image */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{ 
-          backgroundImage: `url('/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.7
-        }}
+      <img 
+        src="/lovable-uploads/13d9ebbc-9b40-4be2-87e7-16edd82b1ec8.png"
+        alt="Background"
+        className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
       />
       
       {/* Dark overlay for better text readability */}
