@@ -4,6 +4,7 @@ import React from 'react';
 interface BattleActionsProps {
   isPlayerTurn: boolean;
   isBattleOver: boolean;
+  actionInProgress: boolean;
   specialAttackAvailable: boolean;
   onAttack: () => void;
   onSpecial: () => void;
@@ -14,6 +15,7 @@ interface BattleActionsProps {
 const BattleActions: React.FC<BattleActionsProps> = ({
   isPlayerTurn,
   isBattleOver,
+  actionInProgress,
   specialAttackAvailable,
   onAttack,
   onSpecial,
@@ -38,56 +40,59 @@ const BattleActions: React.FC<BattleActionsProps> = ({
     }, 700);
   };
 
+  // All buttons should be disabled when action is in progress
+  const buttonsDisabled = !isPlayerTurn || isBattleOver || actionInProgress;
+
   return (
     <div className="grid grid-cols-4 gap-2 mb-2">
       <button 
         onClick={(e) => {
-          if (isPlayerTurn && !isBattleOver) {
+          if (isPlayerTurn && !isBattleOver && !actionInProgress) {
             handleButtonAnimation(e);
             onAttack();
           }
         }} 
-        disabled={!isPlayerTurn || isBattleOver}
-        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
+        disabled={buttonsDisabled}
+        className={`battle-action-button text-xs whitespace-nowrap ${buttonsDisabled ? 'opacity-60' : ''}`}
       >
         こうげき
       </button>
       
       <button 
         onClick={(e) => {
-          if (isPlayerTurn && !isBattleOver && specialAttackAvailable) {
+          if (isPlayerTurn && !isBattleOver && !actionInProgress && specialAttackAvailable) {
             handleButtonAnimation(e);
             onSpecial();
           }
         }} 
-        disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''} ${specialAttackAvailable ? 'bg-pink-500 hover:bg-pink-600' : ''}`}
+        disabled={buttonsDisabled || !specialAttackAvailable}
+        className={`battle-action-button text-xs whitespace-nowrap ${buttonsDisabled || !specialAttackAvailable ? 'opacity-60' : ''} ${specialAttackAvailable ? 'bg-pink-500 hover:bg-pink-600' : ''}`}
       >
         とくぎ
       </button>
       
       <button 
         onClick={(e) => {
-          if (isPlayerTurn && !isBattleOver) {
+          if (isPlayerTurn && !isBattleOver && !actionInProgress) {
             handleButtonAnimation(e);
             onRunAway();
           }
         }} 
-        disabled={!isPlayerTurn || isBattleOver}
-        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
+        disabled={buttonsDisabled}
+        className={`battle-action-button text-xs whitespace-nowrap ${buttonsDisabled ? 'opacity-60' : ''}`}
       >
         にげる
       </button>
       
       <button 
         onClick={(e) => {
-          if (isPlayerTurn && !isBattleOver) {
+          if (isPlayerTurn && !isBattleOver && !actionInProgress) {
             handleButtonAnimation(e);
             onHighball();
           }
         }} 
-        disabled={!isPlayerTurn || isBattleOver}
-        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
+        disabled={buttonsDisabled}
+        className={`battle-action-button text-xs whitespace-nowrap ${buttonsDisabled ? 'opacity-60' : ''}`}
       >
         ハイボール
       </button>

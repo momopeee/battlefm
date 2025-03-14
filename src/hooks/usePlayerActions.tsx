@@ -78,8 +78,8 @@ export const usePlayerActions = ({
     setTimeout(() => {
       if (result.endTurn) {
         setIsPlayerTurn(false);
+        // We don't reset actionInProgress here as opponent's turn will follow
       } else {
-        // If turn doesn't end, make sure to reset actionInProgress
         setActionInProgress(false);
       }
     }, 800);
@@ -122,8 +122,8 @@ export const usePlayerActions = ({
     setTimeout(() => {
       if (result.endTurn) {
         setIsPlayerTurn(false);
+        // We don't reset actionInProgress here as opponent's turn will follow
       } else {
-        // If turn doesn't end, make sure to reset actionInProgress
         setActionInProgress(false);
       }
     }, 800);
@@ -158,8 +158,8 @@ export const usePlayerActions = ({
     setTimeout(() => {
       if (result.endTurn) {
         setIsPlayerTurn(false);
+        // We don't reset actionInProgress here as opponent's turn will follow
       } else {
-        // If turn doesn't end, make sure to reset actionInProgress
         setActionInProgress(false);
       }
     }, 800);
@@ -191,8 +191,8 @@ export const usePlayerActions = ({
     setTimeout(() => {
       if (result.endTurn) {
         setIsPlayerTurn(false);
+        // We don't reset actionInProgress here as opponent's turn will follow
       } else {
-        // If turn doesn't end, make sure to reset actionInProgress
         setActionInProgress(false);
       }
     }, 800);

@@ -46,7 +46,8 @@ export const useBattleEffects = ({
     let opponentTimer: NodeJS.Timeout;
     
     if (!isPlayerTurn && isBattleStarted && !isBattleOver && !actionInProgress) {
-      setActionInProgress(true); // Immediately set action in progress
+      // Immediately set action in progress to prevent multiple actions
+      setActionInProgress(true);
       
       opponentTimer = setTimeout(() => {
         if (sosoHealMode) {
@@ -54,7 +55,9 @@ export const useBattleEffects = ({
         } else {
           handleOpponentAttack();
         }
-      }, 1000);
+        // The action in progress flag will be reset after opponent completes their action
+        // in handleOpponentAttack or handleSosoHeal
+      }, 1200);
       
       return () => clearTimeout(opponentTimer);
     }

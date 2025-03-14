@@ -35,7 +35,8 @@ const Battle1Screen: React.FC = () => {
     handleCharacterClick,
     showCharacterSheet,
     currentCharacterSheet,
-    setShowCharacterSheet
+    setShowCharacterSheet,
+    actionInProgress
   } = useBattleLogic();
 
   return (
@@ -85,6 +86,7 @@ const Battle1Screen: React.FC = () => {
         <BattleActions 
           isPlayerTurn={isPlayerTurn}
           isBattleOver={isBattleOver}
+          actionInProgress={actionInProgress}
           specialAttackAvailable={specialAttackAvailable}
           onAttack={handlePlayerAttack}
           onSpecial={handlePlayerSpecial}

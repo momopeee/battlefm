@@ -63,8 +63,8 @@ export const useBattleLogic = () => {
     
     setTimeout(() => {
       setIsPlayerTurn(true);
-      setActionInProgress(false);
-    }, 800);
+      setActionInProgress(false); // Important: reset action flag after opponent's turn
+    }, 1000);
   }, [player, opponent1, isBattleOver, addComment, setPlayer, setIsPlayerTurn, setActionInProgress]);
 
   // Handle soso heal logic
@@ -77,8 +77,8 @@ export const useBattleLogic = () => {
     
     setTimeout(() => {
       setIsPlayerTurn(true);
-      setActionInProgress(false);
-    }, 800);
+      setActionInProgress(false); // Important: reset action flag after opponent's turn
+    }, 1000);
   }, [opponent1, isBattleOver, addComment, setOpponent1, setIsPlayerTurn, setActionInProgress]);
 
   // Apply battle effects (opponent turn, battle over check, soso heal mode)
@@ -151,6 +151,6 @@ export const useBattleLogic = () => {
     handleHighball,
     handleCharacterClick,
     setShowCharacterSheet,
-    actionInProgress // Export this to BattleActions if needed
+    actionInProgress
   };
 };
