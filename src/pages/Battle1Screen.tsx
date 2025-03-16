@@ -3,7 +3,8 @@ import React from 'react';
 import { useApp } from '@/context/AppContext';
 import CommentArea from '@/components/CommentArea';
 import CharacterSheet from '@/components/CharacterSheet';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, SkipForward } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 // Import the new components
 import PlayerInfo from '@/components/battle/PlayerInfo';
@@ -32,12 +33,13 @@ const Battle1Screen: React.FC = () => {
     handleCharacterClick,
     showCharacterSheet,
     currentCharacterSheet,
-    setShowCharacterSheet
+    setShowCharacterSheet,
+    handleSkip
   } = useBattleLogic();
 
   return (
     <div 
-      className="min-h-screen flex flex-col h-screen p-4 text-white"
+      className="min-h-screen flex flex-col h-screen p-4 text-white relative"
       style={{ 
         background: 'linear-gradient(180deg, rgba(212, 50, 144, 1), rgba(119, 3, 175, 1))',
         backgroundSize: 'cover',
@@ -89,6 +91,17 @@ const Battle1Screen: React.FC = () => {
         {/* Comment input - always at bottom */}
         <CommentInput />
       </div>
+      
+      {/* Skip Button - Only shown when battle is over */}
+      {isBattleOver && (
+        <Button
+          onClick={handleSkip}
+          className="fixed bottom-20 right-6 z-20 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-md animate-pulse flex items-center gap-2"
+        >
+          <SkipForward size={20} />
+          スキップ
+        </Button>
+      )}
       
       {/* BGM Toggle Button */}
       <button

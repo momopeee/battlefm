@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useApp, Character } from '@/context/AppContext';
 
@@ -63,6 +64,7 @@ export const useBattleLogic = () => {
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleStarted, setIsBattleStarted] = useState(false);
   const [transitionScheduled, setTransitionScheduled] = useState(false);
+  const [isPlayerVictory, setIsPlayerVictory] = useState<boolean | null>(null);
 
   // Initialize battle when component mounts
   useEffect(() => {
@@ -90,6 +92,7 @@ export const useBattleLogic = () => {
     setHighballMode(false);
     setSosoHealMode(false);
     setTransitionScheduled(false);
+    setIsPlayerVictory(null);
     
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
     
@@ -119,9 +122,11 @@ export const useBattleLogic = () => {
       
       if (player.currentHp <= 0) {
         // Player lost
+        setIsPlayerVictory(false);
         handleDefeat();
       } else if (opponent1.currentHp <= 0) {
         // Player won
+        setIsPlayerVictory(true);
         handleVictory();
       }
     }
@@ -135,6 +140,23 @@ export const useBattleLogic = () => {
       addComment("システム", "そーそーがとくぎ「強制コラボ召喚」を発動した", true);
     }
   }, [opponent1.currentHp, sosoHealMode, isBattleOver, addComment]);
+
+  // Skip to the appropriate ending screen
+  const handleSkip = () => {
+    if (!isBattleOver) return;
+    
+    // Cancel any pending timers/transitions
+    setTransitionScheduled(true);
+    
+    // Transition to the appropriate screen based on battle outcome
+    if (isPlayerVictory === true) {
+      console.log("Skipping to victory1 screen");
+      handleScreenTransition('victory1');
+    } else if (isPlayerVictory === false) {
+      console.log("Skipping to endingB screen");
+      handleScreenTransition('endingB');
+    }
+  };
 
   // Handle player attack - damage range 15-30
   const handlePlayerAttack = () => {
@@ -353,8 +375,10 @@ export const useBattleLogic = () => {
       
       // 5秒後に勝利画面へ遷移
       setTimeout(() => {
-        console.log("Executing victory transition now to victory1");
-        handleScreenTransition('victory1');
+        if (!transitionScheduled) {
+          console.log("Executing victory transition now to victory1");
+          handleScreenTransition('victory1');
+        }
       }, 5000);
     }, 12000);
   };
@@ -393,8 +417,10 @@ export const useBattleLogic = () => {
         
         // さらに5秒後に敗北画面へ遷移
         setTimeout(() => {
-          console.log("Executing defeat transition now to endingB");
-          handleScreenTransition('endingB');
+          if (!transitionScheduled) {
+            console.log("Executing defeat transition now to endingB");
+            handleScreenTransition('endingB');
+          }
         }, 5000);
       }, 3000);
     }, 15000);
@@ -424,6 +450,7 @@ export const useBattleLogic = () => {
     handleRunAway,
     handleHighball,
     handleCharacterClick,
-    setShowCharacterSheet
+    setShowCharacterSheet,
+    handleSkip
   };
 };
