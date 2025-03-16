@@ -1,9 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
-import { Volume2, VolumeX, Trophy, Star } from 'lucide-react';
+import { Volume2, VolumeX, Trophy, Star, Home, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const Victory1Screen: React.FC = () => {
   const { 
@@ -12,7 +13,8 @@ const Victory1Screen: React.FC = () => {
     handleScreenTransition,
     player
   } = useApp();
-
+  
+  const navigate = useNavigate();
   const [showConfetti, setShowConfetti] = useState(true);
   
   useEffect(() => {
@@ -32,6 +34,12 @@ const Victory1Screen: React.FC = () => {
 
   const handleContinue = () => {
     handleScreenTransition('select');
+    navigate('/select');
+  };
+  
+  const handleReturnToStart = () => {
+    handleScreenTransition('start');
+    navigate('/start');
   };
 
   return (
@@ -62,12 +70,30 @@ const Victory1Screen: React.FC = () => {
         </div>
       )}
       
-      {/* Victory header */}
-      <div className="w-full flex justify-center pt-8">
+      {/* Victory header with return to start button */}
+      <div className="w-full flex justify-between items-center pt-8 px-6">
+        <Button
+          variant="outline"
+          className="bg-purple-700/50 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 text-white border-purple-500 hover:bg-purple-600/60"
+          onClick={handleReturnToStart}
+        >
+          <Home className="text-yellow-400" size={20} />
+          <span>スタートに戻る</span>
+        </Button>
+        
         <div className="bg-purple-700/50 backdrop-blur-sm rounded-full px-8 py-4 flex items-center gap-3 animate-bounce shadow-lg">
           <Trophy className="text-yellow-400" size={32} />
           <h1 className="text-3xl font-bold text-white">勝利</h1>
         </div>
+        
+        {/* Close button */}
+        <Button
+          variant="outline"
+          className="bg-purple-700/50 backdrop-blur-sm rounded-full p-3 flex items-center justify-center text-white border-purple-500 hover:bg-purple-600/60"
+          onClick={handleContinue}
+        >
+          <X size={24} />
+        </Button>
       </div>
       
       {/* Main content */}
@@ -137,7 +163,8 @@ const Victory1Screen: React.FC = () => {
       </button>
       
       {/* CSS for confetti animation */}
-      <style jsx>{`
+      <style>
+        {`
         @keyframes fall {
           to {
             transform: translateY(100vh);
@@ -156,7 +183,8 @@ const Victory1Screen: React.FC = () => {
           border-radius: 0;
           transform-origin: center;
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
