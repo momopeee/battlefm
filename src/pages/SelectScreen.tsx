@@ -14,10 +14,15 @@ const SelectScreen: React.FC = () => {
   const [assaultAlarm, setAssaultAlarm] = useState(false);
   const [showBottomMenu, setShowBottomMenu] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([]);
   
   useEffect(() => {
     // Reset any game state for the next battle
-  }, []);
+    return () => {
+      // Clear all timeouts when component unmounts
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
+  }, [timeouts]);
   
   const handleSelectClick = () => {
     // Start assault mode sequence
@@ -25,20 +30,22 @@ const SelectScreen: React.FC = () => {
     setAssaultAlarm(true);
     
     // Play alarm for 3 seconds, then show scrolling text
-    setTimeout(() => {
+    const alarmTimeout = setTimeout(() => {
       setAssaultAlarm(false);
       setAssaultText(true);
     }, 3000);
     
     // Move to battle2 after 15 seconds total
-    setTimeout(() => {
+    const battleTimeout = setTimeout(() => {
       handleScreenTransition('battle2');
     }, 15000);
+    
+    setTimeouts(prev => [...prev, alarmTimeout, battleTimeout]);
   };
 
   const handleSkip = () => {
     // Clear any existing timeouts
-    clearTimeout();
+    timeouts.forEach(timeout => clearTimeout(timeout));
     // Skip directly to battle2
     handleScreenTransition('battle2');
     navigate('/battle2');
@@ -49,9 +56,11 @@ const SelectScreen: React.FC = () => {
     setShowWarning(true);
     
     // Hide warning after 3 seconds
-    setTimeout(() => {
+    const warningTimeout = setTimeout(() => {
       setShowWarning(false);
     }, 3000);
+    
+    setTimeouts(prev => [...prev, warningTimeout]);
   };
   
   return (

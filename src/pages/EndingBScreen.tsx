@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { useApp } from '@/context/AppContext';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, RefreshCw, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const EndingBScreen: React.FC = () => {
   const { 
@@ -11,6 +12,7 @@ const EndingBScreen: React.FC = () => {
   } = useApp();
 
   const handleRetry = () => {
+    // バトル1の敗北エンドなので、バトル1に戻す
     handleScreenTransition('battle1');
   };
 
@@ -40,19 +42,21 @@ const EndingBScreen: React.FC = () => {
         </p>
         
         <div className="space-y-4">
-          <button
+          <Button
             onClick={handleRetry}
-            className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors"
+            className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
           >
+            <RefreshCw size={20} />
             もう一度戦う
-          </button>
+          </Button>
           
-          <button
+          <Button
             onClick={handleBackToStart}
-            className="w-full bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md font-bold transition-colors"
+            className="w-full bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
           >
+            <Home size={20} />
             スタート画面に戻る
-          </button>
+          </Button>
         </div>
       </div>
       
