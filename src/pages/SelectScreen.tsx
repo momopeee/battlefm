@@ -2,10 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, SkipForward } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const SelectScreen: React.FC = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
+  const navigate = useNavigate();
   const [showAssault, setShowAssault] = useState(false);
   const [assaultText, setAssaultText] = useState(false);
   const [assaultAlarm, setAssaultAlarm] = useState(false);
@@ -31,6 +34,14 @@ const SelectScreen: React.FC = () => {
     setTimeout(() => {
       handleScreenTransition('battle2');
     }, 15000);
+  };
+
+  const handleSkip = () => {
+    // Clear any existing timeouts
+    clearTimeout();
+    // Skip directly to battle2
+    handleScreenTransition('battle2');
+    navigate('/battle2');
   };
 
   const handleMenuButtonClick = (e: React.MouseEvent) => {
@@ -198,6 +209,17 @@ const SelectScreen: React.FC = () => {
                     <p>皆さん、どうぞよろしくウェイで～す！！</p>
                   </div>
                 </div>
+              </div>
+              
+              {/* Skip button - only show when text is scrolling */}
+              <div className="absolute bottom-12 right-12 z-20">
+                <Button 
+                  onClick={handleSkip}
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full flex items-center gap-2 shadow-lg border-2 border-purple-400"
+                >
+                  <SkipForward size={24} />
+                  <span className="font-bold">スキップ</span>
+                </Button>
               </div>
             </>
           )}
