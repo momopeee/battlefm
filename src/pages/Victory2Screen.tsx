@@ -65,10 +65,11 @@ const Victory2Screen: React.FC = () => {
   };
   
   const handleReturnToStart = () => {
-    // Clear the defeat status when returning to start
+    // Reset battle state, clear defeat status, and redirect to index page
     sessionStorage.removeItem('fromDefeat');
-    handleScreenTransition('start');
-    navigate('/start');
+    resetBattleState();
+    handleScreenTransition('index');
+    navigate('/');
   };
   
   const handleFightAgain = () => {

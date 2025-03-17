@@ -39,7 +39,8 @@ const Victory1Screen: React.FC = () => {
   };
   
   const handleReturnToStart = () => {
-    // Modified to redirect to index page instead of start page
+    // Reset battle state and redirect to index page
+    resetBattleState();
     handleScreenTransition('index');
     navigate('/');
   };
