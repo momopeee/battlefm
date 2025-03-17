@@ -27,9 +27,9 @@ const CommentArea: React.FC<CommentAreaProps> = ({ comments }) => {
             {!comment.isSystem && (
               <>
                 <img 
-                  src={comment.author === "とおる＠経営参謀" ? "/lovable-uploads/d86df708-dd2d-4c8d-bf08-85994fc6c7a5.png" : 
+                  src={comment.author === "とおる＠経営参謀" ? "/lovable-uploads/da232b1a-dd62-447f-89f0-799e9e8c150a.png" : 
                        comment.author === "そーそー＠狂犬ツイート" ? "/lovable-uploads/b62bfeb2-59a1-4f1b-976a-d026638e0416.png" : 
-                       comment.author === "ゆうじ" ? "/lovable-uploads/988ea3ef-2efe-4616-a292-04d0d01fb33c.png" :
+                       comment.author === "ゆうじ＠陽気なおじさん" ? "/lovable-uploads/988ea3ef-2efe-4616-a292-04d0d01fb33c.png" :
                        comment.author === "巨万の富男" ? "/lovable-uploads/974ddb88-2c8c-4955-bf82-0d68af6e6e7f.png" :
                        "/lovable-uploads/656bd67f-53fe-4f15-86f3-0db149cc7285.png"}
                   alt={comment.author}
