@@ -12,21 +12,33 @@ const Victory2Screen: React.FC = () => {
     battleTimer,
     totalComments,
     handleScreenTransition,
-    resetBattleState
+    resetBattleState,
+    pauseBattleTimer
   } = useApp();
   
   const navigate = useNavigate();
   const [isFollowed, setIsFollowed] = useState(false);
   const [isFromDefeat, setIsFromDefeat] = useState(false);
+  const [finalBattleTime, setFinalBattleTime] = useState("");
   
   // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {
+    // Ensure timer resets at 99:99
+    if (seconds > 6000) { // 60 sec * 100 min
+      return "99:99";
+    }
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   useEffect(() => {
+    // Ensure timer is stopped
+    pauseBattleTimer();
+    
+    // Save the final battle time
+    setFinalBattleTime(formatTime(battleTimer));
+    
     // Check if this screen was reached after a defeat
     const currentPath = window.location.pathname;
     const urlParams = new URLSearchParams(window.location.search);
@@ -112,7 +124,7 @@ const Victory2Screen: React.FC = () => {
           
           {/* Time display - shows final battle time */}
           <div className="text-[12px] text-gray-500 mb-2">
-            {formatTime(battleTimer)}
+            {finalBattleTime}
           </div>
           
           {/* Comment count */}

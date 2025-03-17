@@ -42,6 +42,8 @@ const Battle2Screen: React.FC = () => {
     bgmEnabled, 
     toggleBgm,
     battleTimer,
+    startBattleTimer,
+    pauseBattleTimer,
     comments,
     attackCount,
     specialAttackAvailable, 
@@ -73,7 +75,7 @@ const Battle2Screen: React.FC = () => {
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   
-  // Reset battle state on component mount
+  // Reset battle state on component mount and start timer
   useEffect(() => {
     clearComments();
     setPlayerHp(player.currentHp);
@@ -86,11 +88,19 @@ const Battle2Screen: React.FC = () => {
     setSpecialModeActive(false);
     setIsHighballConfused(false);
     
+    // Start the battle timer when component mounts
+    startBattleTimer();
+    
     // Initial system message
     setTimeout(() => {
       addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
       addComment('ゆうじ＠陽気なおじさん', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
     }, 1000);
+    
+    // Cleanup function - pause timer when component unmounts
+    return () => {
+      pauseBattleTimer();
+    };
   }, []);
   
   // Yuji's attack comments
@@ -195,6 +205,8 @@ const Battle2Screen: React.FC = () => {
       if (redirectTimer) {
         clearTimeout(redirectTimer);
       }
+      // Ensure timer is paused when redirecting
+      pauseBattleTimer();
     };
   }, [redirectTimer]);
   
@@ -229,6 +241,9 @@ const Battle2Screen: React.FC = () => {
       clearTimeout(redirectTimer);
       setRedirectTimer(null);
     }
+    
+    // Pause the battle timer
+    pauseBattleTimer();
     
     if (battleResult === 'victory') {
       handleScreenTransition('victory2');
@@ -533,6 +548,8 @@ const Battle2Screen: React.FC = () => {
     
     // Set up automatic redirection after 20 seconds
     const timer = setTimeout(() => {
+      // Pause the battle timer before redirecting
+      pauseBattleTimer();
       handleScreenTransition('victory2');
       navigate('/victory2');
     }, 20000);
@@ -549,6 +566,8 @@ const Battle2Screen: React.FC = () => {
     
     // Set up automatic redirection after 20 seconds
     const timer = setTimeout(() => {
+      // Pause the battle timer before redirecting
+      pauseBattleTimer();
       handleScreenTransition('endingC');
       navigate('/endingC');
     }, 20000);
@@ -567,6 +586,11 @@ const Battle2Screen: React.FC = () => {
 
   // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {
+    // Ensure timer resets at 99:99
+    if (seconds > 6000) { // 60 sec * 100 min
+      return "99:99";
+    }
+    
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
