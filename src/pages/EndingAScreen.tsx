@@ -73,7 +73,7 @@ const EndingAScreen: React.FC = () => {
             className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
           >
             <ExternalLink size={20} />
-            スタンドエフエムでとおるをフォローする
+            とおるをフォローする
           </Button>
           
           <Button
