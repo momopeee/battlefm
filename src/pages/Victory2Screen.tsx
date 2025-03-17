@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
-const Victory1Screen: React.FC = () => {
+const Victory2Screen: React.FC = () => {
   const { 
     player,
     battleTimer,
@@ -26,15 +26,15 @@ const Victory1Screen: React.FC = () => {
 
   useEffect(() => {
     // Show victory toast
-    toast.success('そーそーに勝利しました！', {
+    toast.success('ゆうじに勝利しました！', {
       description: 'おめでとうございます！',
       duration: 3000,
     });
   }, []);
 
   const handleContinue = () => {
-    handleScreenTransition('select');
-    navigate('/select');
+    handleScreenTransition('endingA');
+    navigate('/endingA');
   };
   
   const handleReturnToStart = () => {
@@ -143,4 +143,4 @@ const Victory1Screen: React.FC = () => {
   );
 };
 
-export default Victory1Screen;
+export default Victory2Screen;
