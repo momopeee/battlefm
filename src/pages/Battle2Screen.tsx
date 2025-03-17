@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -90,7 +89,7 @@ const Battle2Screen: React.FC = () => {
     // Initial system message
     setTimeout(() => {
       addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
-      addComment('ゆうじ', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
+      addComment('ゆうじ＠陽気なおじさん', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
     }, 1000);
   }, []);
   
@@ -195,7 +194,7 @@ const Battle2Screen: React.FC = () => {
     setYujiInSpecialMode(true);
     setYujiSpecialMode(true);
     
-    addComment('ゆうじ', 'もう一回デザフェス出るから、みんなお金で応援して！！お願い！！');
+    addComment('ゆうじ＠陽気なおじさん', 'もう一回デザフェス出るから、みんなお金で応援して！！お願い！！');
     
     setTimeout(() => {
       addComment('システム', 'ゆうじはクラウドファンディングを発動した', true);
@@ -234,7 +233,7 @@ const Battle2Screen: React.FC = () => {
     
     // Handle highball confusion first if active
     if (isHighballConfused) {
-      addComment('とおる', 'え？ちょっとまって、なに？なに？ちょっとまって？えっ？');
+      addComment('とおる＠経営参謀', 'え？ちょっとまって、なに？なに？ちょっとまって？えっ？');
       
       setTimeout(() => {
         addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた', true);
@@ -262,7 +261,7 @@ const Battle2Screen: React.FC = () => {
     // Get random attack comment
     const randomIndex = Math.floor(Math.random() * playerAttackComments.length);
     const attackComment = playerAttackComments[randomIndex];
-    addComment('とおる', attackComment);
+    addComment('とおる＠経営参謀', attackComment);
     
     // Calculate damage
     const min = player.attackMin;
@@ -312,7 +311,7 @@ const Battle2Screen: React.FC = () => {
     // Get random special attack comment
     const randomIndex = Math.floor(Math.random() * playerSpecialComments.length);
     const specialComment = playerSpecialComments[randomIndex];
-    addComment('とおる', specialComment);
+    addComment('とおる＠経営参謀', specialComment);
     
     // Special attack damage
     const damage = player.specialPower;
@@ -352,7 +351,7 @@ const Battle2Screen: React.FC = () => {
       
       // Get random attack comment
       const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
-      addComment('ゆうじ', attackComment);
+      addComment('ゆうじ＠陽気なおじさん', attackComment);
       
       // Calculate special mode damage (higher)
       const damage = Math.floor(Math.random() * (opponent2.attackMax + 10 - opponent2.attackMin) + opponent2.attackMin);
@@ -395,7 +394,7 @@ const Battle2Screen: React.FC = () => {
       setTimeout(() => {
         setPlayerHp(Math.max(0, playerHp - damage));
         
-        addComment('ゆうじ', attackComment);
+        addComment('ゆうじ＠陽気なおじさん', attackComment);
         addComment('システム', `ゆうじの陽気なトークが突き刺さる！ ${damage}ポイントのダメージ！`, true);
         
         // Check if player defeated
@@ -416,7 +415,7 @@ const Battle2Screen: React.FC = () => {
   const handleRunAway = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
-    addComment('とおる', "逃げよう...");
+    addComment('とおる＠経営参謀', "逃げよう...");
     
     setTimeout(() => {
       addComment('システム', "とおるは逃げようとしたが、漢として本当に逃げていいのか、逃げた先にいったい何がある？ここで逃げたら俺は一生逃げ続ける。不毛でも立ち向かわなければならない。無駄だとしても、踏ん張らなければあかん時があるやろ！！と思いなおし、自分の頬を思いっきりビンタした。とおるは10のダメージを受けた。", true);
@@ -442,7 +441,7 @@ const Battle2Screen: React.FC = () => {
   const handleHighball = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
-    addComment('とおる', 'ぐびぐび、うへぇ～、もう一杯お願いします。メガで。');
+    addComment('とおる＠経営参謀', 'ぐびぐび、うへぇ～、もう一杯お願いします。メガで。');
     
     setTimeout(() => {
       // Check if player's HP is less than half

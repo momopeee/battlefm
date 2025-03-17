@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Character interface
@@ -87,7 +86,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   
   // Initial opponent2 (yuji) state
   const [opponent2, setOpponent2] = useState<Character>({
-    name: 'ゆうじ',
+    name: 'ゆうじ＠陽気なおじさん',
     icon: '/lovable-uploads/988ea3ef-2efe-4616-a292-04d0d01fb33c.png',
     maxHp: 100,
     currentHp: 100,
