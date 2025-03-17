@@ -36,8 +36,22 @@ const Battle1Screen: React.FC = () => {
     showCharacterSheet,
     currentCharacterSheet,
     setShowCharacterSheet,
-    handleSkip
+    handleSkip,
+    battleResult,
+    soundEffect
   } = useBattleLogic();
+
+  // BGM URLs
+  const battleBgmUrl = "https://soundcloud.com/davis-momoyama/toru/s-33qTzn3Pjy0?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const victoryBgmUrl = "https://soundcloud.com/davis-momoyama/syouri/s-u6HAdaFT0Sb?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const defeatBgmUrl = "https://soundcloud.com/davis-momoyama/orehamou/s-q3IJA3aoBNH?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+
+  // Get the current BGM based on battle state
+  const currentBgm = battleResult === 'victory' 
+    ? victoryBgmUrl 
+    : battleResult === 'defeat' 
+      ? defeatBgmUrl 
+      : battleBgmUrl;
 
   return (
     <div 
@@ -54,6 +68,23 @@ const Battle1Screen: React.FC = () => {
         margin: '0 auto'
       }}
     >
+      {/* Background Music */}
+      <AudioPlayer 
+        src={currentBgm} 
+        loop={battleResult === null} 
+        autoPlay={true} 
+      />
+
+      {/* Sound Effects */}
+      {soundEffect && (
+        <AudioPlayer 
+          src={soundEffect} 
+          loop={false} 
+          autoPlay={true} 
+          volume={0.7}
+        />
+      )}
+      
       {/* Top section with title and timer */}
       <PlayerInfo 
         name="とおる＠経営参謀" 

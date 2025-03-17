@@ -68,6 +68,27 @@ export const useBattleLogic = () => {
   const [isPlayerVictory, setIsPlayerVictory] = useState<boolean | null>(null);
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
+  const [soundEffect, setSoundEffect] = useState<string | null>(null);
+  const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
+
+  // Sound effect URLs
+  const attackSoundUrl = "https://soundcloud.com/davis-momoyama/kougeki/s-To2wEpGbOXX?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const specialSoundUrl = "https://soundcloud.com/davis-momoyama/kougeki2/s-wj0EefmlUAf?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const runAwaySoundUrl = "https://on-jin.com/sound/ag/s2e75332cc5/se/z/ta_ta_nigeru01.mp3";
+  const highballSoundUrl = "https://taira-komori.jpn.org/sound/eating01/gulp_down_water1.mp3";
+  const victorySoundUrl = "https://soundcloud.com/davis-momoyama/syouri/s-u6HAdaFT0Sb?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const defeatSoundUrl = "https://soundcloud.com/davis-momoyama/orehamou/s-q3IJA3aoBNH?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+
+  // Reset sound effect after playing
+  useEffect(() => {
+    if (soundEffect) {
+      const timer = setTimeout(() => {
+        setSoundEffect(null);
+      }, 2000); // Clear sound effect after 2 seconds
+      
+      return () => clearTimeout(timer);
+    }
+  }, [soundEffect]);
 
   // Initialize battle when component mounts
   useEffect(() => {
@@ -198,6 +219,9 @@ export const useBattleLogic = () => {
   const handlePlayerAttack = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
+    // Play attack sound
+    setSoundEffect(attackSoundUrl);
+    
     // Increase attack count for special attack
     const newAttackCount = attackCount + 1;
     setAttackCount(newAttackCount);
@@ -215,7 +239,7 @@ export const useBattleLogic = () => {
     
     if (highballMode) {
       // Special handling for highball mode
-      addComment(player.name, "え？ちょっとまって、なに？なに？ちょっとまって？えっ���");
+      addComment(player.name, "え？ちょっとまって、なに？なに？ちょっとまって？えっ？");
       addComment("システム", "何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた", true);
       
       // Player damages himself
@@ -253,6 +277,9 @@ export const useBattleLogic = () => {
   const handlePlayerSpecial = () => {
     if (isBattleOver || !isPlayerTurn || !specialAttackAvailable) return;
     
+    // Play special attack sound
+    setSoundEffect(specialSoundUrl);
+    
     // Get random special attack comment
     const specialComment = playerSpecialComments[Math.floor(Math.random() * playerSpecialComments.length)];
     
@@ -281,6 +308,9 @@ export const useBattleLogic = () => {
   const handleRunAway = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
+    // Play run away sound
+    setSoundEffect(runAwaySoundUrl);
+    
     // Add escape comment
     addComment(player.name, "逃げよう...");
     addComment("システム", "とおるは逃げようとしたが、漢として本当に逃げていいのか、逃げた先にいったい何がある？ここで逃げたら俺は一生逃げ続ける。不毛でも立ち向かわなければならない。無駄だとしても、踏ん張らなければあかん時があるやろ！！と思いなおし、自分の頬を思いっきりビンタした。とおるは10のダメージを受けた。", true);
@@ -299,6 +329,9 @@ export const useBattleLogic = () => {
   const handleHighball = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
+    // Play highball sound
+    setSoundEffect(highballSoundUrl);
+    
     // Check if player's HP is less than half
     if (player.currentHp < player.maxHp / 2) {
       // Full recovery when HP is low
@@ -316,8 +349,8 @@ export const useBattleLogic = () => {
       
       // Random highball effect
       const highballEffects = [
-        "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとお���は10のダメージを受けた",
-        "とおるはハイボールを飲んだ、\nとおるは眠くな���てしまった。\nとおるは10のダメージを受けた",
+        "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
+        "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
         "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
       ];
       
@@ -387,6 +420,8 @@ export const useBattleLogic = () => {
   const handleVictory = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
+    setBattleResult('victory');
+    setSoundEffect(victorySoundUrl);
     
     // Add victory comments
     addComment("システム", "とおるが勝利した、そーそーは破れかぶれになってクソリプを量産してしまった", true);
@@ -431,6 +466,8 @@ export const useBattleLogic = () => {
   const handleDefeat = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
+    setBattleResult('defeat');
+    setSoundEffect(defeatSoundUrl);
     
     // Add defeat comments
     addComment("システム", "とおるが敗北した、そーそーは歯止めが利かなくなってしまった", true);
@@ -498,6 +535,8 @@ export const useBattleLogic = () => {
     currentCharacterSheet,
     comments,
     showSkipButton,
+    soundEffect,
+    battleResult,
     handlePlayerAttack,
     handlePlayerSpecial,
     handleRunAway,
@@ -507,4 +546,3 @@ export const useBattleLogic = () => {
     handleSkip
   };
 };
-
