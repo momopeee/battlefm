@@ -597,7 +597,7 @@ const Battle2Screen: React.FC = () => {
           />
           <div>
             <h1 className="text-[14px] font-bold">さよなら陽気なおじさん！</h1>
-            <p className="text-sm opacity-80">{player.name}</p>
+            <p className="text-sm opacity-80">{formatTime(battleTimer)}</p>
           </div>
         </div>
         <div className="px-3 py-1 bg-white/20 rounded-full text-sm backdrop-blur-sm">

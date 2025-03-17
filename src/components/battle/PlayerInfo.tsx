@@ -25,8 +25,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer }) => {
           className="w-8 h-8 rounded-full"
         />
         <div className="flex flex-col items-start">
-          <span className="text-[11px]">{name}</span>
-          <p className="text-[11px]">{formatTime(battleTimer)}</p>
+          <span className="text-[11px]">{formatTime(battleTimer)}</span>
         </div>
       </div>
     </div>
