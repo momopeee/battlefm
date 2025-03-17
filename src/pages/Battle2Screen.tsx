@@ -329,20 +329,21 @@ const Battle2Screen: React.FC = () => {
     const specialComment = playerSpecialComments[randomIndex];
     addComment('とおる＠経営参謀', specialComment);
     
-    // Special attack damage
-    const damage = player.specialPower;
+    // Special attack damage - Modified to be fixed 10 damage during special mode
+    const damage = specialModeActive ? 10 : player.specialPower;
     
     setTimeout(() => {
       // Check if Yuji is in special mode
       if (specialModeActive) {
-        addComment('システム', 'ゆうじはのれんに腕押しを発動した。とおるの言葉は響かない。ゆうじは0ダメージを受けた。', true);
+        setOpponentHp(Math.max(0, opponentHp - damage));
+        addComment('システム', `とおるの必殺技が炸裂！ゆうじののれんに腕押しをわずかに通過した。 ${damage}ポイントのダメージ！`, true);
       } else {
         setOpponentHp(Math.max(0, opponentHp - damage));
         addComment('システム', `とおるの必殺技が炸裂！ ${damage}ポイントの大ダメージ！`, true);
       }
       
       // Check if opponent defeated
-      if (opponentHp - damage <= 0 && !specialModeActive) {
+      if (opponentHp - damage <= 0) {
         handleVictory();
       } else {
         // Enemy turn
@@ -369,8 +370,10 @@ const Battle2Screen: React.FC = () => {
       const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
       addComment('ゆうじ＠陽気なおじさん', attackComment);
       
-      // Calculate special mode damage (higher)
-      const damage = Math.floor(Math.random() * (opponent2.attackMax + 10 - opponent2.attackMin) + opponent2.attackMin);
+      // Calculate special mode damage (2x normal damage)
+      const min = opponent2.attackMin * 2;
+      const max = opponent2.attackMax * 2;
+      const damage = Math.floor(Math.random() * (max - min + 1)) + min;
       
       setTimeout(() => {
         setPlayerHp(Math.max(0, playerHp - damage));
