@@ -58,7 +58,7 @@ const Victory2Screen: React.FC = () => {
       style={{ width: '1080px', height: '1920px', maxWidth: '100vw', maxHeight: '100vh', margin: '0 auto' }}
     >
       {/* Empty space for future animation */}
-      <div className="w-full aspect-square flex items-center justify-center"></div>
+      <div className="w-full flex-1 flex items-center justify-center"></div>
       
       {/* Main content container */}
       <div className="w-full px-8 flex-1 flex flex-col">
@@ -66,32 +66,32 @@ const Victory2Screen: React.FC = () => {
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold">ライブが終了しました</h2>
           <div className="flex items-center justify-center space-x-8 mt-6">
-            <div className="border border-gray-300 rounded px-4 py-2 min-w-[120px]">
-              {formatTime(battleTimer)}
+            <div className="flex items-center gap-2 border border-gray-300 rounded px-6 py-3">
+              <span className="text-lg">{formatTime(battleTimer)}</span>
             </div>
-            <div className="flex items-center gap-2 border border-gray-300 rounded px-4 py-2 min-w-[120px]">
-              <MessageCircle size={20} />
-              <span>{totalComments}</span>
+            <div className="flex items-center gap-2 border border-gray-300 rounded px-6 py-3">
+              <MessageCircle size={24} />
+              <span className="text-lg">{totalComments}</span>
             </div>
           </div>
         </div>
         
         {/* Player profile card */}
-        <div className="w-full border border-gray-200 rounded-xl p-4 flex items-center gap-4 mb-6">
+        <div className="w-full border border-gray-200 rounded-xl p-6 flex items-center gap-6 mb-6">
           <img 
             src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
             alt={player.name} 
-            className="w-16 h-16 rounded-full object-cover"
+            className="w-20 h-20 rounded-full object-cover"
           />
           
           <div className="flex-1">
-            <div className="font-bold">{player.name}</div>
-            <div className="text-sm text-gray-600">さよならワンマン経営</div>
+            <div className="font-bold text-xl">{player.name}</div>
+            <div className="text-gray-600">さよならワンマン経営</div>
           </div>
           
           <Button
             onClick={handleFollow}
-            className={`rounded-full px-6 py-2 text-sm ${
+            className={`rounded-full px-8 py-3 text-base ${
               isFollowed 
                 ? "bg-gray-200 text-gray-700" 
                 : "bg-pink-500 text-white hover:bg-pink-600"
@@ -125,14 +125,14 @@ const Victory2Screen: React.FC = () => {
         <div className="mt-auto pb-10 space-y-4">
           <Button
             onClick={handleContinue}
-            className="w-full py-4 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-xl"
+            className="w-full py-5 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-xl"
           >
             次へ進む
           </Button>
           
           <Button
             onClick={handleReturnToStart}
-            className="w-full py-4 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-xl"
+            className="w-full py-5 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-xl"
           >
             スタートへ戻る
           </Button>
