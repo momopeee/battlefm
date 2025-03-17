@@ -72,7 +72,7 @@ const Victory2Screen: React.FC = () => {
         <div className="text-center mb-6">
           <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
           
-          {/* Time display */}
+          {/* Time display - shows final battle time */}
           <div className="text-[12px] text-gray-500 mb-2">
             {formatTime(battleTimer)}
           </div>
