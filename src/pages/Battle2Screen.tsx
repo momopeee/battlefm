@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -89,7 +90,7 @@ const Battle2Screen: React.FC = () => {
     // Initial system message
     setTimeout(() => {
       addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
-      addComment('ゆうじ', 'ようこそ！やまにぃのマネージャー面接へ！実践形式で早速やってみましょう！');
+      addComment('ゆうじ', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
     }, 1000);
   }, []);
   
@@ -554,7 +555,7 @@ const Battle2Screen: React.FC = () => {
             className="w-12 h-12 rounded-full mr-2 border-2 border-white"
           />
           <div>
-            <h1 className="text-xl font-bold">さよなら陽気なおじさん！</h1>
+            <h1 className="text-[14px] font-bold">さよなら陽気なおじさん！</h1>
             <p className="text-sm opacity-80">{player.name}</p>
           </div>
         </div>
