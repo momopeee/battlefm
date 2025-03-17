@@ -462,7 +462,7 @@ export const useBattleLogic = () => {
     }, 12000);
   };
 
-  // Handle defeat - updated to redirect to endingB screen
+  // Handle defeat - updated to redirect to endingB screen directly
   const handleDefeat = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
@@ -501,7 +501,7 @@ export const useBattleLogic = () => {
           setShowSkipButton(true);
         }, 1000);
         
-        // Set up a 20-second timer for automatic redirect
+        // Set up a 20-second timer for automatic redirect to endingB instead of victory1
         const timer = setTimeout(() => {
           if (!transitionScheduled) {
             console.log("Executing automatic defeat transition to endingB");
