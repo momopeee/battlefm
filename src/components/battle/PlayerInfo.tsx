@@ -8,7 +8,7 @@ interface PlayerInfoProps {
 }
 
 const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer }) => {
-  // Format timer display
+  // Format timer display - static formatting without counting
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
