@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const CommentInput: React.FC = () => {
   const [comment, setComment] = useState('');
@@ -37,20 +39,28 @@ const CommentInput: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2 mb-2">
-      <input
+      <Input
         type="text"
         placeholder="コメント"
-        className="flex-1 bg-gray-200 text-black rounded-md px-4 py-2"
+        className="flex-1 bg-gray-200 text-black rounded-full px-4 py-2 border-none"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
+        style={{ 
+          height: '40px',
+          minHeight: '40px'
+        }}
       />
-      <button
+      <Button
         type="submit"
-        className="bg-pink-500 text-white rounded-md px-4 py-2 hover:bg-pink-600 transition-colors"
+        className="bg-pink-500 text-white rounded-full px-6 hover:bg-pink-600 transition-colors"
         disabled={!comment.trim()}
+        style={{
+          minWidth: '80px',
+          height: '40px'
+        }}
       >
         送信
-      </button>
+      </Button>
     </form>
   );
 };
