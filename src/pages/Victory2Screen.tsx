@@ -17,11 +17,12 @@ const Victory2Screen: React.FC = () => {
   const navigate = useNavigate();
   const [isFollowed, setIsFollowed] = useState(false);
   
-  // Format battle time nicely (MM:SS)
+  // Format battle time as hours:minutes
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours > 0 ? `${hours}:` : ''}${remainingMinutes.toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`;
   };
 
   useEffect(() => {
@@ -54,89 +55,81 @@ const Victory2Screen: React.FC = () => {
 
   return (
     <div 
-      className="bg-white text-black flex flex-col min-h-screen items-center"
-      style={{ width: '1080px', height: '1920px', maxWidth: '100vw', maxHeight: '100vh', margin: '0 auto' }}
+      className="bg-white text-black flex flex-col items-center justify-between"
+      style={{ 
+        width: '1080px', 
+        height: '1920px', 
+        maxWidth: '100vw', 
+        maxHeight: '100vh', 
+        margin: '0 auto',
+        padding: '80px 40px',
+        position: 'relative',
+        border: '2px solid #000',
+        borderRadius: '32px',
+        boxSizing: 'border-box'
+      }}
     >
-      {/* Empty space for future animation */}
-      <div className="w-full flex-1 flex items-center justify-center"></div>
-      
-      {/* Main content container */}
-      <div className="w-full px-8 flex-1 flex flex-col">
+      {/* Main content */}
+      <div className="w-full flex flex-col items-center justify-center flex-1">
         {/* Live ended text */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold">ライブが終了しました</h2>
-          <div className="flex items-center justify-center space-x-8 mt-6">
-            <div className="flex items-center gap-2 border border-gray-300 rounded px-6 py-3">
-              <span className="text-lg">{formatTime(battleTimer)}</span>
-            </div>
-            <div className="flex items-center gap-2 border border-gray-300 rounded px-6 py-3">
-              <MessageCircle size={24} />
-              <span className="text-lg">{totalComments}</span>
-            </div>
+        <div className="text-center mb-16 mt-64">
+          <h2 className="text-4xl font-bold mb-16">ライブが終了しました</h2>
+          
+          {/* Time display */}
+          <div className="text-3xl font-medium mb-6">
+            {formatTime(battleTimer)}
+          </div>
+          
+          {/* Comment count */}
+          <div className="flex items-center justify-center gap-2 text-3xl">
+            <MessageCircle size={36} strokeWidth={1.5} />
+            <span>{totalComments}</span>
           </div>
         </div>
         
-        {/* Player profile card */}
-        <div className="w-full border border-gray-200 rounded-xl p-6 flex items-center gap-6 mb-6">
+        {/* Player profile with follow button */}
+        <div className="flex items-center justify-center gap-4 mb-64">
           <img 
             src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
             alt={player.name} 
-            className="w-20 h-20 rounded-full object-cover"
+            className="w-16 h-16 rounded-full object-cover"
           />
           
-          <div className="flex-1">
-            <div className="font-bold text-xl">{player.name}</div>
-            <div className="text-gray-600">さよならワンマン経営</div>
+          <div className="text-2xl font-medium">
+            {player.name}
           </div>
           
           <Button
             onClick={handleFollow}
-            className={`rounded-full px-8 py-3 text-base ${
+            className={`rounded-full px-6 py-2 text-base ${
               isFollowed 
                 ? "bg-gray-200 text-gray-700" 
                 : "bg-pink-500 text-white hover:bg-pink-600"
             }`}
+            style={{ minWidth: '140px' }}
           >
             {isFollowed ? "フォロー中" : "フォローする"}
           </Button>
         </div>
+      </div>
+      
+      {/* Action buttons at the bottom */}
+      <div className="w-full space-y-6 mb-12">
+        <Button
+          onClick={handleContinue}
+          className="w-full py-5 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-xl"
+          style={{ height: '80px', fontSize: '26px' }}
+        >
+          次へ進む
+        </Button>
         
-        {/* Level up notification */}
-        <div className="w-full bg-gray-100 rounded-xl p-6 mb-10">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="rounded-full w-8 h-8 flex items-center justify-center border border-pink-400 bg-pink-100">
-              <span className="text-pink-500 font-bold">+1</span>
-            </div>
-            <span className="text-gray-800">経営スキルアップ</span>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <div className="h-2 bg-gray-300 rounded-full flex-1">
-              <div 
-                className="h-full bg-pink-500 rounded-full" 
-                style={{ width: `${(player.currentHp / player.maxHp) * 100}%` }}
-              />
-            </div>
-            <span className="text-xs">{player.currentHp}/{player.maxHp}</span>
-          </div>
-        </div>
-        
-        {/* Action buttons */}
-        <div className="mt-auto pb-10 space-y-4">
-          <Button
-            onClick={handleContinue}
-            className="w-full py-5 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-xl"
-          >
-            次へ進む
-          </Button>
-          
-          <Button
-            onClick={handleReturnToStart}
-            className="w-full py-5 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-xl"
-          >
-            スタートへ戻る
-          </Button>
-        </div>
+        <Button
+          onClick={handleReturnToStart}
+          className="w-full py-5 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-xl"
+          style={{ height: '80px', fontSize: '26px' }}
+        >
+          スタートへ戻る
+        </Button>
       </div>
     </div>
   );
