@@ -563,6 +563,13 @@ const Battle2Screen: React.FC = () => {
     }
   }, [playerHp, opponentHp]);
 
+  // Format battle time as minutes:seconds
+  const formatTime = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div 
       className="min-h-screen flex flex-col h-screen p-4 text-white relative"
@@ -592,7 +599,7 @@ const Battle2Screen: React.FC = () => {
           </div>
         </div>
         <div className="px-3 py-1 bg-white/20 rounded-full text-sm backdrop-blur-sm">
-          {Math.floor(battleTimer / 60)}:{(battleTimer % 60).toString().padStart(2, '0')}
+          {formatTime(battleTimer)}
         </div>
       </div>
       
