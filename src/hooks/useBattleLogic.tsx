@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useApp, Character } from '@/context/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 // Attack comments for player
 const playerAttackComments = [
@@ -59,12 +60,14 @@ export const useBattleLogic = () => {
     handleScreenTransition
   } = useApp();
 
+  const navigate = useNavigate();
   const [isBattleOver, setIsBattleOver] = useState(false);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleStarted, setIsBattleStarted] = useState(false);
   const [transitionScheduled, setTransitionScheduled] = useState(false);
   const [isPlayerVictory, setIsPlayerVictory] = useState<boolean | null>(null);
   const [showSkipButton, setShowSkipButton] = useState(false);
+  const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
 
   // Initialize battle when component mounts
   useEffect(() => {
@@ -153,6 +156,13 @@ export const useBattleLogic = () => {
     };
   }, [isBattleOver, isPlayerVictory]);
 
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (redirectTimer) clearTimeout(redirectTimer);
+    };
+  }, [redirectTimer]);
+
   // Updated: Activate soso heal mode when HP falls below 20 (changed from timer-based)
   useEffect(() => {
     if (opponent1.currentHp <= 20 && !sosoHealMode && !isBattleOver) {
@@ -167,16 +177,20 @@ export const useBattleLogic = () => {
     
     // Cancel any pending timers/transitions
     setTransitionScheduled(true);
+    if (redirectTimer) {
+      clearTimeout(redirectTimer);
+      setRedirectTimer(null);
+    }
     
     // Transition to the appropriate screen based on battle outcome
     if (isPlayerVictory === true) {
       console.log("Skipping to victory1 screen");
       handleScreenTransition('victory1');
+      navigate('/victory1');
     } else if (isPlayerVictory === false) {
-      console.log("Skipping to victory2 screen with defeat parameter");
-      handleScreenTransition('victory2');
-      // Navigate to victory2 with defeat parameter
-      window.location.href = '/victory2?from=defeat';
+      console.log("Skipping to endingB screen");
+      handleScreenTransition('endingB');
+      navigate('/endingB');
     }
   };
 
@@ -302,7 +316,7 @@ export const useBattleLogic = () => {
       
       // Random highball effect
       const highballEffects = [
-        "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
+        "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとお���は10のダメージを受けた",
         "とおるはハイボールを飲んだ、\nとおるは眠くな���てしまった。\nとおるは10のダメージを受けた",
         "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
       ];
@@ -369,7 +383,7 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(true);
   };
 
-  // Handle victory - updated to ensure correct screen transition
+  // Handle victory - updated to automatically redirect after 20 seconds
   const handleVictory = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
@@ -393,24 +407,27 @@ export const useBattleLogic = () => {
     // Final message and screen transition with clear console logs for debugging
     setTimeout(() => {
       addComment("システム", "ライブが終了しました", true);
-      console.log("Scheduling victory transition in 5 seconds...");
+      console.log("Scheduling victory transition in 20 seconds...");
       
       // Show skip button after 10 seconds
       setTimeout(() => {
         setShowSkipButton(true);
       }, 1000);
       
-      // 5秒後に勝利画面へ遷移
-      setTimeout(() => {
+      // Set up a 20-second timer for automatic redirect
+      const timer = setTimeout(() => {
         if (!transitionScheduled) {
-          console.log("Executing victory transition now to victory1");
+          console.log("Executing automatic victory transition to victory1");
           handleScreenTransition('victory1');
+          navigate('/victory1');
         }
-      }, 5000);
+      }, 20000); // 20 seconds automatic redirect
+      
+      setRedirectTimer(timer);
     }, 12000);
   };
 
-  // Handle defeat - updated to redirect to victory2 screen
+  // Handle defeat - updated to redirect to endingB screen
   const handleDefeat = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
@@ -440,22 +457,23 @@ export const useBattleLogic = () => {
       
       setTimeout(() => {
         addComment("システム", "ライブが終了しました", true);
-        console.log("Scheduling defeat transition to victory2 in 5 seconds...");
+        console.log("Scheduling defeat transition to endingB in 20 seconds...");
         
         // Show skip button after 15 seconds
         setTimeout(() => {
           setShowSkipButton(true);
         }, 1000);
         
-        // 5秒後に敗北画面へ遷移 (updated to go to victory2)
-        setTimeout(() => {
+        // Set up a 20-second timer for automatic redirect
+        const timer = setTimeout(() => {
           if (!transitionScheduled) {
-            console.log("Executing defeat transition now to victory2");
-            handleScreenTransition('victory2');
-            // Navigate to victory2 with defeat parameter
-            window.location.href = '/victory2?from=defeat';
+            console.log("Executing automatic defeat transition to endingB");
+            handleScreenTransition('endingB');
+            navigate('/endingB');
           }
-        }, 5000);
+        }, 20000); // 20 seconds automatic redirect
+        
+        setRedirectTimer(timer);
       }, 3000);
     }, 15000);
   };
