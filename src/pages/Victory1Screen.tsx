@@ -38,8 +38,9 @@ const Victory1Screen: React.FC = () => {
   };
   
   const handleReturnToStart = () => {
-    handleScreenTransition('start');
-    navigate('/start');
+    // Modified to redirect to index page instead of start page
+    handleScreenTransition('index');
+    navigate('/');
   };
   
   const handleFollow = () => {
