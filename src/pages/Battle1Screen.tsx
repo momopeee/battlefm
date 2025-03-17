@@ -56,7 +56,7 @@ const Battle1Screen: React.FC = () => {
     >
       {/* Top section with title and timer */}
       <PlayerInfo 
-        name={player.name} 
+        name="とおる＠経営参謀" 
         icon={player.icon}
         battleTimer={battleTimer}
       />
