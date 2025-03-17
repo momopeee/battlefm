@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
-import { Home, MessageCircle, Heart } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -57,26 +57,20 @@ const Victory2Screen: React.FC = () => {
       className="bg-white text-black flex flex-col min-h-screen items-center"
       style={{ width: '1080px', height: '1920px', maxWidth: '100vw', maxHeight: '100vh', margin: '0 auto' }}
     >
-      {/* Victory animation section - this would be a placeholder for the animation */}
-      <div className="w-full aspect-square bg-[#0a647d] flex items-center justify-center mb-4">
-        <p className="text-white text-center text-2xl">
-          このあたりに<br />
-          勝利のモーション<br />
-          を入れる
-        </p>
-      </div>
+      {/* Empty space for future animation */}
+      <div className="w-full aspect-square flex items-center justify-center"></div>
       
-      {/* Main content */}
+      {/* Main content container */}
       <div className="w-full px-8 flex-1 flex flex-col">
         {/* Live ended text */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-8">
           <h2 className="text-2xl font-bold">ライブが終了しました</h2>
-          <div className="flex items-center justify-center space-x-8 mt-4">
-            <div className="text-gray-600">
+          <div className="flex items-center justify-center space-x-8 mt-6">
+            <div className="border border-gray-300 rounded px-4 py-2 min-w-[120px]">
               {formatTime(battleTimer)}
             </div>
-            <div className="flex items-center gap-1 text-gray-600">
-              <MessageCircle size={18} />
+            <div className="flex items-center gap-2 border border-gray-300 rounded px-4 py-2 min-w-[120px]">
+              <MessageCircle size={20} />
               <span>{totalComments}</span>
             </div>
           </div>
@@ -108,7 +102,7 @@ const Victory2Screen: React.FC = () => {
         </div>
         
         {/* Level up notification */}
-        <div className="w-full bg-gray-100 rounded-xl p-6 mb-6">
+        <div className="w-full bg-gray-100 rounded-xl p-6 mb-10">
           <div className="flex items-center gap-2 mb-4">
             <div className="rounded-full w-8 h-8 flex items-center justify-center border border-pink-400 bg-pink-100">
               <span className="text-pink-500 font-bold">+1</span>
@@ -117,7 +111,6 @@ const Victory2Screen: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            <Heart className="text-pink-500" size={20} />
             <div className="h-2 bg-gray-300 rounded-full flex-1">
               <div 
                 className="h-full bg-pink-500 rounded-full" 
