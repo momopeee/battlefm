@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Character interface
@@ -55,6 +56,7 @@ interface AppContextProps {
   setShowCharacterSheet: React.Dispatch<React.SetStateAction<boolean>>;
   currentCharacterSheet: 'player' | 'opponent1' | 'opponent2' | null;
   setCurrentCharacterSheet: React.Dispatch<React.SetStateAction<'player' | 'opponent1' | 'opponent2' | null>>;
+  resetBattleState: () => void; // New function to reset battle state
 }
 
 // Create context
@@ -167,6 +169,40 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [showCharacterSheet, setShowCharacterSheet] = useState(false);
   const [currentCharacterSheet, setCurrentCharacterSheet] = useState<'player' | 'opponent1' | 'opponent2' | null>(null);
   
+  // New function to reset battle state
+  const resetBattleState = () => {
+    // Reset player and opponents stats
+    setPlayer({
+      ...player,
+      currentHp: player.maxHp
+    });
+    
+    setOpponent1({
+      ...opponent1,
+      currentHp: opponent1.maxHp
+    });
+    
+    setOpponent2({
+      ...opponent2,
+      currentHp: opponent2.maxHp
+    });
+    
+    // Reset battle mechanics
+    setAttackCount(0);
+    setSpecialAttackAvailable(false);
+    setHighballMode(false);
+    setSosoHealMode(false);
+    setYujiSpecialMode(false);
+    
+    // Clear comments and reset timer
+    clearComments();
+    resetBattleTimer();
+    
+    // Reset character sheet
+    setShowCharacterSheet(false);
+    setCurrentCharacterSheet(null);
+  };
+  
   // Cleanup on unmount
   React.useEffect(() => {
     return () => {
@@ -189,7 +225,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       sosoHealMode, setSosoHealMode,
       yujiSpecialMode, setYujiSpecialMode,
       showCharacterSheet, setShowCharacterSheet,
-      currentCharacterSheet, setCurrentCharacterSheet
+      currentCharacterSheet, setCurrentCharacterSheet,
+      resetBattleState
     }}>
       {children}
     </AppContext.Provider>

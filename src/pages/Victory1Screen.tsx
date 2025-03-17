@@ -11,7 +11,8 @@ const Victory1Screen: React.FC = () => {
     player,
     battleTimer,
     totalComments,
-    handleScreenTransition
+    handleScreenTransition,
+    resetBattleState
   } = useApp();
   
   const navigate = useNavigate();
@@ -41,6 +42,13 @@ const Victory1Screen: React.FC = () => {
     // Modified to redirect to index page instead of start page
     handleScreenTransition('index');
     navigate('/');
+  };
+  
+  const handleFightAgain = () => {
+    // Reset battle state and redirect to battle1
+    resetBattleState();
+    handleScreenTransition('battle1');
+    navigate('/battle1');
   };
   
   const handleFollow = () => {
@@ -119,6 +127,14 @@ const Victory1Screen: React.FC = () => {
           style={{ height: '40px' }}
         >
           次へ進む
+        </Button>
+        
+        <Button
+          onClick={handleFightAgain}
+          className="w-full py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm"
+          style={{ height: '40px' }}
+        >
+          もう一度戦う
         </Button>
         
         <Button
