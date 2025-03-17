@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Define types for our app
-export type Screen = 'start' | 'battle1' | 'victory1' | 'select' | 'battle2' | 'endingA' | 'endingB' | 'endingC';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+// Character interface
 export interface Character {
   name: string;
   icon: string;
@@ -13,196 +12,105 @@ export interface Character {
   specialPower: number;
 }
 
+// Comment interface
 export interface Comment {
   author: string;
   text: string;
-  isSystem?: boolean;
+  isSystem: boolean;
 }
 
-interface AppContextType {
-  currentScreen: Screen;
-  bgmEnabled: boolean;
+// Define the possible screens
+export type Screen = 'index' | 'start' | 'battle1' | 'victory1' | 'select' | 'battle2' | 'victory2' | 'endingA' | 'endingB' | 'endingC';
+
+// AppContext interface
+interface AppContextProps {
   player: Character;
+  setPlayer: React.Dispatch<React.SetStateAction<Character>>;
   opponent1: Character;
+  setOpponent1: React.Dispatch<React.SetStateAction<Character>>;
   opponent2: Character;
-  battleTimer: number;
-  comments: Comment[];
-  attackCount: number;
-  specialAttackAvailable: boolean;
-  highballMode: boolean;
-  sosoHealMode: boolean;
-  yujiSpecialMode: boolean;
-  showCharacterSheet: boolean;
-  currentCharacterSheet: 'player' | 'opponent1' | 'opponent2' | null;
-  totalComments: number;
-  
-  // Methods
+  setOpponent2: React.Dispatch<React.SetStateAction<Character>>;
+  bgmEnabled: boolean;
   toggleBgm: () => void;
-  handleScreenTransition: (screen: Screen) => void;
-  setPlayer: (player: Character) => void;
-  setOpponent1: (opponent: Character) => void;
-  setOpponent2: (opponent: Character) => void;
-  resetBattleTimer: () => void;
+  battleTimer: number;
   startBattleTimer: () => void;
+  pauseBattleTimer: () => void;
+  resetBattleTimer: () => void;
+  currentScreen: Screen;
+  handleScreenTransition: (screen: Screen) => void;
+  comments: Comment[];
   addComment: (author: string, text: string, isSystem?: boolean) => void;
   clearComments: () => void;
-  setAttackCount: (count: number) => void;
-  setSpecialAttackAvailable: (available: boolean) => void;
-  setHighballMode: (mode: boolean) => void;
-  setSosoHealMode: (mode: boolean) => void;
-  setYujiSpecialMode: (mode: boolean) => void;
-  setShowCharacterSheet: (show: boolean) => void;
-  setCurrentCharacterSheet: (character: 'player' | 'opponent1' | 'opponent2' | null) => void;
-  incrementComments: () => void;
+  totalComments: number;
+  attackCount: number;
+  setAttackCount: React.Dispatch<React.SetStateAction<number>>;
+  specialAttackAvailable: boolean;
+  setSpecialAttackAvailable: React.Dispatch<React.SetStateAction<boolean>>;
+  highballMode: boolean;
+  setHighballMode: React.Dispatch<React.SetStateAction<boolean>>;
+  sosoHealMode: boolean;
+  setSosoHealMode: React.Dispatch<React.SetStateAction<boolean>>;
+  yujiSpecialMode: boolean;
+  setYujiSpecialMode: React.Dispatch<React.SetStateAction<boolean>>;
+  showCharacterSheet: boolean;
+  setShowCharacterSheet: React.Dispatch<React.SetStateAction<boolean>>;
+  currentCharacterSheet: 'player' | 'opponent1' | 'opponent2' | null;
+  setCurrentCharacterSheet: React.Dispatch<React.SetStateAction<'player' | 'opponent1' | 'opponent2' | null>>;
 }
 
-// Create the context with default values
-const AppContext = createContext<AppContextType>({
-  currentScreen: 'start',
-  bgmEnabled: true,
-  player: {
+// Create context
+const AppContext = createContext<AppContextProps | undefined>(undefined);
+
+// Provider component
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  // Initial player state
+  const [player, setPlayer] = useState<Character>({
     name: 'とおる＠経営参謀',
-    icon: '/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png',
+    icon: '/lovable-uploads/da232b1a-dd62-447f-89f0-799e9e8c150a.png',
     maxHp: 100,
     currentHp: 100,
     attackMin: 15,
-    attackMax: 25,
-    specialPower: 40
-  },
-  opponent1: {
-    name: 'そーそー＠狂犬ツイート',
-    icon: '/lovable-uploads/b62bfeb2-59a1-4f1b-976a-d026638e0416.png',
-    maxHp: 70,
-    currentHp: 70,
-    attackMin: 20,
     attackMax: 30,
-    specialPower: 0
-  },
-  opponent2: {
-    name: 'ゆうじ＠陽気なおじさん',
-    icon: '/lovable-uploads/988ea3ef-2efe-4616-a292-04d0d01fb33c.png',
-    maxHp: 100,
-    currentHp: 100,
-    attackMin: 15,
-    attackMax: 25,
-    specialPower: 40
-  },
-  battleTimer: 0,
-  comments: [],
-  attackCount: 0,
-  specialAttackAvailable: false,
-  highballMode: false,
-  sosoHealMode: false,
-  yujiSpecialMode: false,
-  showCharacterSheet: false,
-  currentCharacterSheet: null,
-  totalComments: 0,
+    specialPower: 50
+  });
   
-  toggleBgm: () => {},
-  handleScreenTransition: () => {},
-  setPlayer: () => {},
-  setOpponent1: () => {},
-  setOpponent2: () => {},
-  resetBattleTimer: () => {},
-  startBattleTimer: () => {},
-  addComment: () => {},
-  clearComments: () => {},
-  setAttackCount: () => {},
-  setSpecialAttackAvailable: () => {},
-  setHighballMode: () => {},
-  setSosoHealMode: () => {},
-  setYujiSpecialMode: () => {},
-  setShowCharacterSheet: () => {},
-  setCurrentCharacterSheet: () => {},
-  incrementComments: () => {},
-});
-
-// Create the provider component
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('start');
-  const [bgmEnabled, setBgmEnabled] = useState(true);
-  const [player, setPlayerState] = useState<Character>({
-    name: 'とおる＠経営参謀',
-    icon: '/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png',
-    maxHp: 100,
-    currentHp: 100,
-    attackMin: 15,
-    attackMax: 25,
-    specialPower: 40
-  });
-  const [opponent1, setOpponent1State] = useState<Character>({
+  // Initial opponent1 (soso) state
+  const [opponent1, setOpponent1] = useState<Character>({
     name: 'そーそー＠狂犬ツイート',
     icon: '/lovable-uploads/b62bfeb2-59a1-4f1b-976a-d026638e0416.png',
-    maxHp: 70,
-    currentHp: 70,
-    attackMin: 20,
-    attackMax: 30,
+    maxHp: 100,
+    currentHp: 100,
+    attackMin: 5,
+    attackMax: 15,
     specialPower: 0
   });
-  const [opponent2, setOpponent2State] = useState<Character>({
-    name: 'ゆうじ＠陽気なおじさん',
+  
+  // Initial opponent2 (yuji) state
+  const [opponent2, setOpponent2] = useState<Character>({
+    name: 'ゆうじ',
     icon: '/lovable-uploads/988ea3ef-2efe-4616-a292-04d0d01fb33c.png',
     maxHp: 100,
     currentHp: 100,
-    attackMin: 15,
-    attackMax: 25,
-    specialPower: 40
+    attackMin: 10,
+    attackMax: 20,
+    specialPower: 0
   });
-  const [battleTimer, setBattleTimer] = useState(0);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [attackCount, setAttackCount] = useState(0);
-  const [specialAttackAvailable, setSpecialAttackAvailable] = useState(false);
-  const [highballMode, setHighballMode] = useState(false);
-  const [sosoHealMode, setSosoHealMode] = useState(false);
-  const [yujiSpecialMode, setYujiSpecialMode] = useState(false);
-  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null);
-  const [showCharacterSheet, setShowCharacterSheet] = useState(false);
-  const [currentCharacterSheet, setCurrentCharacterSheet] = useState<'player' | 'opponent1' | 'opponent2' | null>(null);
-  const [totalComments, setTotalComments] = useState(0);
-
-  // Toggle BGM on/off
+  
+  // BGM state
+  const [bgmEnabled, setBgmEnabled] = useState(true);
+  
+  // Toggle BGM
   const toggleBgm = () => {
-    setBgmEnabled(!bgmEnabled);
+    setBgmEnabled(prev => !prev);
   };
-
-  // Handle screen transitions
-  const handleScreenTransition = (screen: Screen) => {
-    setCurrentScreen(screen);
-    
-    // Reset battle timer when entering battle screens
-    if (screen === 'battle1' || screen === 'battle2') {
-      resetBattleTimer();
-      startBattleTimer();
-    } else {
-      stopTimer();
-    }
-  };
-
-  // Update player character
-  const setPlayer = (updatedPlayer: Character) => {
-    setPlayerState(updatedPlayer);
-  };
-
-  // Update opponent1 character
-  const setOpponent1 = (updatedOpponent: Character) => {
-    setOpponent1State(updatedOpponent);
-  };
-
-  // Update opponent2 character
-  const setOpponent2 = (updatedOpponent: Character) => {
-    setOpponent2State(updatedOpponent);
-  };
-
-  // Reset battle timer
-  const resetBattleTimer = () => {
-    setBattleTimer(0);
-  };
-
+  
+  // Battle timer
+  const [battleTimer, setBattleTimer] = useState(0);
+  const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null);
+  
   // Start battle timer
   const startBattleTimer = () => {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-    }
+    if (timerInterval) clearInterval(timerInterval);
     
     const interval = setInterval(() => {
       setBattleTimer(prev => prev + 1);
@@ -210,82 +118,90 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     
     setTimerInterval(interval);
   };
-
-  // Stop battle timer
-  const stopTimer = () => {
+  
+  // Pause battle timer
+  const pauseBattleTimer = () => {
     if (timerInterval) {
       clearInterval(timerInterval);
       setTimerInterval(null);
     }
   };
-
-  // Add comment to the chat
+  
+  // Reset battle timer
+  const resetBattleTimer = () => {
+    if (timerInterval) clearInterval(timerInterval);
+    setBattleTimer(0);
+    setTimerInterval(null);
+  };
+  
+  // Screen transition
+  const [currentScreen, setCurrentScreen] = useState<Screen>('index');
+  
+  const handleScreenTransition = (screen: Screen) => {
+    setCurrentScreen(screen);
+  };
+  
+  // Comments system
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [totalComments, setTotalComments] = useState(0);
+  
   const addComment = (author: string, text: string, isSystem: boolean = false) => {
     setComments(prev => [...prev, { author, text, isSystem }]);
-    incrementComments();
+    if (!isSystem) {
+      setTotalComments(prev => prev + 1);
+    }
   };
-
-  // Clear all comments
+  
   const clearComments = () => {
     setComments([]);
+    setTotalComments(0);
   };
-
-  // Increment total comments counter
-  const incrementComments = () => {
-    setTotalComments(prev => prev + 1);
-  };
-
-  // Clean up timer on unmount
-  useEffect(() => {
+  
+  // Battle mechanics
+  const [attackCount, setAttackCount] = useState(0);
+  const [specialAttackAvailable, setSpecialAttackAvailable] = useState(false);
+  const [highballMode, setHighballMode] = useState(false);
+  const [sosoHealMode, setSosoHealMode] = useState(false);
+  const [yujiSpecialMode, setYujiSpecialMode] = useState(false);
+  
+  // Character sheet display
+  const [showCharacterSheet, setShowCharacterSheet] = useState(false);
+  const [currentCharacterSheet, setCurrentCharacterSheet] = useState<'player' | 'opponent1' | 'opponent2' | null>(null);
+  
+  // Cleanup on unmount
+  React.useEffect(() => {
     return () => {
-      if (timerInterval) {
-        clearInterval(timerInterval);
-      }
+      if (timerInterval) clearInterval(timerInterval);
     };
   }, [timerInterval]);
-
-  // Context value
-  const contextValue: AppContextType = {
-    currentScreen,
-    bgmEnabled,
-    player,
-    opponent1,
-    opponent2,
-    battleTimer,
-    comments,
-    attackCount,
-    specialAttackAvailable,
-    highballMode,
-    sosoHealMode,
-    yujiSpecialMode,
-    showCharacterSheet,
-    currentCharacterSheet,
-    totalComments,
-    toggleBgm,
-    handleScreenTransition,
-    setPlayer,
-    setOpponent1,
-    setOpponent2,
-    resetBattleTimer,
-    startBattleTimer,
-    addComment,
-    clearComments,
-    setAttackCount,
-    setSpecialAttackAvailable,
-    setHighballMode,
-    setSosoHealMode,
-    setYujiSpecialMode,
-    setShowCharacterSheet,
-    setCurrentCharacterSheet,
-    incrementComments,
-  };
-
+  
   return (
-    <AppContext.Provider value={contextValue}>
+    <AppContext.Provider value={{
+      player, setPlayer,
+      opponent1, setOpponent1,
+      opponent2, setOpponent2,
+      bgmEnabled, toggleBgm,
+      battleTimer, startBattleTimer, pauseBattleTimer, resetBattleTimer,
+      currentScreen, handleScreenTransition,
+      comments, addComment, clearComments, totalComments,
+      attackCount, setAttackCount,
+      specialAttackAvailable, setSpecialAttackAvailable,
+      highballMode, setHighballMode,
+      sosoHealMode, setSosoHealMode,
+      yujiSpecialMode, setYujiSpecialMode,
+      showCharacterSheet, setShowCharacterSheet,
+      currentCharacterSheet, setCurrentCharacterSheet
+    }}>
       {children}
     </AppContext.Provider>
   );
 };
 
-// Custom hook for using the app context
-export const useApp = () => useContext(AppContext);
+// Custom hook for using the AppContext
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (context === undefined) {
+    throw new Error('useApp must be used within an AppProvider');
+  }
+  return context;
+};

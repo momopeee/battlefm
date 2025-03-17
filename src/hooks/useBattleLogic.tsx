@@ -65,6 +65,7 @@ export const useBattleLogic = () => {
   const [isBattleStarted, setIsBattleStarted] = useState(false);
   const [transitionScheduled, setTransitionScheduled] = useState(false);
   const [isPlayerVictory, setIsPlayerVictory] = useState<boolean | null>(null);
+  const [showSkipButton, setShowSkipButton] = useState(false);
 
   // Initialize battle when component mounts
   useEffect(() => {
@@ -93,6 +94,7 @@ export const useBattleLogic = () => {
     setSosoHealMode(false);
     setTransitionScheduled(false);
     setIsPlayerVictory(null);
+    setShowSkipButton(false);
     
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
     
@@ -132,6 +134,25 @@ export const useBattleLogic = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.currentHp, opponent1.currentHp]);
+
+  // Show skip button after delay
+  useEffect(() => {
+    let skipButtonTimer: NodeJS.Timeout | null = null;
+    
+    if (isBattleOver && isPlayerVictory === true) {
+      skipButtonTimer = setTimeout(() => {
+        setShowSkipButton(true);
+      }, 10000); // 10 seconds delay for victory
+    } else if (isBattleOver && isPlayerVictory === false) {
+      skipButtonTimer = setTimeout(() => {
+        setShowSkipButton(true);
+      }, 15000); // 15 seconds delay for defeat
+    }
+    
+    return () => {
+      if (skipButtonTimer) clearTimeout(skipButtonTimer);
+    };
+  }, [isBattleOver, isPlayerVictory]);
 
   // Updated: Activate soso heal mode when HP falls below 20 (changed from timer-based)
   useEffect(() => {
@@ -373,6 +394,11 @@ export const useBattleLogic = () => {
       addComment("システム", "ライブが終了しました", true);
       console.log("Scheduling victory transition in 5 seconds...");
       
+      // Show skip button after 10 seconds
+      setTimeout(() => {
+        setShowSkipButton(true);
+      }, 1000);
+      
       // 5秒後に勝利画面へ遷移
       setTimeout(() => {
         if (!transitionScheduled) {
@@ -415,6 +441,11 @@ export const useBattleLogic = () => {
         addComment("システム", "ライブが終了しました", true);
         console.log("Scheduling defeat transition in 5 seconds...");
         
+        // Show skip button after 15 seconds
+        setTimeout(() => {
+          setShowSkipButton(true);
+        }, 1000);
+        
         // さらに5秒後に敗北画面へ遷移
         setTimeout(() => {
           if (!transitionScheduled) {
@@ -445,6 +476,7 @@ export const useBattleLogic = () => {
     showCharacterSheet,
     currentCharacterSheet,
     comments,
+    showSkipButton,
     handlePlayerAttack,
     handlePlayerSpecial,
     handleRunAway,

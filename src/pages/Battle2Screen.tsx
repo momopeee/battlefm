@@ -549,7 +549,7 @@ const Battle2Screen: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center">
           <img 
-            src={player.icon} 
+            src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
             alt={player.name} 
             className="w-12 h-12 rounded-full mr-2 border-2 border-white"
           />
@@ -639,26 +639,6 @@ const Battle2Screen: React.FC = () => {
       
       {/* Audio Player */}
       {soundEffect && <AudioPlayer src={soundEffect} />}
-      
-      {/* Battle results overlay */}
-      {battleResult && (
-        <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-50">
-          <div className="text-center p-8 rounded-lg">
-            <h2 className="text-4xl font-bold mb-4">
-              {battleResult === 'victory' ? (
-                <span className="text-green-500">勝利！</span>
-              ) : (
-                <span className="text-red-500">敗北...</span>
-              )}
-            </h2>
-            <p className="text-xl mb-8">
-              {battleResult === 'victory' 
-                ? 'とおるはゆうじの陽気なおじさんに勝利した！'
-                : 'とおるはゆうじの陽気なおじさんに敗北した...'}
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

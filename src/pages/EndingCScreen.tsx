@@ -1,10 +1,12 @@
 
 import React from 'react';
 import { useApp } from '@/context/AppContext';
-import { Volume2, VolumeX, RefreshCw, Home } from 'lucide-react';
+import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const EndingCScreen: React.FC = () => {
+  const navigate = useNavigate();
   const { 
     bgmEnabled, 
     toggleBgm,
@@ -12,12 +14,18 @@ const EndingCScreen: React.FC = () => {
   } = useApp();
 
   const handleRetry = () => {
-    // バトル2の敗北エンドなので、バトル2に戻す
+    // バトル2に戻す
     handleScreenTransition('battle2');
+    navigate('/battle2');
   };
 
   const handleBackToStart = () => {
     handleScreenTransition('start');
+    navigate('/start');
+  };
+
+  const handleFollowYuji = () => {
+    window.open('https://stand.fm/channels/5eb17436f654bbcab4e54fa0', '_blank');
   };
 
   return (
@@ -25,23 +33,43 @@ const EndingCScreen: React.FC = () => {
       className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
       style={{ 
         backgroundImage: 'url("/lovable-uploads/06195b62-3f14-4c57-b235-a8f00a43b907.png")',
-        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
+        width: '1080px', 
+        height: '1920px', 
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        margin: '0 auto'
       }}
     >
       <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
-        <h1 className="text-3xl font-bold mb-6">敗北...</h1>
+        <h1 className="text-3xl font-bold mb-6">敗北</h1>
         
-        <p className="mb-8 text-lg">
-          とおるは敗北した...
-          <br />
-          ゆうじの陽気なおじさんトークは止まらない...
-          <br /><br />
-          とおるは最後にひとりぼっちでハイボールを飲んだ。
-          <br />
-          心の中では熱い涙が溢れていた。
-        </p>
+        <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
+          とおるは敗れた！<br>
+          <br>
+          とおるの言葉はゆうじに届かなかった<br>
+          世界は広い<br>
+          <br>
+          本当に届けたい人には<br>
+          いつだって言葉は届かない<br>
+          <br>
+          でも嘆く事は無い<br>
+          だって、何度でも話しかける事が出来るから<br>
+          <br>
+          そう、stand.fmならでコラボでお話出来る！<br>
+          <br>
+          俺達のスタエフはまだ始まったばかりだ！<br>`
+        }} />
         
         <div className="space-y-4">
+          <Button
+            onClick={handleFollowYuji}
+            className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+          >
+            <ExternalLink size={20} />
+            スタンドエフエムでゆうじをフォローする
+          </Button>
+          
           <Button
             onClick={handleRetry}
             className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"

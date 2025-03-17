@@ -5,6 +5,7 @@ import CommentArea from '@/components/CommentArea';
 import CharacterSheet from '@/components/CharacterSheet';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import AudioPlayer from '@/components/AudioPlayer';
 
 // Import the new components
 import PlayerInfo from '@/components/battle/PlayerInfo';
@@ -26,6 +27,7 @@ const Battle1Screen: React.FC = () => {
     sosoHealMode,
     specialAttackAvailable,
     comments,
+    showSkipButton,
     handlePlayerAttack,
     handlePlayerSpecial,
     handleRunAway,
@@ -44,7 +46,12 @@ const Battle1Screen: React.FC = () => {
         background: 'linear-gradient(180deg, rgba(212, 50, 144, 1), rgba(119, 3, 175, 1))',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
+        width: '1080px',
+        height: '1920px',
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        margin: '0 auto'
       }}
     >
       {/* Top section with title and timer */}
@@ -92,8 +99,8 @@ const Battle1Screen: React.FC = () => {
         <CommentInput />
       </div>
       
-      {/* Skip Button - Only shown when battle is over */}
-      {isBattleOver && (
+      {/* Skip Button - Only shown when battle is over and after delay */}
+      {showSkipButton && (
         <Button
           onClick={handleSkip}
           className="fixed bottom-20 right-6 z-20 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-md animate-pulse flex items-center gap-2"

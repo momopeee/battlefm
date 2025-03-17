@@ -1,10 +1,12 @@
 
 import React from 'react';
 import { useApp } from '@/context/AppContext';
-import { Volume2, VolumeX, RefreshCw, Home } from 'lucide-react';
+import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const EndingBScreen: React.FC = () => {
+  const navigate = useNavigate();
   const { 
     bgmEnabled, 
     toggleBgm,
@@ -12,12 +14,18 @@ const EndingBScreen: React.FC = () => {
   } = useApp();
 
   const handleRetry = () => {
-    // バトル1の敗北エンドなので、バトル1に戻す
+    // バトル1に戻す
     handleScreenTransition('battle1');
+    navigate('/battle1');
   };
 
   const handleBackToStart = () => {
     handleScreenTransition('start');
+    navigate('/start');
+  };
+
+  const handleFollowSoso = () => {
+    window.open('https://stand.fm/channels/5f5b7d50f04555115d681ad4', '_blank');
   };
 
   return (
@@ -25,23 +33,43 @@ const EndingBScreen: React.FC = () => {
       className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
       style={{ 
         backgroundImage: 'url("/lovable-uploads/5d7a23ab-451e-4a7b-80e4-e649fc0a04aa.png")',
-        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
+        width: '1080px', 
+        height: '1920px', 
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        margin: '0 auto'
       }}
     >
       <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
-        <h1 className="text-3xl font-bold mb-6">敗北...</h1>
+        <h1 className="text-3xl font-bold mb-6">敗北</h1>
         
-        <p className="mb-8 text-lg">
-          とおるは敗北した...
-          <br />
-          そーそーのクソリプは止まらない...
-          <br /><br />
-          しかし、とおるは経験値を得た。
-          <br />
-          次は勝てるだろうか？
-        </p>
+        <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
+          とおるは敗れた！<br>
+          <br>
+          そーそーの狂犬のようなツイートが今日もＸで吹き荒れる<br>
+          もう誰もそれを止める事は出来ない<br>
+          <br>
+          心が荒んでしまったら、<br>
+          スタエフを開いて欲しい<br>
+          <br>
+          そこにはやさしいそーそーがいる<br>
+          怖いのはＸの上でだけ<br>
+          <br>
+          stand.fmでコラボしたら、みんな仲良し！<br>
+          <br>
+          俺達のスタエフはまだ始まったばかりだ！<br>`
+        }} />
         
         <div className="space-y-4">
+          <Button
+            onClick={handleFollowSoso}
+            className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+          >
+            <ExternalLink size={20} />
+            スタンドエフエムでそーそーをフォローする
+          </Button>
+          
           <Button
             onClick={handleRetry}
             className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"

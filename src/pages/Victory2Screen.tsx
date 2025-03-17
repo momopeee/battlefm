@@ -43,7 +43,13 @@ const Victory2Screen: React.FC = () => {
   };
   
   const handleFollow = () => {
+    // Update followed state
     setIsFollowed(!isFollowed);
+    
+    // Open link in new tab when following
+    if (!isFollowed) {
+      window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
+    }
   };
 
   return (
@@ -79,7 +85,7 @@ const Victory2Screen: React.FC = () => {
         {/* Player profile card */}
         <div className="w-full border border-gray-200 rounded-xl p-4 flex items-center gap-4 mb-6">
           <img 
-            src={player.icon} 
+            src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
             alt={player.name} 
             className="w-16 h-16 rounded-full object-cover"
           />

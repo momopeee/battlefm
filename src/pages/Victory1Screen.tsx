@@ -43,7 +43,13 @@ const Victory1Screen: React.FC = () => {
   };
   
   const handleFollow = () => {
+    // Update followed state
     setIsFollowed(!isFollowed);
+    
+    // Open link in new tab when following
+    if (!isFollowed) {
+      window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
+    }
   };
 
   return (
