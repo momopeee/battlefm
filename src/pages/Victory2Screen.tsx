@@ -70,16 +70,16 @@ const Victory2Screen: React.FC = () => {
       <div className="w-full flex flex-col items-center justify-center flex-1">
         {/* Live ended text */}
         <div className="text-center mb-6">
-          <h2 className="text-[15px] font-bold mb-4">ライブが終了しました</h2>
+          <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
           
           {/* Time display */}
-          <div className="text-[11px] text-gray-500 mb-2">
+          <div className="text-[12px] text-gray-500 mb-2">
             {formatTime(battleTimer)}
           </div>
           
           {/* Comment count */}
-          <div className="flex items-center justify-center gap-1 text-[11px] text-gray-500">
-            <MessageCircle size={14} strokeWidth={1.5} />
+          <div className="flex items-center justify-center gap-1 text-[12px] text-gray-500">
+            <MessageCircle size={16} strokeWidth={1.5} />
             <span>{totalComments}</span>
           </div>
         </div>
@@ -89,10 +89,10 @@ const Victory2Screen: React.FC = () => {
           <img 
             src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
             alt={player.name} 
-            className="w-[22px] h-[22px] rounded-full object-cover"
+            className="w-[35px] h-[35px] rounded-full object-cover"
           />
           
-          <div className="text-[10px] font-bold">
+          <div className="text-[12px] font-bold text-black">
             {player.name}
           </div>
           
