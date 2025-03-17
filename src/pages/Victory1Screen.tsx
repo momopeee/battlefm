@@ -10,7 +10,7 @@ const Victory1Screen: React.FC = () => {
   const { 
     player,
     battleTimer,
-    totalComments,
+    comments,
     handleScreenTransition,
     resetBattleState
   } = useApp();
@@ -86,10 +86,10 @@ const Victory1Screen: React.FC = () => {
             {formatTime(battleTimer)}
           </div>
           
-          {/* Comment count */}
+          {/* Comment count - updated to show total comments */}
           <div className="flex items-center justify-center gap-1 text-[12px] text-gray-500">
             <MessageCircle size={16} strokeWidth={1.5} />
-            <span>{totalComments}</span>
+            <span>{comments.length}</span>
           </div>
         </div>
         
