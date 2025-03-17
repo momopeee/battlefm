@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useApp, Character } from '@/context/AppContext';
 
@@ -174,8 +173,10 @@ export const useBattleLogic = () => {
       console.log("Skipping to victory1 screen");
       handleScreenTransition('victory1');
     } else if (isPlayerVictory === false) {
-      console.log("Skipping to endingB screen");
-      handleScreenTransition('endingB');
+      console.log("Skipping to victory2 screen with defeat parameter");
+      handleScreenTransition('victory2');
+      // Navigate to victory2 with defeat parameter
+      window.location.href = '/victory2?from=defeat';
     }
   };
 
@@ -200,7 +201,7 @@ export const useBattleLogic = () => {
     
     if (highballMode) {
       // Special handling for highball mode
-      addComment(player.name, "え？ちょっとまって、なに？なに？ちょっとまって？えっ？");
+      addComment(player.name, "え？ちょっとまって、なに？なに？ちょっとまって？えっ���");
       addComment("システム", "何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた", true);
       
       // Player damages himself
@@ -302,7 +303,7 @@ export const useBattleLogic = () => {
       // Random highball effect
       const highballEffects = [
         "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
-        "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
+        "とおるはハイボールを飲んだ、\nとおるは眠くな���てしまった。\nとおるは10のダメージを受けた",
         "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
       ];
       
@@ -409,7 +410,7 @@ export const useBattleLogic = () => {
     }, 12000);
   };
 
-  // Handle defeat - updated to ensure correct screen transition
+  // Handle defeat - updated to redirect to victory2 screen
   const handleDefeat = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
@@ -439,18 +440,20 @@ export const useBattleLogic = () => {
       
       setTimeout(() => {
         addComment("システム", "ライブが終了しました", true);
-        console.log("Scheduling defeat transition in 5 seconds...");
+        console.log("Scheduling defeat transition to victory2 in 5 seconds...");
         
         // Show skip button after 15 seconds
         setTimeout(() => {
           setShowSkipButton(true);
         }, 1000);
         
-        // さらに5秒後に敗北画面へ遷移
+        // 5秒後に敗北画面へ遷移 (updated to go to victory2)
         setTimeout(() => {
           if (!transitionScheduled) {
-            console.log("Executing defeat transition now to endingB");
-            handleScreenTransition('endingB');
+            console.log("Executing defeat transition now to victory2");
+            handleScreenTransition('victory2');
+            // Navigate to victory2 with defeat parameter
+            window.location.href = '/victory2?from=defeat';
           }
         }, 5000);
       }, 3000);
@@ -486,3 +489,4 @@ export const useBattleLogic = () => {
     handleSkip
   };
 };
+

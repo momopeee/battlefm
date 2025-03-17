@@ -219,8 +219,9 @@ const Battle2Screen: React.FC = () => {
       handleScreenTransition('victory2');
       navigate('/victory2');
     } else if (battleResult === 'defeat') {
-      handleScreenTransition('endingC');
-      navigate('/endingC');
+      // Changed to redirect to victory2 instead of endingC
+      handleScreenTransition('victory2');
+      navigate('/victory2');
     }
   };
   
@@ -519,6 +520,14 @@ const Battle2Screen: React.FC = () => {
     setBattleResult('defeat');
     setSoundEffect('/audios/orehamou.mp3');
     showDefeatComments();
+    
+    // This will be used when automatically transitioning after timeout
+    setTimeout(() => {
+      if (!showSkipButton) {
+        handleScreenTransition('victory2');
+        navigate('/victory2?from=defeat');
+      }
+    }, 20000); // Add a longer timeout for auto-transition
   };
   
   // Check for battle end conditions

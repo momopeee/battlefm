@@ -16,6 +16,7 @@ const Victory2Screen: React.FC = () => {
   
   const navigate = useNavigate();
   const [isFollowed, setIsFollowed] = useState(false);
+  const [isFromDefeat, setIsFromDefeat] = useState(false);
   
   // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {
@@ -25,19 +26,46 @@ const Victory2Screen: React.FC = () => {
   };
 
   useEffect(() => {
-    // Show victory toast
-    toast.success('ゆうじに勝利しました！', {
-      description: 'おめでとうございます！',
-      duration: 3000,
-    });
+    // Check if this screen was reached after a defeat
+    const currentPath = window.location.pathname;
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromDefeat = urlParams.get('from') === 'defeat' || sessionStorage.getItem('fromDefeat') === 'true';
+    
+    setIsFromDefeat(fromDefeat);
+    
+    // Show appropriate toast based on victory/defeat status
+    if (fromDefeat) {
+      sessionStorage.setItem('fromDefeat', 'true'); // Remember defeat status
+      toast.error('ゆうじに敗北しました', {
+        description: '次回は頑張りましょう！',
+        duration: 3000,
+      });
+    } else {
+      // Clear any previous defeat status
+      sessionStorage.removeItem('fromDefeat');
+      // Show victory toast
+      toast.success('ゆうじに勝利しました！', {
+        description: 'おめでとうございます！',
+        duration: 3000,
+      });
+    }
   }, []);
 
   const handleContinue = () => {
-    handleScreenTransition('endingA');
-    navigate('/endingA');
+    if (isFromDefeat) {
+      // If coming from defeat, go to endingC
+      handleScreenTransition('endingC');
+      navigate('/endingC');
+    } else {
+      // Normal flow - go to endingA
+      handleScreenTransition('endingA');
+      navigate('/endingA');
+    }
   };
   
   const handleReturnToStart = () => {
+    // Clear the defeat status when returning to start
+    sessionStorage.removeItem('fromDefeat');
     handleScreenTransition('start');
     navigate('/start');
   };
