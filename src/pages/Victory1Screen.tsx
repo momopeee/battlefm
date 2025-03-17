@@ -66,8 +66,8 @@ const Victory1Screen: React.FC = () => {
         boxSizing: 'border-box'
       }}
     >
-      {/* Main content */}
-      <div className="w-full flex flex-col items-center justify-start flex-1 pt-8">
+      {/* Main content - centered vertically */}
+      <div className="w-full flex flex-col items-center justify-center flex-1">
         {/* Live ended text */}
         <div className="text-center mb-6">
           <h2 className="text-[15px] font-bold mb-4">ライブが終了しました</h2>
