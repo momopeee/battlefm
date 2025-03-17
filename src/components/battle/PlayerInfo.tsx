@@ -16,18 +16,20 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer }) => {
   };
 
   return (
-    <div className="text-center mb-2">
-      <h1 className="text-[13px] font-bold mb-2">さよならクソリプそーそー！</h1>
-      <div className="flex items-start justify-start gap-4">
+    <div className="flex justify-between items-center mb-4">
+      <div className="flex items-center">
         <img 
           src={icon} 
           alt={name} 
-          className="w-8 h-8 rounded-full"
+          className="w-12 h-12 rounded-full mr-2 border-2 border-white"
         />
-        <div className="flex flex-col items-start">
-          <span className="text-[11px]">{name}</span>
-          <p className="text-[11px]">{formatTime(battleTimer)}</p>
+        <div>
+          <h1 className="text-[14px] font-bold">さよなら陽気なおじさん！</h1>
+          <p className="text-sm opacity-80">{name}</p>
         </div>
+      </div>
+      <div className="px-3 py-1 bg-white/20 rounded-full text-sm backdrop-blur-sm">
+        {formatTime(battleTimer)}
       </div>
     </div>
   );

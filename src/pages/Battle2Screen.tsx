@@ -586,22 +586,11 @@ const Battle2Screen: React.FC = () => {
       }}
     >
       {/* Top section with title and timer */}
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center">
-          <img 
-            src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
-            alt={player.name} 
-            className="w-12 h-12 rounded-full mr-2 border-2 border-white"
-          />
-          <div>
-            <h1 className="text-[14px] font-bold">さよなら陽気なおじさん！</h1>
-            <p className="text-sm opacity-80">{player.name}</p>
-          </div>
-        </div>
-        <div className="px-3 py-1 bg-white/20 rounded-full text-sm backdrop-blur-sm">
-          {formatTime(battleTimer)}
-        </div>
-      </div>
+      <PlayerInfo 
+        name={player.name} 
+        icon={player.icon}
+        battleTimer={battleTimer}
+      />
       
       {/* Health and special gauges */}
       <GaugesDisplay 
