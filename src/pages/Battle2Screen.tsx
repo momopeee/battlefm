@@ -72,6 +72,7 @@ const Battle2Screen: React.FC = () => {
   const [specialModeActive, setSpecialModeActive] = useState(false);
   const [isHighballConfused, setIsHighballConfused] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
+  const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   
   // Reset battle state on component mount
   useEffect(() => {
@@ -188,6 +189,15 @@ const Battle2Screen: React.FC = () => {
       if (skipButtonTimer) clearTimeout(skipButtonTimer);
     };
   }, [isBattleOver, battleResult]);
+
+  // Clean up redirect timer on component unmount
+  useEffect(() => {
+    return () => {
+      if (redirectTimer) {
+        clearTimeout(redirectTimer);
+      }
+    };
+  }, [redirectTimer]);
   
   // Activate Yuji's special mode
   const activateYujiSpecialMode = () => {
@@ -215,13 +225,19 @@ const Battle2Screen: React.FC = () => {
   const handleSkip = () => {
     if (!isBattleOver) return;
     
+    // Cancel any pending timers
+    if (redirectTimer) {
+      clearTimeout(redirectTimer);
+      setRedirectTimer(null);
+    }
+    
     if (battleResult === 'victory') {
       handleScreenTransition('victory2');
       navigate('/victory2');
     } else if (battleResult === 'defeat') {
-      // Changed to redirect to victory2 instead of endingC
-      handleScreenTransition('victory2');
-      navigate('/victory2');
+      // Update to redirect to endingC instead of victory2 on defeat
+      handleScreenTransition('endingC');
+      navigate('/endingC');
     }
   };
   
@@ -506,28 +522,36 @@ const Battle2Screen: React.FC = () => {
     });
   };
   
-  // Handle victory
+  // Handle victory with automatic redirection
   const handleVictory = () => {
     setIsBattleOver(true);
     setBattleResult('victory');
     setSoundEffect('/audios/syouri.mp3');
     showVictoryComments();
+    
+    // Set up automatic redirection after 20 seconds
+    const timer = setTimeout(() => {
+      handleScreenTransition('victory2');
+      navigate('/victory2');
+    }, 20000);
+    
+    setRedirectTimer(timer);
   };
   
-  // Handle defeat
+  // Handle defeat with automatic redirection to endingC
   const handleDefeat = () => {
     setIsBattleOver(true);
     setBattleResult('defeat');
     setSoundEffect('/audios/orehamou.mp3');
     showDefeatComments();
     
-    // This will be used when automatically transitioning after timeout
-    setTimeout(() => {
-      if (!showSkipButton) {
-        handleScreenTransition('victory2');
-        navigate('/victory2?from=defeat');
-      }
-    }, 20000); // Add a longer timeout for auto-transition
+    // Set up automatic redirection after 20 seconds
+    const timer = setTimeout(() => {
+      handleScreenTransition('endingC');
+      navigate('/endingC');
+    }, 20000);
+    
+    setRedirectTimer(timer);
   };
   
   // Check for battle end conditions
