@@ -232,7 +232,7 @@ const Battle2Screen: React.FC = () => {
     }, 1000);
   };
   
-  // Skip to the appropriate ending screen
+  // Skip to the appropriate ending screen - MODIFIED
   const handleSkip = () => {
     if (!isBattleOver) return;
     
@@ -249,9 +249,9 @@ const Battle2Screen: React.FC = () => {
       handleScreenTransition('victory2');
       navigate('/victory2');
     } else if (battleResult === 'defeat') {
-      // Update to redirect to endingC instead of victory2 on defeat
-      handleScreenTransition('endingC');
-      navigate('/endingC');
+      // Update to redirect to result2 instead of endingC on defeat
+      handleScreenTransition('result2');
+      navigate('/result2');
     }
   };
   
@@ -557,7 +557,7 @@ const Battle2Screen: React.FC = () => {
     setRedirectTimer(timer);
   };
   
-  // Handle defeat with automatic redirection to endingC
+  // Handle defeat - MODIFIED to redirect to result2
   const handleDefeat = () => {
     setIsBattleOver(true);
     setBattleResult('defeat');
@@ -568,8 +568,8 @@ const Battle2Screen: React.FC = () => {
     const timer = setTimeout(() => {
       // Pause the battle timer before redirecting
       pauseBattleTimer();
-      handleScreenTransition('endingC');
-      navigate('/endingC');
+      handleScreenTransition('result2');
+      navigate('/result2');
     }, 20000);
     
     setRedirectTimer(timer);
