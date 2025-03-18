@@ -76,7 +76,7 @@
     padding: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    /* Removed overflow: hidden; to allow scrolling */
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
   }
@@ -84,7 +84,8 @@
   body {
     @apply bg-background text-foreground;
     font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
-    position: fixed;
+    /* Changed from position: fixed to relative to allow scrolling */
+    position: relative;
     width: 100%;
     height: 100%;
   }
@@ -94,7 +95,7 @@
     height: 100%;
     margin: 0;
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-    overflow: hidden;
+    /* Removed overflow: hidden; to allow scrolling */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -108,7 +109,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    /* Removed overflow: hidden; to allow scrolling */
   }
 }
 
