@@ -1,680 +1,548 @@
 import { useState, useEffect } from 'react';
+import { useApp, Character } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '@/context/AppContext';
-import { Screen } from '@/context/AppContext';
+
+// Attack comments for player
+const playerAttackComments = [
+  "さよならワンマン経営！",
+  "経営チームを作るんだ！",
+  "基礎的人間能力が大事だ！",
+  "短期より中長期の持続可能性！",
+  "光あれば影あり…だが攻める！",
+  "とりあえず寝ないことを決めた",
+  "３億円の個人保証にハンコを押して腹をくくった",
+  "変化を受け入れる企業と個人にコミットします",
+  "経営者の人生観を大切にし、社員さんの一人一人の価値観やポテンシャルも大切にする",
+  "自分の考えもしっかりと持った強い通訳者として経営者と社員の間に入る",
+  "最小エネルギーで最大効果を狙える戦略を好む",
+  "短期利益だけじゃなく中長期的な視点で永続的な利益を重視する",
+  "お金だけでなく人の心を大切にする",
+  "基本笑顔で優しく、安全安心な場を大切にするが、時には厳しくもあり",
+  "ロジックと感覚（お客さんの感覚）の両方を同じくらい大切にする",
+  "これからの時代は基礎的人間能力と基礎的ビジネス能力を伸ばす時代",
+  "スペシャリストになるな、ジェネラリストを目指せ！！"
+];
+
+// Special attack comments for player
+const playerSpecialComments = [
+  "自分の想いの赴くままに目の前の事を全力で楽しんでたらこんな変態になりました",
+  "ファンキーな世の中になっても生きていける基礎的人間能力と基礎的仕事能力を手に入れよう",
+  "漢たるもの、背中で語れ！！！ぅぅぅぅううおおおおおお！！！！くらえ！円月殺法！！！"
+];
+
+// Attack comments for opponent1 (soso)
+const opponent1AttackComments = [
+  "消費税一律30%とかにすれば全て解決する",
+  "マジでこいつのフォロワヤバイ奴しかおらんな",
+  "国民皆保険ごとなくせよバカやろう💢",
+  "貧乏な移民を追い出し、金持ちにビザを買わせる",
+  "真面目に働いていれば万作にはならない",
+  "なかなか一つにまとまらない経済学者がほぼ全員反対するもの: 軽減税率",
+  "老人が全て〇ねば全部解決するのに",
+  "そろそろ米国株開いたかな？",
+  "上原には本当にいいご飯屋さんが多くて嬉しい"
+];
 
 export const useBattleLogic = () => {
-  const navigate = useNavigate();
   const { 
-    player, 
-    setPlayer, 
-    opponent1, 
-    setOpponent1,
-    opponent2,
-    setOpponent2,
+    player, setPlayer,
+    opponent1, setOpponent1,
     battleTimer,
-    startBattleTimer,
-    pauseBattleTimer,
     resetBattleTimer,
-    comments,
-    addComment,
-    clearComments,
-    attackCount,
-    setAttackCount,
-    specialAttackAvailable, 
-    setSpecialAttackAvailable,
-    highballMode,
-    setHighballMode,
-    sosoHealMode,
-    setSosoHealMode,
-    yujiSpecialMode,
-    setYujiSpecialMode,
-    currentScreen,
-    handleScreenTransition,
-    showCharacterSheet,
-    setShowCharacterSheet,
-    currentCharacterSheet,
-    setCurrentCharacterSheet
+    startBattleTimer,
+    comments, addComment, clearComments,
+    specialAttackAvailable, setSpecialAttackAvailable,
+    attackCount, setAttackCount,
+    highballMode, setHighballMode,
+    sosoHealMode, setSosoHealMode,
+    showCharacterSheet, setShowCharacterSheet,
+    currentCharacterSheet, setCurrentCharacterSheet,
+    handleScreenTransition
   } = useApp();
-  
-  // Battle state
-  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+
+  const navigate = useNavigate();
   const [isBattleOver, setIsBattleOver] = useState(false);
-  const [playerHp, setPlayerHp] = useState(player.currentHp);
-  const [opponentHp, setOpponentHp] = useState(currentScreen === 'battle1' ? opponent1.currentHp : opponent2.currentHp);
-  const [attackInProgress, setAttackInProgress] = useState(false);
-  const [soundEffect, setSoundEffect] = useState<string | null>(null);
-  const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+  const [isBattleStarted, setIsBattleStarted] = useState(false);
+  const [transitionScheduled, setTransitionScheduled] = useState(false);
+  const [isPlayerVictory, setIsPlayerVictory] = useState<boolean | null>(null);
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
-  const [isHighballConfused, setIsHighballConfused] = useState(false);
-  
-  // Reset player HP and set current HP on component mount or when maxHp changes
+  const [soundEffect, setSoundEffect] = useState<string | null>(null);
+  const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
+
+  // Sound effect URLs
+  const attackSoundUrl = "https://soundcloud.com/davis-momoyama/kougeki/s-To2wEpGbOXX?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const specialSoundUrl = "https://soundcloud.com/davis-momoyama/kougeki2/s-wj0EefmlUAf?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const runAwaySoundUrl = "https://on-jin.com/sound/ag/s2e75332cc5/se/z/ta_ta_nigeru01.mp3";
+  const highballSoundUrl = "https://taira-komori.jpn.org/sound/eating01/gulp_down_water1.mp3";
+  const victorySoundUrl = "https://soundcloud.com/davis-momoyama/syouri/s-u6HAdaFT0Sb?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const defeatSoundUrl = "https://soundcloud.com/davis-momoyama/orehamou/s-q3IJA3aoBNH?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+
+  // Reset sound effect after playing
   useEffect(() => {
-    const selectedOpponent = currentScreen === 'battle1' ? opponent1 : opponent2;
-    setPlayerHp(player.currentHp);
-    setOpponentHp(selectedOpponent.currentHp);
-    
-    // Start battle timer
+    if (soundEffect) {
+      const timer = setTimeout(() => {
+        setSoundEffect(null);
+      }, 2000); // Clear sound effect after 2 seconds
+      
+      return () => clearTimeout(timer);
+    }
+  }, [soundEffect]);
+
+  // Initialize battle when component mounts
+  useEffect(() => {
+    clearComments();
+    resetBattleTimer();
     startBattleTimer();
+    setIsBattleStarted(true);
     
-    // Add initial system message
-    if (comments.length === 0) {
-      const opponentName = currentScreen === 'battle1' ? 'そーそー＠狂犬ツイート' : 'ゆうじ＠陽気なおじさん';
-      setTimeout(() => {
-        addComment('システム', `バトル開始！とおる VS ${opponentName}`, true);
-      }, 500);
-    }
+    // Reset player and opponent stats
+    setPlayer({
+      ...player,
+      currentHp: player.maxHp,
+      attackMin: 15,  // Set attack min to 15
+      attackMax: 30,  // Set attack max to 30
+      specialPower: 50 // Special attack power to 30-50
+    });
     
-    // Cleanup on unmount
-    return () => {
-      pauseBattleTimer();
-      if (redirectTimer) {
-        clearTimeout(redirectTimer);
-      }
-    };
-  }, [player.maxHp, currentScreen]);
-  
-  // Update the current opponent based on the current screen
-  const currentOpponent = currentScreen === 'battle1' ? opponent1 : opponent2;
-  
-  // Player attack comments for each battle
-  const sosoAttackComments = [
-    "スタエフに黒い噂が絶えないのは、そーそーがクソリプを付けまくっているせいだ",
-    "テイルズオブジアビスに何百時間費やしたのなら、もっとSEOやGoogleアナリティクスに時間を使え！",
-    "起業家なら自分に厳しくあれ！！ベストセラーを生み出す漫画家の思考法を見習え！！",
-    "作家性に溺れるな！お前はクリエイターじゃない、起業家なんだ！",
-    "いい加減本業に集中しろ！",
-    "「しょうじき、むり」じゃなくて「ぜったい、やる！」と言え！",
-    "ひろゆきが正しいと思うなら、お前は永遠に成長しない",
-    "スタンドエフエムが好きなだけで、売上が上がると勘違いするな！",
-    "もっとベネフィットを考えて、「何が売れるか？」で考えろ！"
-  ];
-
-  const yujiAttackComments = [
-    "ゆうじは人の相談にのってはいけない人間だと確信している",
-    "正論を言われた時に、拗ねて逃げていては成長に繋がらないだろ",
-    "もっと漢として、大地に根を張って、自信をもって堂々としろ！",
-    "自分に反抗しない人を探して、適当にアドバイスをするのは相手の方に失礼だ！",
-    "タムタムやリコさんに逃げるな！！",
-    "ゆうじはじゅんさんにちゃんと謝罪すべきですね",
-    "クラファンとかやる前に、自分の強みと弱みを理解して、サービスの解像度を上げなさい",
-    "テクノロジーで急速に変化する世界の中で、この先何が自分の優位性になるのか考えろ",
-    "妄想でストーリーを作らず、根拠に基づいたデータに沿ってもう一度考え直せ！",
-    "それっぽいものを作ってもダメだ、目の前の相手をしっかり見ろ"
-  ];
-  
-  // Player special attack comments for each battle
-  const sosoSpecialComments = [
-    "そーそー、お前はツイッターで毒を吐くな！！自分を成長させる時間に当てろ！！お前の骨は俺が拾う！！！",
-    "クソリプを付けるエネルギーで新サービス開発しろ！！そうすればスタエフはもっとよくなる、俺がそーその骨は拾ってやる！！",
-    "そーその毒は必要ない！！優しくて温かいスタエフが大好きなそーその顔が見たいんだ！！その骨は俺が拾う！！！"
-  ];
-
-  const yujiSpecialComments = [
-    "パッションは大事だ、でもパッションだけじゃ薄っぺらい詐欺師と何も変わらないだろ！ゆうじが守りたいものを思い出して、正面からぶつかっていけ！骨は俺が拾う！！",
-    "俺達はゆうじが大好きだからいろいろ言うんだ、耳が痛い事もあるだろう、だが逃げるな！何があってもお前の骨は俺が拾う！！！",
-    "自らアドバイスを求めたなら、その相手には進捗の報告を怠るな！！俺達はいい、友達だから報告が無くても\"ゆうじは最低だ！！\"で済ませて、その後も仲良く出来る。だが、他の人は違う、一度不義理をしたら一生相手にされないし、下手したら敵になって戻ってくる。良く考えて行動し、軽はずみで他人を使い捨てにするな！！"
-  ];
-  
-  // Victory and defeat comments for each battle
-  const sosoVictoryComments = [
-    "とおるが勝利した！",
-    "そーそーのキーボードは鍵のかかった机の引き出しに片付けられた",
-    "そして、そーそーのXアカウントに二段階認証が設定された",
-    "ログインの暗唱を忘れたそーそーが嘆いている",
-    "そーそーは「いつもブラウザにログインしてるから〜」とか言い訳をしている",
-    "とおるは「心配するな！これも愛だ！骨は俺が拾う！」と優しい笑顔でそーそーに語りかけた",
-    "そーそーのスマホには管理アプリが入り、毒ツイートには警告画面が表示されるようになった",
-    "そーそーのキーボードは今日も泣いている",
-    "だが、そーそーはクリエイティブな迷路から抜け出し、本業で大きな成功を収めた",
-    "時々毒ツイートが恋しくなり、スタエフで毒を吐くために毎週金曜の夜には必ずライブをするようになった",
-    "そこで、とおるが「そうじゃない！そこじゃない！」と叫ぶ",
-    "でもみんな幸せであった"
-  ];
-
-  const sosoDefeatComments = [
-    "とおるが敗北した、そーそーのツイッターが止まらない",
-    "もはや誰も止められない",
-    "そーそーの毒は加速していく",
-    "でも心配いらない",
-    "そーそーの毒は愛",
-    "その毒さえ愛せるなら",
-    "この世は天国",
-    "だって、",
-    "伝説の起業家になった今のそーそーは、かつての毒ツイートを全て愛の文字に変えた",
-    "毒があったからこそ今の彼がある",
-    "そして、",
-    "今日もとおるとそーそーはスタエフで楽しくコラボ配信するのだった"
-  ];
-
-  const yujiVictoryComments = [
-    "とおるが勝利した、ゆうじは拗ねてタムタムにLINEをした",
-    "タムタムからの返事がない、ゆうじはリコさんにLINEをした",
-    "リコさんからの返事がない",
-    "ゆうじは殻に閉じこもってしまった",
-    "その後、風のうわさでゆうじが米国大統領に当選したと聞いた",
-    "とおるはゆうじを倒した。",
-    "でも本当は、ゆうじを倒したくなかった。",
-    "永遠にゆうじとの戯れをつづけたかった。",
-    "だが、とおるはゆうじを倒してしまった。",
-    "この戦いに勝利者はいない",
-    "とおるは一人涙して、今日もハイボールを飲む、とおるの心に7兆のダメージ"
-  ];
-
-  const yujiDefeatComments = [
-    "とおるが敗北した、ゆうじは調子にのってしまった",
-    "とおるは5億の経験値を得た",
-    "とおるは敗北からも学べる男だった",
-    "とおるはレベルが7000上がった",
-    "だが、ゆうじはどんどん悪い方向に成長した",
-    "とおるは危機感を覚えた",
-    "あの時俺が本気でぶん殴って目を覚まさせてやればこんなことには・・・",
-    "とおるは悔やんだ、そしてハイボールを飲んだ",
-    "夜空に輝く星の瞬きが、今日だけはいつもよりも多く感じた"
-  ];
-
-  // Enemy attack comments for each battle
-  const sosoEnemyComments = [
-    "くそが！お前馬鹿か？",
-    "漫画家の考え方を勉強しろ！",
-    "「しょうじき、むり」",
-    "おれは作家なんだよ！",
-    "スタエフのせいで作業が進まない！",
-    "作家性だよ！わかる？",
-    "お前、ひろゆきに論破されてほしいな",
-    "それ、違うから",
-    "そもそも売れないから！"
-  ];
-
-  const yujiEnemyComments = [
-    "しいたけ しか勝たん！！俺はしいたけ占いしか信じてないんすよ～",
-    "年収1000万目指します、まじで",
-    "「やればやるほど、楽しくなっていく」今まさにそんな状態！",
-    "佐川の集荷呼ぶだけでこんなに難しいなんて・・・",
-    "僕は常にかゆいところに手が届く存在でありたい",
-    "2025年以降の目標を立てて、めっちゃワクワクした！",
-    "今日の予定？タイミー"
-  ];
-  
-  // Handle character click
-  const handleCharacterClick = (character: 'player' | 'opponent1' | 'opponent2') => {
-    setCurrentCharacterSheet(character);
-    setShowCharacterSheet(true);
-  };
-  
-  // Handle player attack
-  const handlePlayerAttack = () => {
-    if (!isPlayerTurn || attackInProgress || isBattleOver) return;
+    setOpponent1({
+      ...opponent1,
+      currentHp: opponent1.maxHp
+    });
     
-    setAttackInProgress(true);
-    setSoundEffect('/audios/attack.mp3');
-    
-    // Handle highball confusion
-    if (isHighballConfused) {
-      addComment('とおる＠経営参謀', 'え？ちょっとまって、なに？なに？ちょっとまって？えっ？');
-      
-      setTimeout(() => {
-        addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた', true);
-        
-        // Player damages himself
-        setPlayerHp(Math.max(0, playerHp - 10));
-        setIsHighballConfused(false);
-        
-        // Check if player defeated himself
-        if (playerHp - 10 <= 0) {
-          handleDefeat();
-        } else {
-          // Enemy turn
-          setTimeout(() => {
-            setIsPlayerTurn(false);
-            setAttackInProgress(false);
-            handleEnemyAttack();
-          }, 1000);
-        }
-      }, 500);
-      
-      return;
-    }
-    
-    // Get battle-specific attack comments array
-    const attackComments = currentScreen === 'battle1' ? sosoAttackComments : yujiAttackComments;
-    
-    // Get random attack comment
-    const randomIndex = Math.floor(Math.random() * attackComments.length);
-    const attackComment = attackComments[randomIndex];
-    
-    addComment('とおる＠経営参謀', attackComment);
-    
-    // Calculate damage
-    const min = player.attackMin;
-    const max = player.attackMax;
-    const damage = Math.floor(Math.random() * (max - min + 1)) + min;
-    
-    // Special case for Soso's heal mode
-    if (currentScreen === 'battle1' && sosoHealMode) {
-      setTimeout(() => {
-        addComment('システム', 'そーそーは毒を吸収してパワーアップした！\nそーそーのHPが回復した', true);
-        
-        // Opponent1 (Soso) heals instead of taking damage
-        setOpponentHp(Math.min(opponent1.maxHp, opponentHp + 10));
-        
-        // Update attack count for special meter
-        const newAttackCount = attackCount + 1;
-        setAttackCount(newAttackCount);
-        if (newAttackCount >= 3) {
-          setSpecialAttackAvailable(true);
-        }
-        
-        // Enemy turn
-        setTimeout(() => {
-          setIsPlayerTurn(false);
-          setAttackInProgress(false);
-          handleEnemyAttack();
-        }, 1000);
-      }, 500);
-      
-      return;
-    }
-    
-    // Special case for Yuji's special mode in Battle2
-    const isYujiSpecialMode = currentScreen === 'battle2' && yujiSpecialMode;
-    
-    // Apply damage with delay for animation
-    setTimeout(() => {
-      if (isYujiSpecialMode) {
-        // Yuji's special mode reduces damage to 0
-        addComment('システム', 'ゆうじはのれんに腕押しを発動した。とおるの言葉は響かない。ゆうじは0ダメージを受けた。', true);
-      } else {
-        setOpponentHp(Math.max(0, opponentHp - damage));
-        addComment('システム', `とおるの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
-      }
-      
-      // Update attack count for special meter
-      const newAttackCount = attackCount + 1;
-      setAttackCount(newAttackCount);
-      if (newAttackCount >= 3) {
-        setSpecialAttackAvailable(true);
-      }
-      
-      // Check if opponent defeated
-      if (opponentHp - damage <= 0 && !isYujiSpecialMode) {
-        handleVictory();
-      } else {
-        // Enemy turn
-        setTimeout(() => {
-          setIsPlayerTurn(false);
-          setAttackInProgress(false);
-          handleEnemyAttack();
-        }, 1000);
-      }
-    }, 500);
-  };
-  
-  // Handle player special attack
-  const handlePlayerSpecial = () => {
-    if (!isPlayerTurn || attackInProgress || !specialAttackAvailable || isBattleOver) return;
-    
-    setAttackInProgress(true);
-    setSoundEffect('/audios/special.mp3');
-    setSpecialAttackAvailable(false);
     setAttackCount(0);
+    setSpecialAttackAvailable(false);
+    setHighballMode(false);
+    setSosoHealMode(false);
+    setTransitionScheduled(false);
+    setIsPlayerVictory(null);
+    setShowSkipButton(false);
     
-    // Get battle-specific special attack comments
-    const specialComments = currentScreen === 'battle1' ? sosoSpecialComments : yujiSpecialComments;
+    addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
     
-    // Get random special attack comment
-    const randomIndex = Math.floor(Math.random() * specialComments.length);
-    const specialComment = specialComments[randomIndex];
-    
-    addComment('とおる＠経営参謀', specialComment);
-    
-    // Special attack damage - handle Yuji's special mode differently
-    const isYujiSpecialMode = currentScreen === 'battle2' && yujiSpecialMode;
-    const damage = isYujiSpecialMode ? 10 : player.specialPower;
-    
-    setTimeout(() => {
-      if (currentScreen === 'battle1' && sosoHealMode) {
-        // Turn off Soso's heal mode
-        setSosoHealMode(false);
-        addComment('システム', 'そーそーの毒吸収能力が無効化された！\nそーそーに50ポイントのダメージ！', true);
-        setOpponentHp(Math.max(0, opponentHp - 50));
-      } else if (isYujiSpecialMode) {
-        // Yuji special mode reduces effectiveness
-        setOpponentHp(Math.max(0, opponentHp - damage));
-        addComment('システム', `とおるの必殺技が炸裂！ゆうじののれんに腕押しをわずかに通過した。 ${damage}ポイントのダメージ！`, true);
-      } else {
-        // Normal special attack
-        setOpponentHp(Math.max(0, opponentHp - damage));
-        addComment('システム', `とおるの必殺技が炸裂！ ${damage}ポイントの大ダメージ！`, true);
-      }
-      
-      // Check if opponent defeated
-      if (opponentHp - damage <= 0 || (currentScreen === 'battle1' && sosoHealMode && opponentHp - 50 <= 0)) {
-        handleVictory();
-      } else {
-        // Enemy turn
-        setTimeout(() => {
-          setIsPlayerTurn(false);
-          setAttackInProgress(false);
-          handleEnemyAttack();
-        }, 1000);
-      }
-    }, 500);
-  };
-  
-  // Handle enemy attack
-  const handleEnemyAttack = () => {
-    if (isBattleOver) return;
-    
-    setAttackInProgress(true);
-    setSoundEffect('/audios/enemy_attack.mp3');
-    
-    // Get battle-specific enemy attack comments
-    const enemyComments = currentScreen === 'battle1' ? sosoEnemyComments : yujiEnemyComments;
-    
-    // Get random enemy attack comment
-    const randomIndex = Math.floor(Math.random() * enemyComments.length);
-    const attackComment = enemyComments[randomIndex];
-    const opponentName = currentScreen === 'battle1' ? 'そーそー＠狂犬ツイート' : 'ゆうじ＠陽気なおじさん';
-    
-    // Calculate damage - special for Yuji's special mode
-    const isYujiSpecialMode = currentScreen === 'battle2' && yujiSpecialMode;
-    const min = isYujiSpecialMode ? currentOpponent.attackMin * 2 : currentOpponent.attackMin;
-    const max = isYujiSpecialMode ? currentOpponent.attackMax * 2 : currentOpponent.attackMax;
-    const damage = Math.floor(Math.random() * (max - min + 1)) + min;
-    
-    setTimeout(() => {
-      addComment(opponentName, attackComment);
-      
-      if (currentScreen === 'battle1' && opponentHp < opponent1.maxHp * 0.3 && !sosoHealMode) {
-        // Activate Soso's heal mode when HP is low
-        setSosoHealMode(true);
-        addComment('システム', 'そーそーが毒を吸収するモードに移行した！\n攻撃するとそーそーのHPが回復してしまう！', true);
-      }
-      
-      setTimeout(() => {
-        setPlayerHp(Math.max(0, playerHp - damage));
-        
-        if (isYujiSpecialMode) {
-          addComment('システム', `確変モード中！ゆうじの言葉が突き刺さる！ ${damage}ポイントの大ダメージ！`, true);
-        } else if (currentScreen === 'battle1') {
-          addComment('システム', `そーそーの毒舌が突き刺さる！ ${damage}ポイントのダメージ！`, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Handle opponent's turn
+  useEffect(() => {
+    if (!isPlayerTurn && isBattleStarted && !isBattleOver) {
+      const opponentTimer = setTimeout(() => {
+        if (sosoHealMode) {
+          handleSosoHeal();
         } else {
-          addComment('システム', `ゆうじの陽気なトークが突き刺さる！ ${damage}ポイントのダメージ！`, true);
+          handleOpponentAttack();
         }
-        
-        // Check if player defeated
-        if (playerHp - damage <= 0) {
-          handleDefeat();
-        } else {
-          // Player's turn
-          setTimeout(() => {
-            setIsPlayerTurn(true);
-            setAttackInProgress(false);
-          }, 1000);
-        }
-      }, 1000);
-    }, 500);
-  };
-  
-  // Handle running away
-  const handleRunAway = () => {
-    if (!isPlayerTurn || attackInProgress || isBattleOver) return;
-    
-    addComment('とおる＠経営参謀', "逃げよう...");
-    
-    setTimeout(() => {
-      addComment('システム', "とおるは逃げようとしたが、漢として本当に逃げていいのか、逃げた先にいったい何がある？ここで逃げたら俺は一生逃げ続ける。不毛でも立ち向かわなければならない。無駄だとしても、踏ん張らなければあかん時があるやろ！！と思いなおし、自分の頬を思いっきりビンタした。とおるは10のダメージを受けた。", true);
+      }, 1500);
       
-      // Player damages himself
-      setPlayerHp(Math.max(0, playerHp - 10));
+      return () => clearTimeout(opponentTimer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlayerTurn, isBattleStarted, isBattleOver, sosoHealMode]);
+
+  // Check for battle over conditions
+  useEffect(() => {
+    if ((player.currentHp <= 0 || opponent1.currentHp <= 0) && !isBattleOver && !transitionScheduled) {
+      setIsBattleOver(true);
       
-      // Check if player defeated himself
-      if (playerHp - 10 <= 0) {
+      if (player.currentHp <= 0) {
+        // Player lost
+        setIsPlayerVictory(false);
         handleDefeat();
-      } else {
-        // Enemy turn
-        setTimeout(() => {
-          setIsPlayerTurn(false);
-          setAttackInProgress(false);
-          handleEnemyAttack();
-        }, 1000);
+      } else if (opponent1.currentHp <= 0) {
+        // Player won
+        setIsPlayerVictory(true);
+        handleVictory();
       }
-    }, 500);
-  };
-  
-  // Handle highball
-  const handleHighball = () => {
-    if (!isPlayerTurn || attackInProgress || isBattleOver) return;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [player.currentHp, opponent1.currentHp]);
+
+  // Show skip button after delay
+  useEffect(() => {
+    let skipButtonTimer: NodeJS.Timeout | null = null;
     
-    addComment('とおる＠経営参謀', 'ぐびぐび、うへぇ～、もう一杯お願いします。メガで。');
+    if (isBattleOver && isPlayerVictory === true) {
+      skipButtonTimer = setTimeout(() => {
+        setShowSkipButton(true);
+      }, 10000); // 10 seconds delay for victory
+    } else if (isBattleOver && isPlayerVictory === false) {
+      skipButtonTimer = setTimeout(() => {
+        setShowSkipButton(true);
+      }, 15000); // 15 seconds delay for defeat
+    }
     
-    setTimeout(() => {
-      // Check if player's HP is less than half
-      if (playerHp < player.maxHp / 2) {
-        // Full recovery when HP is low
-        addComment('システム', "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
-        
-        // Restore player's HP
-        setPlayerHp(player.maxHp);
-      } else {
-        // Normal highball effect
-        const highballEffects = [
-          "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
-          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
-          "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
-        ];
-        
-        const effectIdx = Math.floor(Math.random() * highballEffects.length);
-        addComment('システム', highballEffects[effectIdx], true);
-        
-        // Player damages himself
-        setPlayerHp(Math.max(0, playerHp - 10));
-        
-        // Set highball confusion if drinking made player confused
-        if (effectIdx === 2) {
-          setIsHighballConfused(true);
-        }
-        
-        // Check if player defeated himself
-        if (playerHp - 10 <= 0) {
-          handleDefeat();
-          return;
-        }
-      }
-      
-      // Enable highball mode (if needed for future features)
-      setHighballMode(true);
-      
-      // End player's turn
-      setTimeout(() => {
-        setIsPlayerTurn(false);
-        setAttackInProgress(false);
-        handleEnemyAttack();
-      }, 1000);
-    }, 500);
-  };
-  
-  // Show victory comments sequentially
-  const showVictoryComments = () => {
-    // Choose the right set of victory comments
-    const victoryComments = currentScreen === 'battle1' ? sosoVictoryComments : yujiVictoryComments;
-    
-    victoryComments.forEach((comment, index) => {
-      setTimeout(() => {
-        addComment('システム', comment, true);
-      }, index * 3000); // Show each comment with a 3-second delay
-    });
-  };
-  
-  // Show defeat comments sequentially
-  const showDefeatComments = () => {
-    // Choose the right set of defeat comments
-    const defeatComments = currentScreen === 'battle1' ? sosoDefeatComments : yujiDefeatComments;
-    
-    defeatComments.forEach((comment, index) => {
-      setTimeout(() => {
-        addComment('システム', comment, true);
-      }, index * 3000); // Show each comment with a 3-second delay
-    });
-  };
-  
-  // Handle victory with automatic redirection
-  const handleVictory = () => {
-    setIsBattleOver(true);
-    setBattleResult('victory');
-    setSoundEffect('/audios/syouri.mp3');
-    showVictoryComments();
-    
-    // Set up automatic redirection after 30 seconds
-    const timer = setTimeout(() => {
-      // Pause the battle timer before redirecting
-      pauseBattleTimer();
-      
-      // Redirect based on current screen
-      const nextRoute = currentScreen === 'battle1' ? '/victory1' : '/victory2';
-      handleScreenTransition(currentScreen === 'battle1' ? 'victory1' : 'victory2');
-      navigate(nextRoute);
-    }, 20000);
-    
-    setRedirectTimer(timer);
-    
-    // Show skip button after 10 seconds
-    setTimeout(() => {
-      setShowSkipButton(true);
-    }, 10000);
-  };
-  
-  // Handle defeat with automatic redirection
-  const handleDefeat = () => {
-    setIsBattleOver(true);
-    setBattleResult('defeat');
-    setSoundEffect('/audios/orehamou.mp3');
-    showDefeatComments();
-    
-    // Set up automatic redirection after 30 seconds
-    const timer = setTimeout(() => {
-      // Pause the battle timer before redirecting
-      pauseBattleTimer();
-      
-      // Redirect based on current screen to the result screens
-      const nextRoute = currentScreen === 'battle1' ? '/result1' : '/result2';
-      handleScreenTransition(currentScreen === 'battle1' ? 'result1' : 'result2');
-      navigate(nextRoute);
-    }, 20000);
-    
-    setRedirectTimer(timer);
-    
-    // Show skip button after 15 seconds
-    setTimeout(() => {
-      setShowSkipButton(true);
-    }, 15000);
-  };
-  
-  // Handle skip button click
-  const handleSkip = (customRoute?: string) => {
+    return () => {
+      if (skipButtonTimer) clearTimeout(skipButtonTimer);
+    };
+  }, [isBattleOver, isPlayerVictory]);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (redirectTimer) clearTimeout(redirectTimer);
+    };
+  }, [redirectTimer]);
+
+  // Updated: Activate soso heal mode when HP falls below 20 (changed from timer-based)
+  useEffect(() => {
+    if (opponent1.currentHp <= 20 && !sosoHealMode && !isBattleOver) {
+      setSosoHealMode(true);
+      addComment("システム", "そーそーがとくぎ「強制コラボ召喚」を発動した", true);
+    }
+  }, [opponent1.currentHp, sosoHealMode, isBattleOver, addComment]);
+
+  // Skip to the appropriate ending screen
+  const handleSkip = () => {
     if (!isBattleOver) return;
     
-    // Cancel any pending timers
+    // Cancel any pending timers/transitions
+    setTransitionScheduled(true);
     if (redirectTimer) {
       clearTimeout(redirectTimer);
       setRedirectTimer(null);
     }
     
-    // Pause the battle timer
-    pauseBattleTimer();
+    // Transition to the appropriate screen based on battle outcome
+    if (isPlayerVictory === true) {
+      console.log("Skipping to victory1 screen");
+      handleScreenTransition('victory1');
+      navigate('/victory1');
+    } else if (isPlayerVictory === false) {
+      console.log("Skipping to endingB screen");
+      handleScreenTransition('endingB');
+      navigate('/endingB');
+    }
+  };
+
+  // Handle player attack - damage range 15-30
+  const handlePlayerAttack = () => {
+    if (isBattleOver || !isPlayerTurn) return;
     
-    // If custom route provided, use it
-    if (customRoute) {
-      const screenMap: Record<string, Screen> = {
-        '/victory1': 'victory1',
-        '/victory2': 'victory2',
-        '/result1': 'result1',
-        '/result2': 'result2'
-      };
+    // Play attack sound
+    setSoundEffect(attackSoundUrl);
+    
+    // Increase attack count for special attack
+    const newAttackCount = attackCount + 1;
+    setAttackCount(newAttackCount);
+    
+    // Enable special attack after 3 regular attacks
+    if (newAttackCount >= 3 && !specialAttackAvailable) {
+      setSpecialAttackAvailable(true);
+    }
+    
+    // Get random attack comment
+    const attackComment = playerAttackComments[Math.floor(Math.random() * playerAttackComments.length)];
+    
+    // Calculate damage
+    let damage;
+    
+    if (highballMode) {
+      // Special handling for highball mode
+      addComment(player.name, "え？ちょっとまって、なに？なに？ちょっとまって？えっ？");
+      addComment("システム", "何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた", true);
       
-      const mappedScreen = screenMap[customRoute] as Screen;
-      if (mappedScreen) {
-        handleScreenTransition(mappedScreen);
-      }
+      // Player damages himself
+      setPlayer({
+        ...player,
+        currentHp: Math.max(0, player.currentHp - 10)
+      });
       
-      navigate(customRoute);
+      // Reset highball mode
+      setHighballMode(false);
+      
+      // End player's turn
+      setIsPlayerTurn(false);
       return;
     }
     
-    // Otherwise use default routes based on battle result
-    if (battleResult === 'victory') {
-      const nextRoute = currentScreen === 'battle1' ? '/victory1' : '/victory2';
-      handleScreenTransition(currentScreen === 'battle1' ? 'victory1' : 'victory2');
-      navigate(nextRoute);
-    } else if (battleResult === 'defeat') {
-      // Update to redirect to result screens on defeat
-      const nextRoute = currentScreen === 'battle1' ? '/result1' : '/result2';
-      handleScreenTransition(currentScreen === 'battle1' ? 'result1' : 'result2');
-      navigate(nextRoute);
-    }
+    // Normal attack damage calculation - 15 to 30 damage
+    damage = Math.floor(Math.random() * (player.attackMax - player.attackMin + 1)) + player.attackMin;
+    
+    // Add attack comments
+    addComment(player.name, attackComment);
+    addComment("システム", `とおるの攻撃、そーそーは${damage}のダメージを受けた`, true);
+    
+    // Apply damage to opponent
+    setOpponent1({
+      ...opponent1,
+      currentHp: Math.max(0, opponent1.currentHp - damage)
+    });
+    
+    // End player's turn
+    setIsPlayerTurn(false);
   };
-  
-  // Update player/opponent health in context when battle ends
-  useEffect(() => {
-    if (isBattleOver) {
-      if (currentScreen === 'battle1') {
-        // Update opponent1 and player health
-        setOpponent1({
-          ...opponent1,
-          currentHp: opponentHp
-        });
-      } else if (currentScreen === 'battle2') {
-        // Update opponent2 and player health
-        setOpponent2({
-          ...opponent2,
-          currentHp: opponentHp
-        });
-      }
+
+  // Handle player special attack - 30 to 50 damage
+  const handlePlayerSpecial = () => {
+    if (isBattleOver || !isPlayerTurn || !specialAttackAvailable) return;
+    
+    // Play special attack sound
+    setSoundEffect(specialSoundUrl);
+    
+    // Get random special attack comment
+    const specialComment = playerSpecialComments[Math.floor(Math.random() * playerSpecialComments.length)];
+    
+    // Calculate damage (30-50 range)
+    let damage = Math.floor(Math.random() * 21) + 30; // 30-50 damage
+    
+    // Add attack comments
+    addComment(player.name, specialComment);
+    addComment("システム", `とおるのとくぎ！そーそーは${damage}のダメージを受けた！`, true);
+    
+    // Apply damage to opponent
+    setOpponent1({
+      ...opponent1,
+      currentHp: Math.max(0, opponent1.currentHp - damage)
+    });
+    
+    // Reset special attack availability and count
+    setSpecialAttackAvailable(false);
+    setAttackCount(0);
+    
+    // End player's turn
+    setIsPlayerTurn(false);
+  };
+
+  // Handle running away - updated with new comment
+  const handleRunAway = () => {
+    if (isBattleOver || !isPlayerTurn) return;
+    
+    // Play run away sound
+    setSoundEffect(runAwaySoundUrl);
+    
+    // Add escape comment
+    addComment(player.name, "逃げよう...");
+    addComment("システム", "とおるは逃げようとしたが、漢として本当に逃げていいのか、逃げた先にいったい何がある？ここで逃げたら俺は一生逃げ続ける。不毛でも立ち向かわなければならない。無駄だとしても、踏ん張らなければあかん時があるやろ！！と思いなおし、自分の頬を思いっきりビンタした。とおるは10のダメージを受けた。", true);
+    
+    // Player damages himself
+    setPlayer({
+      ...player,
+      currentHp: Math.max(0, player.currentHp - 10)
+    });
+    
+    // End player's turn
+    setIsPlayerTurn(false);
+  };
+
+  // Handle drinking highball - updated with new logic
+  const handleHighball = () => {
+    if (isBattleOver || !isPlayerTurn) return;
+    
+    // Play highball sound
+    setSoundEffect(highballSoundUrl);
+    
+    // Check if player's HP is less than half
+    if (player.currentHp < player.maxHp / 2) {
+      // Full recovery when HP is low
+      addComment(player.name, "ぐびぐび、うへぇ～、もう一杯お願いします。メガで。");
+      addComment("システム", "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
       
-      // Update player health
+      // Restore player's HP
       setPlayer({
         ...player,
-        currentHp: playerHp
+        currentHp: player.maxHp
       });
-    }
-  }, [isBattleOver]);
-  
-  // Clean up redirect timer on component unmount
-  useEffect(() => {
-    return () => {
-      if (redirectTimer) {
-        clearTimeout(redirectTimer);
+    } else {
+      // Normal highball effect
+      addComment(player.name, "ぐびぐび、うへぇ～、もう一杯お願いします。メガで。");
+      
+      // Random highball effect
+      const highballEffects = [
+        "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
+        "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
+        "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
+      ];
+      
+      const effectIdx = Math.floor(Math.random() * highballEffects.length);
+      addComment("システム", highballEffects[effectIdx], true);
+      
+      // Player damages himself
+      setPlayer({
+        ...player,
+        currentHp: Math.max(0, player.currentHp - 10)
+      });
+      
+      // Set highball mode if drinking made player confused
+      if (effectIdx === 2) {
+        setHighballMode(true);
       }
-    };
-  }, [redirectTimer]);
-  
+    }
+    
+    // End player's turn
+    setIsPlayerTurn(false);
+  };
+
+  // Handle opponent's attack
+  const handleOpponentAttack = () => {
+    if (isBattleOver) return;
+    
+    // Get random attack comment
+    const attackComment = opponent1AttackComments[Math.floor(Math.random() * opponent1AttackComments.length)];
+    
+    // Calculate damage
+    const damage = Math.floor(Math.random() * (opponent1.attackMax - opponent1.attackMin + 1)) + opponent1.attackMin;
+    
+    // Add attack comments
+    addComment(opponent1.name, attackComment);
+    addComment("システム", `そーそーの攻撃、とおるは${damage}のダメージを受けた`, true);
+    
+    // Apply damage to player
+    setPlayer({
+      ...player,
+      currentHp: Math.max(0, player.currentHp - damage)
+    });
+    
+    // Start player's turn
+    setIsPlayerTurn(true);
+  };
+
+  // Handle soso heal with fixed 10 points and updated comments
+  const handleSosoHeal = () => {
+    if (isBattleOver) return;
+    
+    // Add heal comments
+    addComment(opponent1.name, "あー、生きるのってむずかしいんだよなー、株クラのみんなも上がろうよ");
+    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した", true);
+    addComment("システム", "そーそーの体力が10回復した", true);
+    
+    // Heal opponent - fixed at 10 points
+    setOpponent1({
+      ...opponent1,
+      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + 10)
+    });
+    
+    // Start player's turn
+    setIsPlayerTurn(true);
+  };
+
+  // Handle victory - updated to automatically redirect after 20 seconds
+  const handleVictory = () => {
+    // Mark that we've already scheduled a transition
+    setTransitionScheduled(true);
+    setBattleResult('victory');
+    setSoundEffect(victorySoundUrl);
+    
+    // Add victory comments
+    addComment("システム", "とおるが勝利した、そーそーは破れかぶれになってクソリプを量産してしまった", true);
+    
+    // Queue up the victory messages with delays
+    setTimeout(() => {
+      addComment("システム", "とおるは400の経験値を得た、とおるはレベルが上がった", true);
+    }, 3000);
+    
+    setTimeout(() => {
+      addComment("システム", "とおるは祝いの美酒に酔いしれた", true);
+    }, 6000);
+    
+    setTimeout(() => {
+      addComment("システム", "とおるは祝いの美酒の効果で痛風が悪化した、80のダメージ", true);
+    }, 9000);
+    
+    // Final message and screen transition with clear console logs for debugging
+    setTimeout(() => {
+      addComment("システム", "ライブが終了しました", true);
+      console.log("Scheduling victory transition in 20 seconds...");
+      
+      // Show skip button after 10 seconds
+      setTimeout(() => {
+        setShowSkipButton(true);
+      }, 1000);
+      
+      // Set up a 20-second timer for automatic redirect
+      const timer = setTimeout(() => {
+        if (!transitionScheduled) {
+          console.log("Executing automatic victory transition to victory1");
+          handleScreenTransition('victory1');
+          navigate('/victory1');
+        }
+      }, 20000); // 20 seconds automatic redirect
+      
+      setRedirectTimer(timer);
+    }, 12000);
+  };
+
+  // Handle defeat - updated to redirect to endingB screen directly
+  const handleDefeat = () => {
+    // Mark that we've already scheduled a transition
+    setTransitionScheduled(true);
+    setBattleResult('defeat');
+    setSoundEffect(defeatSoundUrl);
+    
+    // Add defeat comments
+    addComment("システム", "とおるが敗北した、そーそーは歯止めが利かなくなってしまった", true);
+    
+    setTimeout(() => {
+      addComment("システム", "とおるは4000の経験値を得た", true);
+    }, 3000);
+    
+    setTimeout(() => {
+      addComment("システム", "とおるは敗北からも学べる男だった", true);
+    }, 6000);
+    
+    setTimeout(() => {
+      addComment("システム", "とおるはレベルが上がった", true);
+    }, 9000);
+    
+    setTimeout(() => {
+      addComment("システム", "とおるは敗北の美酒に酔いしれた", true);
+    }, 12000);
+    
+    // Final messages and screen transition with clear console logs for debugging
+    setTimeout(() => {
+      addComment("システム", "とおるは敗北の美酒の効果で痛風が悪化した、530000のダメージ", true);
+      
+      setTimeout(() => {
+        addComment("システム", "ライブが終了しました", true);
+        console.log("Scheduling defeat transition to endingB in 20 seconds...");
+        
+        // Show skip button after 15 seconds
+        setTimeout(() => {
+          setShowSkipButton(true);
+        }, 1000);
+        
+        // Set up a 20-second timer for automatic redirect to endingB instead of victory1
+        const timer = setTimeout(() => {
+          if (!transitionScheduled) {
+            console.log("Executing automatic defeat transition to endingB");
+            handleScreenTransition('endingB');
+            navigate('/endingB');
+          }
+        }, 20000); // 20 seconds automatic redirect
+        
+        setRedirectTimer(timer);
+      }, 3000);
+    }, 15000);
+  };
+
+  // Handle character sheet display
+  const handleCharacterClick = (character: 'player' | 'opponent1') => {
+    setCurrentCharacterSheet(character);
+    setShowCharacterSheet(true);
+  };
+
   return {
-    player: { ...player, currentHp: playerHp },
-    opponent1: { ...opponent1, currentHp: currentScreen === 'battle1' ? opponentHp : opponent1.currentHp },
-    opponent2: { ...opponent2, currentHp: currentScreen === 'battle2' ? opponentHp : opponent2.currentHp },
+    player,
+    opponent1,
     battleTimer,
-    isPlayerTurn,
     isBattleOver,
+    isPlayerTurn,
     attackCount,
     sosoHealMode,
-    yujiSpecialMode,
     specialAttackAvailable,
+    highballMode,
+    showCharacterSheet,
+    currentCharacterSheet,
     comments,
     showSkipButton,
+    soundEffect,
+    battleResult,
     handlePlayerAttack,
     handlePlayerSpecial,
     handleRunAway,
     handleHighball,
     handleCharacterClick,
-    showCharacterSheet: currentCharacterSheet !== null,
-    currentCharacterSheet,
-    setShowCharacterSheet: (show: boolean) => {
-      if (!show) setCurrentCharacterSheet(null);
-    },
-    handleSkip,
-    battleResult,
-    soundEffect
+    setShowCharacterSheet,
+    handleSkip
   };
 };

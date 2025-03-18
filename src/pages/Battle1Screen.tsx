@@ -41,15 +41,6 @@ const Battle1Screen: React.FC = () => {
     soundEffect
   } = useBattleLogic();
 
-  // Update handleSkip to go to Result1Screen instead of Victory1Screen if player is defeated
-  const handleSkipModified = () => {
-    if (battleResult === 'defeat') {
-      handleSkip('/result1');
-    } else {
-      handleSkip();
-    }
-  };
-
   // BGM URLs
   const battleBgmUrl = "https://soundcloud.com/davis-momoyama/toru/s-33qTzn3Pjy0?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
   const victoryBgmUrl = "https://soundcloud.com/davis-momoyama/syouri/s-u6HAdaFT0Sb?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
@@ -142,7 +133,7 @@ const Battle1Screen: React.FC = () => {
       {/* Skip Button - Only shown when battle is over and after delay */}
       {showSkipButton && (
         <Button
-          onClick={handleSkipModified}
+          onClick={handleSkip}
           className="fixed bottom-20 right-6 z-20 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-md animate-pulse flex items-center gap-2"
         >
           <SkipForward size={20} />

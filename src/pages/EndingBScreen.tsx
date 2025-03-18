@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useApp } from '@/context/AppContext';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -28,17 +28,9 @@ const EndingBScreen: React.FC = () => {
     window.open('https://stand.fm/channels/5f5b7d50f04555115d681ad4', '_blank');
   };
 
-  // Start scrolling animation when component mounts
-  useEffect(() => {
-    const textContainer = document.getElementById('scrolling-text');
-    if (textContainer) {
-      textContainer.classList.add('scrolling');
-    }
-  }, []);
-
   return (
     <div 
-      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center relative"
+      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
       style={{ 
         backgroundImage: 'url("/lovable-uploads/5d7a23ab-451e-4a7b-80e4-e649fc0a04aa.png")',
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
@@ -46,60 +38,30 @@ const EndingBScreen: React.FC = () => {
         height: '1920px', 
         maxWidth: '100vw',
         maxHeight: '100vh',
-        margin: '0 auto',
-        overflow: 'hidden'
+        margin: '0 auto'
       }}
     >
-      {/* Scrolling text container */}
-      <div 
-        className="h-[60vh] overflow-hidden absolute bottom-0 left-0 right-0 pointer-events-none flex justify-center"
-      >
-        <div 
-          id="scrolling-text"
-          className="text-white text-center whitespace-pre-line text-outlined"
-          style={{ 
-            fontSize: 'calc(1.5rem - 4px)',
-            lineHeight: '1.75',
-            position: 'absolute',
-            transform: 'translateY(100%)',
-            width: '80%',
-            maxWidth: '600px'
-          }}
-        >
-          <h1 className="text-2xl font-bold mb-6 text-outlined">敗北</h1>
-          
-          とおるは敗れた！
-
-          荒廃していく「X」
-          狂犬のようなツイートが、
-          フィードを埋め尽くす
-
-          そーそーが作りだした
-          ディストピアだ
-
-          でも大丈夫
-
-          心が荒んでしまったら、
-          スタエフを開こう
-
-          スタエフのそーそは
-          常識的で優しい
-
-          吐く毒にも愛嬌がある
-
-          怖いのはツイートだけ
-
-          stand.fm でコラボしたら、
-          みんな仲良し！
-
-          俺達のスタエフは
-          まだ始まったばかりだ！
-        </div>
-      </div>
-      
-      {/* Actions container at the bottom */}
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-        <div className="space-y-4 w-full max-w-md px-4">
+      <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
+        <h1 className="text-3xl font-bold mb-6">敗北</h1>
+        
+        <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
+          とおるは敗れた！<br>
+          <br>
+          そーそーの狂犬のようなツイートが今日もＸで吹き荒れる<br>
+          もう誰もそれを止める事は出来ない<br>
+          <br>
+          心が荒んでしまったら、<br>
+          スタエフを開いて欲しい<br>
+          <br>
+          そこにはやさしいそーそーがいる<br>
+          怖いのはＸの上でだけ<br>
+          <br>
+          stand.fmでコラボしたら、みんな仲良し！<br>
+          <br>
+          俺達のスタエフはまだ始まったばかりだ！<br>`
+        }} />
+        
+        <div className="space-y-4">
           <Button
             onClick={handleFollowSoso}
             className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
