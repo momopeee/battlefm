@@ -41,6 +41,22 @@ const EndingBScreen: React.FC = () => {
         margin: '0 auto'
       }}
     >
+      {/* 敗北 Header */}
+      <div className="w-full text-center mb-6 z-10">
+        <h1 
+          className="text-white -webkit-text-stroke-[2px] -webkit-text-stroke-black animate-pulse" 
+          style={{ 
+            fontSize: 'calc(1.5rem + 18px)',
+            fontFamily: 'Rodin M, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
+            textShadow: '0 0 10px rgba(255,255,255,0.7)',
+            letterSpacing: '2px',
+            fontWeight: 'bold'
+          }}
+        >
+          敗北
+        </h1>
+      </div>
+      
       <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden perspective">
         <div className="absolute w-full max-w-3xl text-center transform rotate3d">
           <div className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-6 rounded" style={{ fontSize: 'calc(1.125rem + 4px)' }}>
