@@ -35,9 +35,9 @@ const GaugesDisplay: React.FC<GaugesDisplayProps> = ({
           <SpecialGauge currentValue={attackCount} maxValue={3} />
         </div>
         <div className="flex-1">
-          {/* Opponent's special gauge (heal mode gauge) */}
+          {/* Opponent's special gauge (heal mode gauge) - Updated condition to HP <= 30 */}
           <SpecialGauge 
-            currentValue={sosoHealMode ? 0 : opponent.currentHp <= 20 ? 1 : 0} 
+            currentValue={sosoHealMode ? 0 : opponent.currentHp <= 30 ? 1 : 0} 
             maxValue={1} 
             label={sosoHealMode ? "強制コラボ召喚中" : "とくぎはつどう：1"}
           />

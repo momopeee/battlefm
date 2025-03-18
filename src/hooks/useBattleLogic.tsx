@@ -170,9 +170,9 @@ export const useBattleLogic = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.currentHp, opponent1.currentHp]);
 
-  // UPDATED: Activate soso heal mode when HP falls below 20 (and display special skill message once)
+  // UPDATED: Activate soso heal mode when HP falls below 30 (changed from 20) and display special skill message once
   useEffect(() => {
-    if (opponent1.currentHp <= 20 && !sosoHealMode && !isBattleOver && !specialSkillMessageDisplayed) {
+    if (opponent1.currentHp <= 30 && !sosoHealMode && !isBattleOver && !specialSkillMessageDisplayed) {
       setSosoHealMode(true);
       setSpecialSkillMessageDisplayed(true); // Mark that we've displayed the special skill message
       
