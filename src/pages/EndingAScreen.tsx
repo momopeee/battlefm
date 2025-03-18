@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { useApp } from '@/context/AppContext';
-import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import AudioPlayer from '@/components/AudioPlayer';
 
 const EndingAScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -44,10 +44,19 @@ const EndingAScreen: React.FC = () => {
     >
       <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
       
-      <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
-        <h1 className="text-3xl font-bold mb-6">完全勝利！</h1>
+      <div className="p-8 max-w-md w-full text-center">
+        <h1 className="text-3xl font-bold mb-6" style={{ 
+          color: 'white', 
+          textShadow: '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 2px 0 #000, 2px 0 0 #000, 0 -2px 0 #000, -2px 0 0 #000'
+        }}>完全勝利！</h1>
         
-        <p className="mb-8 text-lg" style={{ fontSize: 'calc(1.125rem - 4px)' }} dangerouslySetInnerHTML={{ __html: `
+        <p className="mb-8 text-lg" 
+          style={{ 
+            fontSize: 'calc(1.125rem - 4px)',
+            color: 'white', 
+            textShadow: '1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000'
+          }} 
+          dangerouslySetInnerHTML={{ __html: `
           とおるは勝利した！<br>
           <br>
           だが、<br>
