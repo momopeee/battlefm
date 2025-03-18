@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { useApp } from '@/context/AppContext';
-import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import AudioPlayer from '@/components/AudioPlayer';
 
 const EndingAScreen: React.FC = () => {
   const navigate = useNavigate();
