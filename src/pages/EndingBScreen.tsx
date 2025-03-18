@@ -44,7 +44,7 @@ const EndingBScreen: React.FC = () => {
       <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold mb-6">敗北</h1>
         
-        <p className="mb-8 text-lg" style={{ fontSize: 'calc(1.125rem - 3px)' }} dangerouslySetInnerHTML={{ __html: `
+        <p className="mb-8 text-lg" style={{ fontSize: 'calc(1.125rem - 4px)' }} dangerouslySetInnerHTML={{ __html: `
           とおるは敗れた！<br>
           <br>
           そーそーの狂犬のようなツイートが今日もＸで吹き荒れる<br>
