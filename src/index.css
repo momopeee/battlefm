@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -64,6 +63,14 @@
     --sidebar-border: 217.2 32.6% 17.5%;
     --sidebar-ring: 212.7 26.8% 83.9%;
   }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
 }
 
 @layer base {
@@ -73,6 +80,22 @@
   body {
     @apply bg-background text-foreground;
     font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+  }
+}
+
+/* Responsive container for game screens */
+.game-container {
+  width: 100%;
+  max-width: 1080px;
+  height: 100vh;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .game-container {
+    height: 100vh;
   }
 }
 
@@ -179,9 +202,9 @@
   justify-content: center;
   align-items: center;
   border-radius: 9999px;
-  padding: 10px 15px;
+  padding: 8px 12px;
   color: #fff;
-  line-height: 1.8;
+  line-height: 1.5;
   text-decoration: none;
   font-weight: 500;
   background: linear-gradient(270deg, #3bade3 0%, #576fe6 25%, #9844b7 51%, #ff357f 100%);
@@ -190,11 +213,20 @@
   transition: all 0.3s ease-out;
   /* Make buttons oval-shaped by adjusting width */
   width: 100%;
-  min-width: 70px;
+  min-width: 60px;
   max-width: 100%;
   height: 36px; /* Fixed height to ensure oval shape */
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 640px) {
+  .battle-action-button {
+    padding: 10px 15px;
+    min-width: 70px;
+    font-size: 1rem;
+  }
 }
 
 .battle-action-button:hover:not(:disabled) {
@@ -207,4 +239,20 @@
 .battle-action-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Responsive text sizes */
+.text-responsive {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+}
+
+.title-responsive {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+}
+
+/* Fix for mobile viewport height */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
 }

@@ -6,6 +6,7 @@ import CharacterSheet from '@/components/CharacterSheet';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AudioPlayer from '@/components/AudioPlayer';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Import the new components
 import PlayerInfo from '@/components/battle/PlayerInfo';
@@ -17,6 +18,8 @@ import { useBattleLogic } from '@/hooks/useBattleLogic';
 
 const Battle1Screen: React.FC = () => {
   const { bgmEnabled, toggleBgm } = useApp();
+  const isMobile = useIsMobile();
+  
   const {
     player,
     opponent1,
@@ -55,15 +58,15 @@ const Battle1Screen: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col h-screen p-4 text-white relative"
+      className="min-h-screen flex flex-col h-screen p-2 sm:p-4 text-white relative"
       style={{ 
         background: 'linear-gradient(180deg, rgba(212, 50, 144, 1), rgba(119, 3, 175, 1))',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
-        width: '1080px',
-        height: '1920px',
-        maxWidth: '100vw',
+        width: '100%',
+        maxWidth: '1080px',
+        height: '100vh',
         maxHeight: '100vh',
         margin: '0 auto'
       }}
@@ -108,8 +111,8 @@ const Battle1Screen: React.FC = () => {
         sosoHealMode={sosoHealMode}
       />
       
-      {/* Comments area with fixed height */}
-      <div className="flex-1 mb-2 h-[25vh] overflow-hidden">
+      {/* Comments area with responsive height */}
+      <div className="flex-1 mb-1 sm:mb-2 h-[20vh] sm:h-[25vh] overflow-hidden">
         <CommentArea comments={comments} />
       </div>
       
@@ -134,9 +137,9 @@ const Battle1Screen: React.FC = () => {
       {showSkipButton && (
         <Button
           onClick={handleSkip}
-          className="fixed bottom-20 right-6 z-20 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-md animate-pulse flex items-center gap-2"
+          className="fixed bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-purple-600 hover:bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
         >
-          <SkipForward size={20} />
+          <SkipForward size={isMobile ? 16 : 20} />
           スキップ
         </Button>
       )}
@@ -144,9 +147,12 @@ const Battle1Screen: React.FC = () => {
       {/* BGM Toggle Button */}
       <button
         onClick={toggleBgm}
-        className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
+        className="fixed top-3 sm:top-6 right-3 sm:right-6 z-20 bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-full hover:bg-white/20 transition-colors"
       >
-        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
+        {bgmEnabled ? 
+          <Volume2 size={isMobile ? 20 : 24} color="white" /> : 
+          <VolumeX size={isMobile ? 20 : 24} color="white" />
+        }
       </button>
       
       {/* Character Sheet Popup */}

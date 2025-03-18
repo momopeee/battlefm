@@ -3,6 +3,7 @@ import React from 'react';
 import HPBar from '@/components/HPBar';
 import SpecialGauge from '@/components/SpecialGauge';
 import { Character } from '@/context/AppContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface GaugesDisplayProps {
   player: Character;
@@ -17,10 +18,12 @@ const GaugesDisplay: React.FC<GaugesDisplayProps> = ({
   attackCount,
   sosoHealMode
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <>
       {/* Health bars */}
-      <div className="flex gap-4 mb-2">
+      <div className={`flex gap-2 sm:gap-4 mb-1 sm:mb-2 w-full ${isMobile ? 'px-1' : ''}`}>
         <div className="flex-1">
           <HPBar currentHP={player.currentHp} maxHP={player.maxHp} />
         </div>
@@ -30,7 +33,7 @@ const GaugesDisplay: React.FC<GaugesDisplayProps> = ({
       </div>
       
       {/* Special attack gauges */}
-      <div className="flex gap-4 mb-2">
+      <div className={`flex gap-2 sm:gap-4 mb-1 sm:mb-2 w-full ${isMobile ? 'px-1' : ''}`}>
         <div className="flex-1">
           <SpecialGauge currentValue={attackCount} maxValue={3} />
         </div>
