@@ -38,7 +38,6 @@ const SelectScreen: React.FC = () => {
     // Move to battle2 after 15 seconds total
     const battleTimeout = setTimeout(() => {
       handleScreenTransition('battle2');
-      navigate('/battle2');
     }, 15000);
     
     setTimeouts(prev => [...prev, alarmTimeout, battleTimeout]);
