@@ -209,9 +209,9 @@ export const useBattleLogic = () => {
       handleScreenTransition('victory1');
       navigate('/victory1');
     } else if (isPlayerVictory === false) {
-      console.log("Skipping to result1 screen");
-      handleScreenTransition('result1');
-      navigate('/result1');
+      console.log("Skipping to endingB screen");
+      handleScreenTransition('endingB');
+      navigate('/endingB');
     }
   };
 
@@ -462,7 +462,7 @@ export const useBattleLogic = () => {
     }, 12000);
   };
 
-  // Handle defeat - updated to redirect to result1 screen directly
+  // Handle defeat - updated to redirect to endingB screen directly
   const handleDefeat = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
@@ -494,19 +494,19 @@ export const useBattleLogic = () => {
       
       setTimeout(() => {
         addComment("システム", "ライブが終了しました", true);
-        console.log("Scheduling defeat transition to result1 in 20 seconds...");
+        console.log("Scheduling defeat transition to endingB in 20 seconds...");
         
         // Show skip button after 15 seconds
         setTimeout(() => {
           setShowSkipButton(true);
         }, 1000);
         
-        // Set up a 20-second timer for automatic redirect to result1 instead of endingB
+        // Set up a 20-second timer for automatic redirect to endingB instead of victory1
         const timer = setTimeout(() => {
           if (!transitionScheduled) {
-            console.log("Executing automatic defeat transition to result1");
-            handleScreenTransition('result1');
-            navigate('/result1');
+            console.log("Executing automatic defeat transition to endingB");
+            handleScreenTransition('endingB');
+            navigate('/endingB');
           }
         }, 20000); // 20 seconds automatic redirect
         
