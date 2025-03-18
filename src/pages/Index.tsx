@@ -6,14 +6,14 @@ import { Button } from '@/components/ui/button';
 const Index = () => {
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-between bg-white p-4"
+      className="min-h-screen flex flex-col items-center justify-between bg-black p-4"
       style={{ width: '1080px', height: '1920px', maxWidth: '100vw', maxHeight: '100vh', margin: '0 auto' }}
     >
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center flex flex-col items-center justify-center gap-10">
-          {/* Logo */}
+          {/* Updated Logo */}
           <img 
-            src="/lovable-uploads/4cc74295-9825-4091-9728-1f2dc84f72c1.png" 
+            src="/lovable-uploads/c8b9a8dd-129e-4ba6-ba66-c03a253d63f7.png" 
             alt="battle.fm" 
             className="w-64 md:w-80 mb-10"
           />
@@ -27,13 +27,13 @@ const Index = () => {
         </div>
       </div>
       
-      {/* Presenter credit at bottom */}
+      {/* Presenter credit with white text */}
       <div className="mt-auto pb-4">
         <a 
           href="https://stand.fm/channels/5e82bebe4afcd351043886fe" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-white hover:text-gray-300"
         >
           presented by 巨万の富男
         </a>
