@@ -5,6 +5,7 @@ import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import AudioPlayer from '@/components/AudioPlayer';
 
 const Victory1Screen: React.FC = () => {
   const { 
@@ -17,6 +18,9 @@ const Victory1Screen: React.FC = () => {
   
   const navigate = useNavigate();
   const [isFollowed, setIsFollowed] = useState(false);
+  
+  // Victory music URL
+  const victoryBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/a44a510a-0da9-46d6-9d70-ddeb68b9f3c0/syouri.mp3?table=block&id=1ba25ac2-cb4e-8053-b5be-d99d848c557b&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=MedUZRSs0R4-GLmakmxYgAZ_HxcnwR6meCjmouLfKVE";
   
   // Format battle time as minutes:seconds - using static battleTimer value from context
   const formatTime = (seconds: number): string => {
@@ -76,6 +80,9 @@ const Victory1Screen: React.FC = () => {
         boxSizing: 'border-box'
       }}
     >
+      {/* Audio Player for victory music */}
+      <AudioPlayer src={victoryBgmUrl} loop autoPlay volume={0.7} />
+      
       {/* Main content - centered vertically */}
       <div className="w-full flex flex-col items-center justify-center flex-1">
         {/* Live ended text */}
