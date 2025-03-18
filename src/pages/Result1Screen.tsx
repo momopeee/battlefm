@@ -1,150 +1,130 @@
 
-import React, { useEffect, useState } from 'react';
-import { useApp } from '@/context/AppContext';
-import { MessageCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApp } from '@/context/AppContext';
+import { Volume2, VolumeX, RefreshCw, Home, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Result1Screen: React.FC = () => {
-  const { 
-    player,
-    battleTimer,
-    comments,
-    handleScreenTransition,
-    resetBattleState,
-    pauseBattleTimer
-  } = useApp();
-  
   const navigate = useNavigate();
-  const [isFollowed, setIsFollowed] = useState(false);
-  const [finalBattleTime, setFinalBattleTime] = useState("");
-  
-  // Format battle time as minutes:seconds - using static battleTimer value from context
+  const { 
+    bgmEnabled, 
+    toggleBgm, 
+    battleTimer,
+    totalComments,
+    resetBattleState,
+    handleScreenTransition 
+  } = useApp();
+
+  // Function to format the battle timer as MM:SS
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  useEffect(() => {
-    // Ensure timer is stopped and save final time
-    pauseBattleTimer();
-    setFinalBattleTime(formatTime(battleTimer));
-  }, []);
-
-  const handleContinue = () => {
+  // Handle navigating to the next screen (EndingB)
+  const handleNext = () => {
     handleScreenTransition('endingB');
     navigate('/endingB');
   };
-  
-  const handleReturnToStart = () => {
-    // Reset battle state and redirect to index page
-    resetBattleState();
-    handleScreenTransition('index');
-    navigate('/');
-  };
-  
-  const handleFightAgain = () => {
-    // Reset battle state and redirect to battle1
+
+  // Handle retrying the battle
+  const handleRetry = () => {
     resetBattleState();
     handleScreenTransition('battle1');
     navigate('/battle1');
   };
-  
-  const handleFollow = () => {
-    // Update followed state
-    setIsFollowed(!isFollowed);
-    
-    // Open link in new tab when following
-    if (!isFollowed) {
-      window.open('https://stand.fm/channels/5f5b7d50f04555115d681ad4', '_blank');
-    }
+
+  // Handle going back to the start screen
+  const handleBackToStart = () => {
+    resetBattleState();
+    handleScreenTransition('index');
+    navigate('/');
   };
 
   return (
     <div 
-      className="bg-white text-black flex flex-col items-center justify-between"
+      className="min-h-screen flex flex-col justify-between items-center text-white px-6 py-10 bg-cover bg-center"
       style={{ 
-        width: '100%', 
-        height: '100vh', 
-        maxWidth: '1080px', 
-        maxHeight: '1920px', 
-        margin: '0 auto',
-        padding: '20px',
-        position: 'relative',
-        boxSizing: 'border-box'
+        backgroundImage: 'url("/lovable-uploads/5d7a23ab-451e-4a7b-80e4-e649fc0a04aa.png")',
+        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
+        width: '1080px',
+        height: '1920px',
+        maxWidth: '100vw',
+        maxHeight: '100vh',
+        margin: '0 auto'
       }}
     >
-      {/* Main content - centered vertically */}
-      <div className="w-full flex flex-col items-center justify-center flex-1">
-        {/* Live ended text - positioned lower */}
-        <div className="text-center mb-6 mt-16">
-          <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
-          
-          {/* Time display - uses static battleTimer from context */}
-          <div className="text-[12px] text-gray-500 mb-2">
-            {finalBattleTime}
+      {/* Top title section */}
+      <div className="w-full">
+        <div className="flex items-center justify-center mt-12">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-outlined">敗北...</h1>
           </div>
-          
-          {/* Comment count - updated to show total comments */}
-          <div className="flex items-center justify-center gap-1 text-[12px] text-gray-500">
-            <MessageCircle size={16} strokeWidth={1.5} />
-            <span>{comments.length}</span>
-          </div>
-        </div>
-        
-        {/* Player profile with follow button */}
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <img 
-            src={player.icon} 
-            alt={player.name} 
-            className="w-[35px] h-[35px] rounded-full object-cover"
-          />
-          
-          <div className="text-[12px] font-bold text-black">
-            {player.name}
-          </div>
-          
-          <Button
-            onClick={handleFollow}
-            className={`rounded-full px-3 py-1 text-[10px] h-[22px] ${
-              isFollowed 
-                ? "bg-gray-200 text-gray-700" 
-                : "bg-pink-500 text-white hover:bg-pink-600"
-            }`}
-            style={{ minWidth: '80px' }}
-          >
-            {isFollowed ? "フォロー中" : "フォローする"}
-          </Button>
         </div>
       </div>
       
-      {/* Action buttons at the bottom */}
-      <div className="w-full space-y-3 pb-4">
+      {/* Middle section with live ended message */}
+      <div className="text-center">
+        <div className="text-3xl font-bold text-outlined mb-8">ライブが終了しました</div>
+        
+        {/* Stats display */}
+        <div className="flex items-center justify-center space-x-8 mb-6">
+          {/* Timer */}
+          <div className="flex flex-col items-center">
+            <div className="text-sm opacity-80 mb-1">バトル時間</div>
+            <div className="text-3xl font-bold text-outlined">{formatTime(battleTimer)}</div>
+          </div>
+          
+          {/* Comments count */}
+          <div className="flex flex-col items-center">
+            <div className="flex items-center">
+              <div className="text-sm opacity-80 mb-1">コメント数</div>
+            </div>
+            <div className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span className="text-3xl font-bold text-outlined">{totalComments}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Bottom actions */}
+      <div className="space-y-4 w-full max-w-md">
         <Button
-          onClick={handleContinue}
-          className="w-full py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm"
-          style={{ height: '40px' }}
+          onClick={handleNext}
+          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-md flex items-center justify-center gap-2"
         >
-          次へ進む
+          次に進む <ChevronRight size={20} />
         </Button>
         
         <Button
-          onClick={handleFightAgain}
-          className="w-full py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm"
-          style={{ height: '40px' }}
+          onClick={handleRetry}
+          className="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-3 rounded-md flex items-center justify-center gap-2"
         >
+          <RefreshCw size={20} />
           もう一度戦う
         </Button>
         
         <Button
-          onClick={handleReturnToStart}
-          className="w-full py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm"
-          style={{ height: '40px' }}
+          onClick={handleBackToStart}
+          className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-md flex items-center justify-center gap-2"
         >
+          <Home size={20} />
           スタートへ戻る
         </Button>
       </div>
+      
+      {/* BGM Toggle Button */}
+      <button
+        onClick={toggleBgm}
+        className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
+      >
+        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
+      </button>
     </div>
   );
 };

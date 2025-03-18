@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
-import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -15,9 +14,9 @@ const EndingAScreen: React.FC = () => {
   } = useApp();
 
   const handleRetry = () => {
-    // バトル2に戻す
-    handleScreenTransition('battle2');
-    navigate('/battle2');
+    // バトル1に戻す
+    handleScreenTransition('battle1');
+    navigate('/battle1');
   };
 
   const handleBackToStart = () => {
@@ -25,8 +24,8 @@ const EndingAScreen: React.FC = () => {
     navigate('/start');
   };
 
-  const handleFollowTooru = () => {
-    window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
+  const handleFollowYamanix = () => {
+    window.open('https://stand.fm/channels/60e5c664ddc03da2c9b0f3ec', '_blank');
   };
 
   // Start scrolling animation when component mounts
@@ -39,21 +38,18 @@ const EndingAScreen: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
+      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center relative"
       style={{ 
-        backgroundImage: 'url("/lovable-uploads/3a40abae-e601-4662-8d22-bc33a5ff7e0f.png")',
+        backgroundImage: 'url("/lovable-uploads/a37987c5-d1ab-4f11-86a4-7ac9a089a401.png")',
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
         width: '1080px', 
         height: '1920px', 
         maxWidth: '100vw',
         maxHeight: '100vh',
         margin: '0 auto',
-        position: 'relative',
         overflow: 'hidden'
       }}
     >
-      <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
-      
       {/* Scrolling text container */}
       <div 
         className="h-[60vh] overflow-hidden absolute bottom-0 left-0 right-0 pointer-events-none flex justify-center"
@@ -70,7 +66,7 @@ const EndingAScreen: React.FC = () => {
             maxWidth: '600px'
           }}
         >
-          <h1 className="text-2xl font-bold mb-6 text-outlined">完全勝利！</h1>
+          <h1 className="text-2xl font-bold mb-6 text-outlined">勝利</h1>
           
           とおるは勝利した！
 
@@ -107,11 +103,11 @@ const EndingAScreen: React.FC = () => {
       <div className="absolute bottom-4 left-0 right-0 flex justify-center">
         <div className="space-y-4 w-full max-w-md px-4">
           <Button
-            onClick={handleFollowTooru}
+            onClick={handleFollowYamanix}
             className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
           >
             <ExternalLink size={20} />
-            とおるをフォローする
+            やまにぃをフォローする
           </Button>
           
           <Button

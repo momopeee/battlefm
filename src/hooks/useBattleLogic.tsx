@@ -30,7 +30,11 @@ export const useBattleLogic = () => {
     yujiSpecialMode,
     setYujiSpecialMode,
     currentScreen,
-    handleScreenTransition
+    handleScreenTransition,
+    showCharacterSheet,
+    setShowCharacterSheet,
+    currentCharacterSheet,
+    setCurrentCharacterSheet
   } = useApp();
   
   // Battle state

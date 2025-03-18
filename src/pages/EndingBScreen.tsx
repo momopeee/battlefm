@@ -38,7 +38,7 @@ const EndingBScreen: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
+      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center relative"
       style={{ 
         backgroundImage: 'url("/lovable-uploads/5d7a23ab-451e-4a7b-80e4-e649fc0a04aa.png")',
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
@@ -47,7 +47,6 @@ const EndingBScreen: React.FC = () => {
         maxWidth: '100vw',
         maxHeight: '100vh',
         margin: '0 auto',
-        position: 'relative',
         overflow: 'hidden'
       }}
     >
