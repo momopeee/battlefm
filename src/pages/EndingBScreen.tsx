@@ -53,25 +53,42 @@ const EndingBScreen: React.FC = () => {
               
               <p className="mb-8 text-lg" 
                 style={{ 
-                  fontSize: 'calc(1.125rem - 4px)', 
+                  fontSize: 'calc(1.125rem - 5px)', 
                   color: 'white', 
                   textShadow: '1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000'
                 }} 
                 dangerouslySetInnerHTML={{ __html: `
                 とおるは敗れた！<br>
                 <br>
-                そーそーの狂犬のようなツイートが今日もＸで吹き荒れる<br>
-                もう誰もそれを止める事は出来ない<br>
+                荒廃していく「Ｘ」<br>
+                狂犬のようなツイートが、<br>
+                フィードを埋め尽くす<br>
+                <br>
+                そーそーが作りだした<br>
+                ディストピアだ<br>
+                <br>
+                <br>
+                でも大丈夫<br>
                 <br>
                 心が荒んでしまったら、<br>
-                スタエフを開いて欲しい<br>
+                スタエフを開こう<br>
                 <br>
-                そこにはやさしいそーそーがいる<br>
-                怖いのはＸの上でだけ<br>
                 <br>
-                stand.fmでコラボしたら、みんな仲良し！<br>
+                スタエフのそーそは<br>
+                常識的で優しい<br>
                 <br>
-                俺達のスタエフはまだ始まったばかりだ！<br>`
+                吐く毒にも愛嬌がある<br>
+                <br>
+                怖いのはツイートだけ<br>
+                <br>
+                <br>
+                stand.fmでコラボしたら、<br>
+                みんな仲良し！<br>
+                <br>
+                <br>
+                <br>
+                俺達のスタエフは<br>
+                まだ始まったばかりだ！<br>`
               }} />
             </div>
           </div>
