@@ -41,60 +41,67 @@ const EndingCScreen: React.FC = () => {
         margin: '0 auto'
       }}
     >
-      <div className="p-8 max-w-md w-full text-center">
-        <h1 className="text-3xl font-bold mb-6" style={{ 
-          color: 'white', 
-          textShadow: '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 2px 0 #000, 2px 0 0 #000, 0 -2px 0 #000, -2px 0 0 #000'
-        }}>敗北</h1>
-        
-        <p className="mb-8 text-lg" 
-          style={{ 
-            fontSize: 'calc(1.125rem - 4px)', 
-            color: 'white', 
-            textShadow: '1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000'
-          }} 
-          dangerouslySetInnerHTML={{ __html: `
-          とおるは敗れた！<br>
-          <br>
-          とおるの言葉はゆうじに届かなかった<br>
-          世界は広い<br>
-          <br>
-          本当に届けたい人には<br>
-          いつだって言葉は届かない<br>
-          <br>
-          でも嘆く事は無い<br>
-          だって、何度でも話しかける事が出来るから<br>
-          <br>
-          そう、stand.fmならコラボでお話出来る！<br>
-          <br>
-          俺達のスタエフはまだ始まったばかりだ！<br>`
-        }} />
-        
-        <div className="space-y-4">
-          <Button
-            onClick={handleFollowYuji}
-            className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
-          >
-            <ExternalLink size={20} />
-            ゆうじをフォローする
-          </Button>
-          
-          <Button
-            onClick={handleRetry}
-            className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
-          >
-            <RefreshCw size={20} />
-            もう一度戦う
-          </Button>
-          
-          <Button
-            onClick={handleBackToStart}
-            className="w-full bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
-          >
-            <Home size={20} />
-            スタート画面に戻る
-          </Button>
+      {/* Star Wars style text scroll */}
+      <div className="perspective relative h-[60vh] w-full overflow-hidden">
+        <div className="rotate3d">
+          <div className="star-wars-text-content absolute w-full">
+            <div className="text-center px-8 max-w-[500px] mx-auto">
+              <h1 className="text-3xl font-bold mb-6" style={{ 
+                color: 'white', 
+                textShadow: '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 2px 0 #000, 2px 0 0 #000, 0 -2px 0 #000, -2px 0 0 #000'
+              }}>敗北</h1>
+              
+              <p className="mb-8 text-lg" 
+                style={{ 
+                  fontSize: 'calc(1.125rem - 4px)', 
+                  color: 'white', 
+                  textShadow: '1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000'
+                }} 
+                dangerouslySetInnerHTML={{ __html: `
+                とおるは敗れた！<br>
+                <br>
+                とおるの言葉はゆうじに届かなかった<br>
+                世界は広い<br>
+                <br>
+                本当に届けたい人には<br>
+                いつだって言葉は届かない<br>
+                <br>
+                でも嘆く事は無い<br>
+                だって、何度でも話しかける事が出来るから<br>
+                <br>
+                そう、stand.fmならコラボでお話出来る！<br>
+                <br>
+                俺達のスタエフはまだ始まったばかりだ！<br>`
+              }} />
+            </div>
+          </div>
         </div>
+      </div>
+      
+      <div className="space-y-4 mt-4 w-full max-w-md">
+        <Button
+          onClick={handleFollowYuji}
+          className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+        >
+          <ExternalLink size={20} />
+          ゆうじをフォローする
+        </Button>
+        
+        <Button
+          onClick={handleRetry}
+          className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+        >
+          <RefreshCw size={20} />
+          もう一度戦う
+        </Button>
+        
+        <Button
+          onClick={handleBackToStart}
+          className="w-full bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+        >
+          <Home size={20} />
+          スタート画面に戻る
+        </Button>
       </div>
       
       {/* BGM Toggle Button */}
