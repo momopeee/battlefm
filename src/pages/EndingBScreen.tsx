@@ -10,7 +10,7 @@ const EndingBScreen = () => {
   const { bgmEnabled, toggleBgm } = useApp();
   
   // BGM URL
-  const endingBgmUrl = "https://soundcloud.com/davis-momoyama/clear/s-zGJMXp4T1gZ?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const endingBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/df4d3cfd-d360-49ea-90b4-2446850bab38/kyoman.mp3?table=block&id=1ba25ac2-cb4e-800d-8735-d8d4f50eada9&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=z4t7Uq9Gm_hiNsxycw86WXXMO9lt1btrtIm0Df-6u5E";
   
   useEffect(() => {
     // Reset game state or perform any cleanup needed
