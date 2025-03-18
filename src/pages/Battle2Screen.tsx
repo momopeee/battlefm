@@ -34,6 +34,17 @@ const playerSpecialComments = [
   "自らアドバイスを求めたなら、その相手には進捗の報告を怠るな！！俺達はいい、友達だから報告が無くても\"ゆうじは最低だ！！\"で済ませて、その後も仲良く出来る。だが、他の人は違う、一度不義理をしたら一生相手にされないし、下手したら敵になって戻ってくる。良く考えて行動し、軽はずみで他人を使い捨てにするな！！"
 ];
 
+// UPDATED: Yuji's special attack comments
+const yujiSpecialComments = [
+  "やまにいは僕の事いじめたいだけですよね、ひどいです",
+  "じゅんさんも本当にひどいです",
+  "ぜつぼうさんがコラボに上がった時、もう99人コラボやめようと思いました",
+  "みんな僕をいじめたいだけだよね、別にいいけど",
+  "もういいですよ、何を言われても今まで通りやるだけ",
+  "やまにいの言葉よりしいたけ占いのが深いんだよね",
+  "式場の利益よりもプランナーの地位向上のが大事なんです、それが分からない式場は全部だめですよ"
+];
+
 const Battle2Screen: React.FC = () => {
   const navigate = useNavigate();
   const { 
@@ -210,7 +221,7 @@ const Battle2Screen: React.FC = () => {
     };
   }, [redirectTimer]);
   
-  // Activate Yuji's special mode
+  // UPDATED: Activate Yuji's special mode
   const activateYujiSpecialMode = () => {
     setYujiInSpecialMode(true);
     setYujiSpecialMode(true);
@@ -221,7 +232,7 @@ const Battle2Screen: React.FC = () => {
       addComment('システム', 'ゆうじはクラウドファンディングを発動した', true);
       addComment('システム', 'ゆうじのHPゲージが満タンになった', true);
       
-      // Restore Yuji's HP
+      // Restore Yuji's HP - only once when activating special mode
       setOpponentHp(opponent2.maxHp);
       
       setTimeout(() => {
@@ -371,7 +382,7 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   };
   
-  // Handle enemy attack
+  // UPDATED: Handle enemy attack to implement new special mode healing
   const handleEnemyAttack = () => {
     if (isBattleOver) return;
     
@@ -381,9 +392,9 @@ const Battle2Screen: React.FC = () => {
     if (specialModeActive) {
       setSoundEffect('/audios/enemy_special.mp3');
       
-      // Get random attack comment
-      const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
-      addComment('ゆうじ＠陽気なおじさん', attackComment);
+      // Get random special attack comment from the new list
+      const specialComment = yujiSpecialComments[Math.floor(Math.random() * yujiSpecialComments.length)];
+      addComment('ゆうじ＠陽気なおじさん', specialComment);
       
       // Calculate special mode damage (2x normal damage)
       const min = opponent2.attackMin * 2;
@@ -391,9 +402,14 @@ const Battle2Screen: React.FC = () => {
       const damage = Math.floor(Math.random() * (max - min + 1)) + min;
       
       setTimeout(() => {
+        // Apply damage to player (same as normal mode)
         setPlayerHp(Math.max(0, playerHp - damage));
         
+        // Heal Yuji by 30 HP per turn during special mode
+        setOpponentHp(Math.min(opponent2.maxHp, opponentHp + 30));
+        
         addComment('システム', `確変モード中！ゆうじの言葉が突き刺さる！ ${damage}ポイントの大ダメージ！`, true);
+        addComment('システム', `ゆうじは30HP回復した！`, true);
         
         // Check if player defeated
         if (playerHp - damage <= 0) {
