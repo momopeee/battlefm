@@ -38,10 +38,11 @@ const Result2Screen: React.FC = () => {
     // Save the final battle time
     setFinalBattleTime(formatTime(battleTimer));
     
-    // Show defeat toast
+    // Show defeat toast - display from top only once
     toast.error('ゆうじに敗北しました', {
       description: '次回は頑張りましょう！',
       duration: 3000,
+      position: 'top-center',
     });
   }, [battleTimer, pauseBattleTimer]);
 

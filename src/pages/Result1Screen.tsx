@@ -12,7 +12,8 @@ const Result1Screen: React.FC = () => {
     battleTimer,
     comments,
     handleScreenTransition,
-    resetBattleState
+    resetBattleState,
+    pauseBattleTimer
   } = useApp();
   
   const navigate = useNavigate();
@@ -27,15 +28,19 @@ const Result1Screen: React.FC = () => {
   };
 
   useEffect(() => {
+    // Ensure timer is stopped
+    pauseBattleTimer();
+    
     // Save the final battle time
     setFinalBattleTime(formatTime(battleTimer));
     
-    // Show defeat toast
+    // Show defeat toast - display from top only once
     toast.error('そーそーに敗北しました', {
       description: '次回は頑張りましょう！',
       duration: 3000,
+      position: 'top-center',
     });
-  }, [battleTimer]);
+  }, [battleTimer, pauseBattleTimer]);
 
   const handleContinue = () => {
     handleScreenTransition('endingB');
