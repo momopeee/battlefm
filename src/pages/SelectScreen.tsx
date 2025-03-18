@@ -16,6 +16,11 @@ const SelectScreen: React.FC = () => {
   const [showWarning, setShowWarning] = useState(false);
   const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([]);
   
+  // BGM and Sound Effect URLs
+  const normalBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/ae0e945c-84c2-4272-b702-4ad2bd0aa8cb/%E3%81%8A%E6%97%A5%E6%A7%98%E3%81%A8%E5%B0%91%E5%A5%B3.mp3?table=block&id=1ba25ac2-cb4e-80b3-a0b4-c8d5ac4f223d&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=R411RNajqlmCZWMlkfQkcO2krTCgr_gbZadQ43xvE5U";
+  const assaultBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/cd7733b1-e48e-4e13-b2aa-996303c01390/%E4%BF%BA%E3%81%AF%E3%82%86%E3%81%86%E3%81%98%E3%80%81%E3%81%8A%E3%81%8A%E3%81%8F%E3%81%BC%E3%82%86%E3%81%86%E3%81%98.mp3?table=block&id=1ba25ac2-cb4e-8035-8682-c3baf8c96f62&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=mjK5VRx5h17LF6YMyj1yfa9EDrZA0CJKAjSYMF3cKpw";
+  const alarmSoundUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/270027e7-c38f-4c1e-a4c8-63627ad75857/keihou.mp3?table=block&id=1ba25ac2-cb4e-8097-bf5b-fbd90ec67685&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=AWhlmCIAAdpGQZ89hhfJ8wghwbMXKbWbU3ra4JVybbQ";
+  
   useEffect(() => {
     // Reset any game state for the next battle
     return () => {
@@ -65,6 +70,17 @@ const SelectScreen: React.FC = () => {
   
   return (
     <div className="relative min-h-screen bg-white">
+      {/* BGM */}
+      {!showAssault && (
+        <AudioPlayer src={normalBgmUrl} loop={true} autoPlay={true} />
+      )}
+      
+      {/* Assault alarm sound */}
+      {assaultAlarm && <AudioPlayer src={alarmSoundUrl} loop={false} autoPlay={true} />}
+      
+      {/* Assault BGM - starts after the alarm */}
+      {assaultText && <AudioPlayer src={assaultBgmUrl} loop={false} autoPlay={true} />}
+      
       {!showAssault && (
         <>
           {/* Twitter-like interface */}
@@ -181,9 +197,6 @@ const SelectScreen: React.FC = () => {
       {/* Assault Mode */}
       {showAssault && (
         <div className="min-h-screen bg-black relative overflow-hidden">
-          {/* Audio */}
-          {assaultAlarm && <AudioPlayer src="/audios/keihou.mp3" loop={false} autoPlay />}
-          
           {/* Flashing image during alarm */}
           {assaultAlarm && (
             <div className="absolute inset-0 z-10 animate-pulse">
