@@ -46,7 +46,7 @@ const EndingBScreen: React.FC = () => {
           <h1 className="text-3xl font-bold mb-6 -webkit-text-stroke-[1px] -webkit-text-stroke-black text-white">敗北</h1>
           
           <div className="star-wars-text-container w-full overflow-hidden h-[60vh]">
-            <div className="star-wars-text-content text-lg rotate3d text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black" style={{ fontSize: 'calc(1.125rem - 4px)' }}>
+            <div className="star-wars-text-content text-lg rotate3d text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black" style={{ fontSize: 'calc(1.125rem + 4px)' }}>
               とおるは敗れた！<br />
               <br />
               荒廃していく「Ｘ」<br />
