@@ -44,6 +44,19 @@ const EndingAScreen: React.FC = () => {
     >
       <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
       
+      {/* 完全勝利 Header */}
+      <div className="w-full text-center mb-4 z-10">
+        <h1 
+          className="text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black" 
+          style={{ 
+            fontSize: 'calc(1.125rem + 10px)',
+            fontFamily: 'Rodin M, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
+          }}
+        >
+          完全勝利
+        </h1>
+      </div>
+      
       <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden perspective">
         <div className="absolute w-full max-w-3xl text-center transform rotate3d">
           <div className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-6 rounded" style={{ fontSize: 'calc(1.125rem + 4px)' }}>
