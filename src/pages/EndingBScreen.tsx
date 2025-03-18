@@ -41,68 +41,72 @@ const EndingBScreen: React.FC = () => {
         margin: '0 auto'
       }}
     >
-      <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
-        <h1 className="text-3xl font-bold mb-6">敗北</h1>
-        
-        <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
-          とおるは敗れた！<br>
-          <br>
-          荒廃していく「Ｘ」<br>
-          狂犬のようなツイートが、<br>
-          フィードを埋め尽くす<br>
-          <br>
-          そーそーが作りだした<br>
-          ディストピアだ<br>
-          <br>
-          <br>
-          でも大丈夫<br>
-          <br>
-          心が荒んでしまったら、<br>
-          スタエフを開こう<br>
-          <br>
-          <br>
-          スタエフのそーそは<br>
-          常識的で優しい<br>
-          <br>
-          吐く毒にも愛嬌がある<br>
-          <br>
-          怖いのはツイートだけ<br>
-          <br>
-          <br>
-          stand.fmでコラボしたら、<br>
-          みんな仲良し！<br>
-          <br>
-          <br>
-          <br>
-          俺達のスタエフは<br>
-          まだ始まったばかりだ！<br>`
-        }} />
-        
-        <div className="space-y-4">
-          <Button
-            onClick={handleFollowSoso}
-            className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
-          >
-            <ExternalLink size={20} />
-            そーそーをフォローする
-          </Button>
+      <div className="perspective relative flex-1 flex items-center justify-center w-full">
+        <div className="text-center w-full max-w-md">
+          <h1 className="text-3xl font-bold mb-6 -webkit-text-stroke-[1px] -webkit-text-stroke-black text-white">敗北</h1>
           
-          <Button
-            onClick={handleRetry}
-            className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
-          >
-            <RefreshCw size={20} />
-            もう一度戦う
-          </Button>
-          
-          <Button
-            onClick={handleBackToStart}
-            className="w-full bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
-          >
-            <Home size={20} />
-            スタート画面に戻る
-          </Button>
+          <div className="star-wars-text-container w-full overflow-hidden h-[60vh]">
+            <div className="star-wars-text-content text-lg rotate3d text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black" style={{ fontSize: 'calc(1.125rem - 4px)' }}>
+              とおるは敗れた！<br />
+              <br />
+              荒廃していく「Ｘ」<br />
+              狂犬のようなツイートが、<br />
+              フィードを埋め尽くす<br />
+              <br />
+              そーそーが作りだした<br />
+              ディストピアだ<br />
+              <br />
+              <br />
+              でも大丈夫<br />
+              <br />
+              心が荒んでしまったら、<br />
+              スタエフを開こう<br />
+              <br />
+              <br />
+              スタエフのそーそは<br />
+              常識的で優しい<br />
+              <br />
+              吐く毒にも愛嬌がある<br />
+              <br />
+              怖いのはツイートだけ<br />
+              <br />
+              <br />
+              stand.fmでコラボしたら、<br />
+              みんな仲良し！<br />
+              <br />
+              <br />
+              <br />
+              俺達のスタエフは<br />
+              まだ始まったばかりだ！<br />
+            </div>
+          </div>
         </div>
+      </div>
+      
+      <div className="space-y-4 mt-4 w-full max-w-md">
+        <Button
+          onClick={handleFollowSoso}
+          className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+        >
+          <ExternalLink size={20} />
+          そーそーをフォローする
+        </Button>
+        
+        <Button
+          onClick={handleRetry}
+          className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+        >
+          <RefreshCw size={20} />
+          もう一度戦う
+        </Button>
+        
+        <Button
+          onClick={handleBackToStart}
+          className="w-full bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+        >
+          <Home size={20} />
+          スタート画面に戻る
+        </Button>
       </div>
       
       {/* BGM Toggle Button */}

@@ -77,14 +77,11 @@ const StartScreen = () => {
         </div>
       )}
       
-      {/* Dark overlay for better text readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
-      
       {/* Star Wars style scrolling text */}
       {showText && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden perspective z-20">
           <div className="absolute w-full max-w-3xl text-center transform rotate3d">
-            <div className="star-wars-text-content text-black text-[15px] md:text-[18px] leading-relaxed animate-text-scroll p-6 rounded text-stroke">
+            <div className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-6 rounded" style={{ fontSize: 'calc(15px - 3px)' }}>
               <p>
                 ファンキーな世の中をあなたはどう生きますか？
                 <br />

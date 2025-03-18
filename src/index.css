@@ -120,8 +120,19 @@
 
 /* Text with white outline */
 .text-stroke {
-  -webkit-text-stroke: 1px white;
+  -webkit-text-stroke: 1px black;
   text-shadow: 0 0 2px white;
+}
+
+/* Ending screens Star Wars text scrolling */
+.star-wars-text-container {
+  perspective: 400px;
+  overflow: hidden;
+}
+
+.star-wars-text-content {
+  animation: text-scroll 60s linear infinite;
+  transform: translateY(100%);
 }
 
 @keyframes text-scroll {
