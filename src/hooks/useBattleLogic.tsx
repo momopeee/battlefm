@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -51,7 +52,7 @@ export const useBattleLogic = () => {
   useEffect(() => {
     clearComments();
     setPlayerHp(player.currentHp);
-    setOpponentHp(opponent1.currentHp);
+    setOpponentHp(currentScreen === 'battle1' ? opponent1.currentHp : opponent2.currentHp);
     setAttackCount(0);
     setSpecialAttackAvailable(false);
     setHighballMode(false);
@@ -63,18 +64,29 @@ export const useBattleLogic = () => {
     
     // Initial system message
     setTimeout(() => {
-      addComment('システム', '第一戦！とおる VS そーそー＠狂犬ツイート', true);
-      addComment('そーそー＠狂犬ツイート', 'おっしゃこら！かかってこいや！');
+      const opponentName = currentScreen === 'battle1' ? 'そーそー＠狂犬ツイート' : 'ゆうじ＠陽気なおじさん';
+      addComment('システム', `第${currentScreen === 'battle1' ? '一' : '二'}戦！とおる VS ${opponentName}`, true);
+      
+      if (currentScreen === 'battle1') {
+        addComment('そーそー＠狂犬ツイート', 'おっしゃこら！かかってこいや！');
+      } else {
+        addComment('ゆうじ＠陽気なおじさん', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
+      }
     }, 1000);
     
     // Cleanup function - pause timer when component unmounts
     return () => {
       pauseBattleTimer();
+      
+      // Clear any pending redirect timers
+      if (redirectTimer) {
+        clearTimeout(redirectTimer);
+      }
     };
   }, []);
   
-  // Victory comments array
-  const victoryComments = [
+  // Victory comments array based on current battle
+  const victoryComments = currentScreen === 'battle1' ? [
     "そーそーは狂犬ツイートをやめた",
     "そーそーはおとなしくなった",
     "そーそーはただの犬になった",
@@ -86,10 +98,22 @@ export const useBattleLogic = () => {
     "だが、とおるはそーそーを倒してしまった。",
     "この戦いに勝利者はいない",
     "とおるは一人涙して、今日もハイボールを飲む、とおるの心に7兆のダメージ"
+  ] : [
+    "とおるが勝利した、ゆうじは拗ねてタムタムにLINEをした",
+    "タムタムからの返事がない、ゆうじはリコさんにLINEをした",
+    "リコさんからの返事がない",
+    "ゆうじは殻に閉じこもってしまった",
+    "その後、風のうわさでゆうじが米国大統領に当選したと聞いた",
+    "とおるはゆうじを倒した。",
+    "でも本当は、ゆうじを倒したくなかった。",
+    "永遠にゆうじとの戯れをつづけたかった。",
+    "だが、とおるはゆうじを倒してしまった。",
+    "この戦いに勝利者はいない",
+    "とおるは一人涙して、今日もハイボールを飲む、とおるの心に7兆のダメージ"
   ];
   
-  // Defeat comments array
-  const defeatComments = [
+  // Defeat comments array based on current battle
+  const defeatComments = currentScreen === 'battle1' ? [
     "とおるは敗北した、そーそーの狂犬ツイートは止まらない",
     "そーそーは狂犬ツイートをやめない",
     "そーそーはもっと狂犬になった",
@@ -99,6 +123,16 @@ export const useBattleLogic = () => {
     "とおるは敗北からも学べる男だった",
     "とおるはレベルが7000上がった",
     "だが、そーそーはどんどん悪い方向に成長した",
+    "とおるは危機感を覚えた",
+    "あの時俺が本気でぶん殴って目を覚まさせてやればこんなことには・・・",
+    "とおるは悔やんだ、そしてハイボールを飲んだ",
+    "夜空に輝く星の瞬きが、今日だけはいつもよりも多く感じた"
+  ] : [
+    "とおるが敗北した、ゆうじは調子にのってしまった",
+    "とおるは5億の経験値を得た",
+    "とおるは敗北からも学べる男だった",
+    "とおるはレベルが7000上がった",
+    "だが、ゆうじはどんどん悪い方向に成長した",
     "とおるは危機感を覚えた",
     "あの時俺が本気でぶん殴って目を覚まさせてやればこんなことには・・・",
     "とおるは悔やんだ、そしてハイボールを飲んだ",
@@ -195,14 +229,20 @@ export const useBattleLogic = () => {
     setSoundEffect('/audios/enemy_attack.mp3');
     
     // Calculate damage
-    const min = opponent1.attackMin;
-    const max = opponent1.attackMax;
+    const min = currentScreen === 'battle1' ? opponent1.attackMin : opponent2.attackMin;
+    const max = currentScreen === 'battle1' ? opponent1.attackMax : opponent2.attackMax;
     const damage = Math.floor(Math.random() * (max - min + 1)) + min;
     
     setTimeout(() => {
       setPlayerHp(Math.max(0, playerHp - damage));
-      addComment('そーそー＠狂犬ツイート', 'アホ！カス！死ね！');
-      addComment('システム', `そーそーの狂犬ツイートが突き刺さる！ ${damage}ポイントのダメージ！`, true);
+      
+      if (currentScreen === 'battle1') {
+        addComment('そーそー＠狂犬ツイート', 'アホ！カス！死ね！');
+        addComment('システム', `そーそーの狂犬ツイートが突き刺さる！ ${damage}ポイントのダメージ！`, true);
+      } else {
+        addComment('ゆうじ＠陽気なおじさん', 'しいたけ しか勝たん！！俺はしいたけ占いしか信じてないんすよ～');
+        addComment('システム', `ゆうじの陽気なトークが突き刺さる！ ${damage}ポイントのダメージ！`, true);
+      }
       
       // Check if player defeated
       if (playerHp - damage <= 0) {
@@ -280,11 +320,22 @@ export const useBattleLogic = () => {
     const timer = setTimeout(() => {
       // Pause the battle timer before redirecting
       pauseBattleTimer();
-      handleScreenTransition('victory1');
-      navigate('/victory1');
+      
+      if (currentScreen === 'battle1') {
+        handleScreenTransition('victory1');
+        navigate('/victory1');
+      } else {
+        handleScreenTransition('victory2');
+        navigate('/victory2');
+      }
     }, 20000);
     
     setRedirectTimer(timer);
+    
+    // Show skip button after some delay
+    setTimeout(() => {
+      setShowSkipButton(true);
+    }, 15000);
   };
   
   // Handle defeat with automatic redirection
@@ -299,10 +350,16 @@ export const useBattleLogic = () => {
       // Pause the battle timer before redirecting
       pauseBattleTimer();
       
-      // Redirect based on current screen to the result screens
-      const nextRoute = currentScreen === 'battle1' ? '/result1' : '/result2';
-      handleScreenTransition(currentScreen === 'battle1' ? 'result1' : 'result2');
-      navigate(nextRoute);
+      // Redirect to the appropriate result screen based on current battle
+      if (currentScreen === 'battle1') {
+        handleScreenTransition('result1');
+        navigate('/result1');
+      } else {
+        // For battle2, store defeat status for EndingC screen
+        sessionStorage.setItem('fromDefeat', 'true');
+        handleScreenTransition('result2');
+        navigate('/result2');
+      }
     }, 20000);
     
     setRedirectTimer(timer);
@@ -328,14 +385,24 @@ export const useBattleLogic = () => {
     
     // Use default routes based on battle result
     if (battleResult === 'victory') {
-      const nextRoute = currentScreen === 'battle1' ? '/victory1' : '/victory2';
-      handleScreenTransition(currentScreen === 'battle1' ? 'victory1' : 'victory2');
-      navigate(nextRoute);
+      if (currentScreen === 'battle1') {
+        handleScreenTransition('victory1');
+        navigate('/victory1');
+      } else {
+        handleScreenTransition('victory2');
+        navigate('/victory2');
+      }
     } else if (battleResult === 'defeat') {
       // Update to redirect to result screens on defeat
-      const nextRoute = currentScreen === 'battle1' ? '/result1' : '/result2';
-      handleScreenTransition(currentScreen === 'battle1' ? 'result1' : 'result2');
-      navigate(nextRoute);
+      if (currentScreen === 'battle1') {
+        handleScreenTransition('result1');
+        navigate('/result1');
+      } else {
+        // For battle2, store defeat status for EndingC screen
+        sessionStorage.setItem('fromDefeat', 'true');
+        handleScreenTransition('result2');
+        navigate('/result2');
+      }
     }
   };
   
