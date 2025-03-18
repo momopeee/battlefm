@@ -197,8 +197,7 @@ export const useBattleLogic = () => {
     "今日の予定？タイミー"
   ];
   
-  // Render character sheet
-  const [currentCharacterSheet, setCurrentCharacterSheet] = useState<'player' | 'opponent1' | 'opponent2' | null>(null);
+  // Handle character click
   const handleCharacterClick = (character: 'player' | 'opponent1' | 'opponent2') => {
     setCurrentCharacterSheet(character);
     setShowCharacterSheet(true);
@@ -669,11 +668,9 @@ export const useBattleLogic = () => {
     handleRunAway,
     handleHighball,
     handleCharacterClick,
-    showCharacterSheet: currentCharacterSheet !== null,
+    showCharacterSheet,
     currentCharacterSheet,
-    setShowCharacterSheet: (show: boolean) => {
-      if (!show) setCurrentCharacterSheet(null);
-    },
+    setShowCharacterSheet,
     handleSkip,
     battleResult,
     soundEffect
