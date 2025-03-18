@@ -44,12 +44,10 @@ const EndingAScreen: React.FC = () => {
     >
       <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
       
-      <div className="perspective relative flex-1 flex items-center justify-center w-full">
-        <div className="text-center w-full max-w-md">
-          <h1 className="text-3xl font-bold mb-6 -webkit-text-stroke-[1px] -webkit-text-stroke-black text-white">完全勝利！</h1>
-          
-          <div className="star-wars-text-container w-full overflow-hidden h-[60vh]">
-            <div className="star-wars-text-content text-lg rotate3d text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black" style={{ fontSize: 'calc(1.125rem + 4px)' }}>
+      <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden perspective">
+        <div className="absolute w-full max-w-3xl text-center transform rotate3d">
+          <div className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-6 rounded" style={{ fontSize: 'calc(1.125rem + 4px)' }}>
+            <p>
               とおるは勝利した！<br />
               <br />
               だが、それは本質ではない<br />
@@ -83,7 +81,7 @@ const EndingAScreen: React.FC = () => {
               <br />
               俺達のスタエフは<br />
               まだ始まったばかりだ！<br />
-            </div>
+            </p>
           </div>
         </div>
       </div>
