@@ -45,12 +45,15 @@ const EndingAScreen: React.FC = () => {
       <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
       
       {/* 完全勝利 Header */}
-      <div className="w-full text-center mb-4 z-10">
+      <div className="w-full text-center mb-6 z-10">
         <h1 
-          className="text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black" 
+          className="text-white -webkit-text-stroke-[2px] -webkit-text-stroke-black animate-pulse" 
           style={{ 
-            fontSize: 'calc(1.125rem + 10px)',
-            fontFamily: 'Rodin M, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif'
+            fontSize: 'calc(1.5rem + 18px)',
+            fontFamily: 'Rodin M, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
+            textShadow: '0 0 10px rgba(255,255,255,0.7)',
+            letterSpacing: '2px',
+            fontWeight: 'bold'
           }}
         >
           完全勝利
