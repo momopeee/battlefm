@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
@@ -29,6 +29,14 @@ const EndingAScreen: React.FC = () => {
     window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
   };
 
+  // Start scrolling animation when component mounts
+  useEffect(() => {
+    const textContainer = document.getElementById('scrolling-text');
+    if (textContainer) {
+      textContainer.classList.add('scrolling');
+    }
+  }, []);
+
   return (
     <div 
       className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
@@ -39,35 +47,65 @@ const EndingAScreen: React.FC = () => {
         height: '1920px', 
         maxWidth: '100vw',
         maxHeight: '100vh',
-        margin: '0 auto'
+        margin: '0 auto',
+        position: 'relative',
+        overflow: 'hidden'
       }}
     >
       <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
       
-      <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
-        <h1 className="text-3xl font-bold mb-6">完全勝利！</h1>
-        
-        <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
-          とおるは勝利した！<br>
-          <br>
-          だが、<br>
-          人間づきあいには勝利も敗北ない<br>
-          <br>
-          誠実に相手に向き合い、<br>
-          そして、自分に正直に真摯に対応する。<br>
-          <br>
-          その結果すれ違う事もある<br>
-          意見が分かれる事もある<br>
-          <br>
-          だがそんな時は、<br>
-          <br>
-          とことん話をすればいい<br>
-          そう、stand.fmで徹底的にコラボしよう<br>
-          <br>
-          俺達のスタエフはまだ始まったばかりだ！<br>`
-        }} />
-        
-        <div className="space-y-4">
+      {/* Scrolling text container */}
+      <div 
+        className="h-[60vh] overflow-hidden absolute bottom-0 left-0 right-0 pointer-events-none flex justify-center"
+      >
+        <div 
+          id="scrolling-text"
+          className="text-white text-center whitespace-pre-line text-outlined"
+          style={{ 
+            fontSize: 'calc(1.5rem - 4px)',
+            lineHeight: '1.75',
+            position: 'absolute',
+            transform: 'translateY(100%)',
+            width: '80%',
+            maxWidth: '600px'
+          }}
+        >
+          <h1 className="text-2xl font-bold mb-6 text-outlined">完全勝利！</h1>
+          
+          とおるは勝利した！
+
+          だが、それは本質ではない
+
+          人間づきあいには
+          勝利も敗北もないからだ
+
+          俺達はいつだって、
+          誠実に相手に向き合い、
+          そして、
+          自分に正直に
+          真摯に対応する
+
+          その結果
+          すれ違う事もある
+          意見が分かれる事もある
+
+          でも大丈夫だ
+
+          そんな時は
+          とことん話をすればいい
+
+          そう、stand.fm で
+
+          さあ徹底的にコラボしよう
+
+          俺達のスタエフは
+          まだ始まったばかりだ！
+        </div>
+      </div>
+      
+      {/* Actions container at the bottom */}
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+        <div className="space-y-4 w-full max-w-md px-4">
           <Button
             onClick={handleFollowTooru}
             className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
