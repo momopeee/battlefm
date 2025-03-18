@@ -1,150 +1,62 @@
-import React from 'react';
-import { useApp } from '@/context/AppContext';
-import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
+
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useApp } from '@/context/AppContext';
+import { Volume2, VolumeX } from 'lucide-react';
 import AudioPlayer from '@/components/AudioPlayer';
-import { useIsMobile } from '@/hooks/use-mobile';
 
-const EndingAScreen: React.FC = () => {
-  const navigate = useNavigate();
-  const isMobile = useIsMobile();
-  const { 
-    bgmEnabled, 
-    toggleBgm,
-    handleScreenTransition,
-    resetBattleState
-  } = useApp();
-
-  const handleRetry = () => {
-    // Reset battle state and redirect to battle2
-    resetBattleState();
-    handleScreenTransition('battle2');
-    navigate('/battle2');
-  };
-
-  const handleBackToStart = () => {
-    // Reset battle state when returning to start
-    resetBattleState();
-    handleScreenTransition('start');
-    navigate('/start');
-  };
-
-  const handleFollowTooru = () => {
-    window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
-  };
-
+const EndingAScreen = () => {
+  const { bgmEnabled, toggleBgm } = useApp();
+  
+  // BGM URL
+  const endingBgmUrl = "https://soundcloud.com/davis-momoyama/clear/s-zGJMXp4T1gZ?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  
+  useEffect(() => {
+    // Reset game state or perform any cleanup needed
+    window.scrollTo(0, 0);
+  }, []);
+  
   return (
-    <div 
-      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
-      style={{ 
-        backgroundImage: 'url("/lovable-uploads/3a40abae-e601-4662-8d22-bc33a5ff7e0f.png")',
-        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
-        width: '100%', 
-        maxWidth: '1080px', 
-        height: isMobile ? '100vh' : '1920px', 
-        maxWidth: '100vw',
-        maxHeight: '100vh',
-        margin: '0 auto'
-      }}
-    >
-      <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
-      
-      {/* 完全勝利 Header */}
-      <div className="w-full text-center mb-4 sm:mb-6 z-10">
-        <h1 
-          className="text-white -webkit-text-stroke-[1px] sm:-webkit-text-stroke-[2px] -webkit-text-stroke-black animate-pulse" 
-          style={{ 
-            fontSize: isMobile ? 'calc(1.25rem + 8px)' : 'calc(1.5rem + 18px)',
-            fontFamily: 'Rodin M, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
-            textShadow: '0 0 10px rgba(255,255,255,0.7)',
-            letterSpacing: '2px',
-            fontWeight: 'bold'
-          }}
-        >
-          完全勝利
-        </h1>
-      </div>
-      
-      <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden perspective">
-        <div className="absolute w-full max-w-3xl text-center transform rotate3d">
-          <div className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-4 sm:p-6 rounded" 
-            style={{ fontSize: isMobile ? 'calc(0.875rem + 2px)' : 'calc(1.125rem + 4px)' }}>
-            <p>
-              とおるは勝利した！<br />
-              <br />
-              だが、それは本質ではない<br />
-              <br />
-              人間づきあいには<br />
-              勝利も敗北もないからだ<br />
-              <br />
-              俺達はいつだって、<br />
-              誠実に相手に向き合い、<br />
-              そして、<br />
-              自分に正直に<br />
-              真摯に対応する<br />
-              <br />
-              <br />
-              その結果<br />
-              すれ違う事もある<br />
-              意見が分かれる事もある<br />
-              <br />
-              <br />
-              でも大丈夫だ<br />
-              <br />
-              そんな時は<br />
-              とことん話をすればいい<br />
-              <br />
-              <br />
-              <br />
-              そう、stand.fmで<br />
-              <br />
-              さあ徹底的にコラボしよう<br />
-              <br />
-              <br />
-              俺達のスタエフは<br />
-              まだ始まったばかりだ！<br />
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="space-y-2 sm:space-y-4 mt-2 sm:mt-4 w-full max-w-xs sm:max-w-md">
-        <Button
-          onClick={handleFollowTooru}
-          className="w-full bg-green-700 hover:bg-green-600 py-2 sm:py-3 px-3 sm:px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
-        >
-          <ExternalLink size={isMobile ? 16 : 20} />
-          とおるをフォローする
-        </Button>
-        
-        <Button
-          onClick={handleRetry}
-          className="w-full bg-purple-700 hover:bg-purple-600 py-2 sm:py-3 px-3 sm:px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
-        >
-          <RefreshCw size={isMobile ? 16 : 20} />
-          もう一度戦う
-        </Button>
-        
-        <Button
-          onClick={handleBackToStart}
-          className="w-full bg-gray-700 hover:bg-gray-600 py-2 sm:py-3 px-3 sm:px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
-        >
-          <Home size={isMobile ? 16 : 20} />
-          スタート画面に戻る
-        </Button>
-      </div>
+    <div className="relative min-h-screen bg-black text-white p-4 flex flex-col items-center justify-between">
+      {/* BGM Player */}
+      <AudioPlayer src={endingBgmUrl} loop autoPlay />
       
       {/* BGM Toggle Button */}
       <button
         onClick={toggleBgm}
-        className="fixed top-3 sm:top-6 right-3 sm:right-6 z-20 bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-full hover:bg-white/20 transition-colors"
+        className="absolute top-4 right-4 z-30 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
       >
-        {bgmEnabled ? 
-          <Volume2 size={isMobile ? 20 : 24} color="white" /> : 
-          <VolumeX size={isMobile ? 20 : 24} color="white" />
-        }
+        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
+      
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8 text-pink-500">エンディングA: 理想の働き方</h1>
+        
+        <div className="mb-8 text-center">
+          <p className="text-xl mb-4">おめでとうございます！</p>
+          <p className="mb-6">あなたは自分の才能と情熱を活かして、理想的な働き方を見つけました。</p>
+          <p className="mb-6">自分らしく生きることの大切さを理解し、周りの期待や常識に縛られることなく、あなたは自分の道を切り開きました。</p>
+        </div>
+        
+        <div className="mt-8">
+          <Button asChild variant="outline" className="mr-4">
+            <Link to="/">トップに戻る</Link>
+          </Button>
+        </div>
+      </div>
+      
+      <footer className="mt-auto py-4 text-xs text-center text-gray-400 w-full">
+        <p>© 2023 battle.fm All Rights Reserved.</p>
+        <a 
+          href="https://stand.fm/channels/5e82bebe4afcd351043886fe" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-pink-400 hover:text-pink-300 mt-2 inline-block"
+        >
+          presented by 巨万の富男
+        </a>
+      </footer>
     </div>
   );
 };
