@@ -668,9 +668,11 @@ export const useBattleLogic = () => {
     handleRunAway,
     handleHighball,
     handleCharacterClick,
-    showCharacterSheet,
+    showCharacterSheet: currentCharacterSheet !== null,
     currentCharacterSheet,
-    setShowCharacterSheet,
+    setShowCharacterSheet: (show: boolean) => {
+      if (!show) setCurrentCharacterSheet(null);
+    },
     handleSkip,
     battleResult,
     soundEffect
