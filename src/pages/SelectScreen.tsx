@@ -38,6 +38,7 @@ const SelectScreen: React.FC = () => {
     // Move to battle2 after 15 seconds total
     const battleTimeout = setTimeout(() => {
       handleScreenTransition('battle2');
+      navigate('/battle2');
     }, 15000);
     
     setTimeouts(prev => [...prev, alarmTimeout, battleTimeout]);
@@ -235,8 +236,7 @@ const SelectScreen: React.FC = () => {
         </div>
       )}
 
-      <style>
-        {`
+      <style jsx>{`
         @keyframes star-wars {
           0% {
             transform: translateY(100vh) rotateX(25deg);
@@ -258,8 +258,7 @@ const SelectScreen: React.FC = () => {
           justify-content: center;
           align-items: center;
         }
-        `}
-      </style>
+        `}</style>
     </div>
   );
 };
