@@ -47,7 +47,7 @@ const EndingAScreen: React.FC = () => {
       <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold mb-6">完全勝利！</h1>
         
-        <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
+        <p className="mb-8 text-lg" style={{ fontSize: 'calc(1.125rem - 3px)' }} dangerouslySetInnerHTML={{ __html: `
           とおるは勝利した！<br>
           <br>
           だが、<br>

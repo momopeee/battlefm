@@ -44,7 +44,7 @@ const EndingCScreen: React.FC = () => {
       <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
         <h1 className="text-3xl font-bold mb-6">敗北</h1>
         
-        <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
+        <p className="mb-8 text-lg" style={{ fontSize: 'calc(1.125rem - 3px)' }} dangerouslySetInnerHTML={{ __html: `
           とおるは敗れた！<br>
           <br>
           とおるの言葉はゆうじに届かなかった<br>
@@ -56,7 +56,7 @@ const EndingCScreen: React.FC = () => {
           でも嘆く事は無い<br>
           だって、何度でも話しかける事が出来るから<br>
           <br>
-          そう、stand.fmならでコラボでお話出来る！<br>
+          そう、stand.fmならコラボでお話出来る！<br>
           <br>
           俺達のスタエフはまだ始まったばかりだ！<br>`
         }} />
