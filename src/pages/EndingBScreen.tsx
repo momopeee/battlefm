@@ -10,16 +10,20 @@ const EndingBScreen: React.FC = () => {
   const { 
     bgmEnabled, 
     toggleBgm,
-    handleScreenTransition
+    handleScreenTransition,
+    resetBattleState
   } = useApp();
 
   const handleRetry = () => {
-    // バトル1に戻す
+    // Reset battle state and redirect to battle1
+    resetBattleState();
     handleScreenTransition('battle1');
     navigate('/battle1');
   };
 
   const handleBackToStart = () => {
+    // Reset battle state when returning to start
+    resetBattleState();
     handleScreenTransition('start');
     navigate('/start');
   };
