@@ -30,15 +30,10 @@ const EndingBScreen: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col p-4 justify-center items-center text-white bg-cover bg-center"
+      className="game-container flex flex-col justify-center items-center text-white bg-cover bg-center relative"
       style={{ 
         backgroundImage: 'url("/lovable-uploads/5d7a23ab-451e-4a7b-80e4-e649fc0a04aa.png")',
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
-        width: '1080px', 
-        height: '1920px', 
-        maxWidth: '100vw',
-        maxHeight: '100vh',
-        margin: '0 auto'
       }}
     >
       {/* Star Wars style text scroll */}
@@ -95,7 +90,7 @@ const EndingBScreen: React.FC = () => {
         </div>
       </div>
       
-      <div className="space-y-4 mt-4 w-full max-w-md">
+      <div className="space-y-4 mt-4 w-full max-w-md px-4">
         <Button
           onClick={handleFollowSoso}
           className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
@@ -124,7 +119,7 @@ const EndingBScreen: React.FC = () => {
       {/* BGM Toggle Button */}
       <button
         onClick={toggleBgm}
-        className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
+        className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
       >
         {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
