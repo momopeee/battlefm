@@ -84,7 +84,7 @@ const StartScreen = () => {
       {showText && (
         <div className="absolute inset-0 flex items-center justify-center overflow-hidden perspective z-20">
           <div className="absolute w-full max-w-3xl text-center transform rotate3d">
-            <div className="star-wars-text-content text-white text-lg md:text-xl leading-relaxed animate-text-scroll bg-black bg-opacity-30 p-6 rounded">
+            <div className="star-wars-text-content text-black text-[15px] md:text-[18px] leading-relaxed animate-text-scroll p-6 rounded text-stroke">
               <p>
                 ファンキーな世の中をあなたはどう生きますか？
                 <br />

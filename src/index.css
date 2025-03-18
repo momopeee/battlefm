@@ -118,6 +118,12 @@
   transform: translateY(100%);
 }
 
+/* Text with white outline */
+.text-stroke {
+  -webkit-text-stroke: 1px white;
+  text-shadow: 0 0 2px white;
+}
+
 @keyframes text-scroll {
   0% {
     transform: translateY(100%);
