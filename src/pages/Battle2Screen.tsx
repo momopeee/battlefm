@@ -487,7 +487,7 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   };
   
-  // Handle highball offer
+  // Handle highball offer - Updated to prevent HP going to 0 after recovery
   const handleHighball = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
