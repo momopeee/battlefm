@@ -1,13 +1,14 @@
 
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/context/AppContext';
 import { Volume2, VolumeX } from 'lucide-react';
 import AudioPlayer from '@/components/AudioPlayer';
 
 const EndingBScreen = () => {
-  const { bgmEnabled, toggleBgm } = useApp();
+  const { bgmEnabled, toggleBgm, handleScreenTransition, resetBattleState } = useApp();
+  const navigate = useNavigate();
   
   // BGM URL
   const endingBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/df4d3cfd-d360-49ea-90b4-2446850bab38/kyoman.mp3?table=block&id=1ba25ac2-cb4e-800d-8735-d8d4f50eada9&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=z4t7Uq9Gm_hiNsxycw86WXXMO9lt1btrtIm0Df-6u5E";
@@ -16,6 +17,13 @@ const EndingBScreen = () => {
     // Reset game state or perform any cleanup needed
     window.scrollTo(0, 0);
   }, []);
+  
+  const handleReturnToStart = () => {
+    // Reset battle state and redirect to index page
+    resetBattleState();
+    handleScreenTransition('index');
+    navigate('/');
+  };
   
   return (
     <div className="relative min-h-screen bg-black text-white p-4 flex flex-col items-center justify-between">
@@ -40,8 +48,8 @@ const EndingBScreen = () => {
         </div>
         
         <div className="mt-8">
-          <Button asChild variant="outline" className="mr-4">
-            <Link to="/">トップに戻る</Link>
+          <Button variant="outline" className="mr-4" onClick={handleReturnToStart}>
+            トップに戻る
           </Button>
         </div>
       </div>
