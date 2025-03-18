@@ -43,6 +43,14 @@ const opponent1AttackComments = [
   "上原には本当にいいご飯屋さんが多くて嬉しい"
 ];
 
+// NEW: Soso's special attack (collaboration) comments
+const sosoCollaborationComments = [
+  "やまねさんの言ってる事は本当にその通りで、だからこそ老人を日本から排除しないといけないと思うんですよ",
+  "らむださん、どう思います？今ねてました？",
+  "山根さんあんな事言ってるけどことことだったらどうする？",
+  "ごもっともですけど、60代以上の医療費は一回2億支払わないと受けれないようにしてもいいと思うんですよ"
+];
+
 export const useBattleLogic = () => {
   const { 
     player, setPlayer,
@@ -70,6 +78,9 @@ export const useBattleLogic = () => {
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   const [soundEffect, setSoundEffect] = useState<string | null>(null);
   const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
+  
+  // NEW: Flag to track if the special skill message has been displayed
+  const [specialSkillMessageDisplayed, setSpecialSkillMessageDisplayed] = useState(false);
 
   // Sound effect URLs
   const attackSoundUrl = "https://soundcloud.com/davis-momoyama/kougeki/s-To2wEpGbOXX?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
@@ -118,6 +129,7 @@ export const useBattleLogic = () => {
     setTransitionScheduled(false);
     setIsPlayerVictory(null);
     setShowSkipButton(false);
+    setSpecialSkillMessageDisplayed(false); // Reset special skill message flag
     
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
     
@@ -158,7 +170,26 @@ export const useBattleLogic = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.currentHp, opponent1.currentHp]);
 
-  // Show skip button after delay
+  // UPDATED: Activate soso heal mode when HP falls below 20 (and display special skill message once)
+  useEffect(() => {
+    if (opponent1.currentHp <= 20 && !sosoHealMode && !isBattleOver && !specialSkillMessageDisplayed) {
+      setSosoHealMode(true);
+      setSpecialSkillMessageDisplayed(true); // Mark that we've displayed the special skill message
+      
+      // Display the skill activation message sequence
+      addComment("システム", "そーそーがとくぎ「強制コラボ召喚」を発動した", true);
+      
+      // To ensure messages display in order with some delay
+      setTimeout(() => {
+        addComment(opponent1.name, "あー、生きるのってむずかしいんだよなー、株クラのみんなも上がろうよ", false);
+      }, 1000);
+      
+      setTimeout(() => {
+        addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した", true);
+      }, 2000);
+    }
+  }, [opponent1.currentHp, sosoHealMode, isBattleOver, specialSkillMessageDisplayed, addComment, opponent1.name]);
+
   useEffect(() => {
     let skipButtonTimer: NodeJS.Timeout | null = null;
     
@@ -184,15 +215,6 @@ export const useBattleLogic = () => {
     };
   }, [redirectTimer]);
 
-  // Updated: Activate soso heal mode when HP falls below 20 (changed from timer-based)
-  useEffect(() => {
-    if (opponent1.currentHp <= 20 && !sosoHealMode && !isBattleOver) {
-      setSosoHealMode(true);
-      addComment("システム", "そーそーがとくぎ「強制コラボ召喚」を発動した", true);
-    }
-  }, [opponent1.currentHp, sosoHealMode, isBattleOver, addComment]);
-
-  // Skip to the appropriate ending screen
   const handleSkip = () => {
     if (!isBattleOver) return;
     
@@ -397,26 +419,33 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(true);
   };
 
-  // Handle soso heal with fixed 10 points and updated comments
+  // UPDATED: Handle soso heal with new behavior
   const handleSosoHeal = () => {
     if (isBattleOver) return;
     
-    // Add heal comments
-    addComment(opponent1.name, "あー、生きるのってむずかしいんだよなー、株クラのみんなも上がろうよ");
-    addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した", true);
-    addComment("システム", "そーそーの体力が10回復した", true);
+    // Get random collaboration comment
+    const collaborationComment = sosoCollaborationComments[Math.floor(Math.random() * sosoCollaborationComments.length)];
     
-    // Heal opponent - fixed at 10 points
+    // Add collaboration comment
+    addComment(opponent1.name, collaborationComment);
+    
+    // Heal 20 HP per collaboration comment
+    const healAmount = 20;
+    addComment("システム", `そーそーの体力が${healAmount}回復した`, true);
+    
+    // Heal opponent by 20 points
     setOpponent1({
       ...opponent1,
-      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + 10)
+      currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + healAmount),
+      // Increase attack power by 5 in special mode
+      attackMin: opponent1.attackMin + 5,
+      attackMax: opponent1.attackMax + 5
     });
     
     // Start player's turn
     setIsPlayerTurn(true);
   };
 
-  // Handle victory - unchanged
   const handleVictory = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
@@ -516,7 +545,7 @@ export const useBattleLogic = () => {
   };
 
   // Handle character sheet display
-  const handleCharacterClick = (character: 'player' | 'opponent1') => {
+  const handleCharacterClick = (character: 'player' | 'opponent1' | 'opponent2') => {
     setCurrentCharacterSheet(character);
     setShowCharacterSheet(true);
   };
