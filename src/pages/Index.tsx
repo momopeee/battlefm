@@ -16,13 +16,14 @@ const Index = () => {
   
   return (
     <div 
-      className="min-h-screen flex flex-col items-center justify-between bg-black p-4 relative"
+      className="min-h-screen flex flex-col items-center justify-between p-4 relative"
       style={{ 
         width: '100%', 
         maxWidth: '1080px', 
         height: isMobile ? '100vh' : '100vh',
         maxHeight: '100vh', 
-        margin: '0 auto' 
+        margin: '0 auto',
+        backgroundColor: '#0a0a0a'
       }}
     >
       {/* Audio Player for BGM */}
