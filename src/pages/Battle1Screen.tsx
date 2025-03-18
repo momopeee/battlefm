@@ -47,8 +47,8 @@ const Battle1Screen: React.FC = () => {
   // BGM URLs
   const battleBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/25dcdcc6-7a5a-47a2-9406-e65a76e382ba/toru.mp3?table=block&id=1ba25ac2-cb4e-8044-92be-e2545318adf3&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=MHFbJx9mCs0X6KbOv59pptHsCjNnl8kiLkpKAHHl-_U";
   const specialSkillBgmUrl = "https://cdncf.stand.fm/audios/01JFDDJRX8ZXW8VF97A98JE1VE.m4a";
-  const victoryBgmUrl = "https://soundcloud.com/davis-momoyama/syouri/s-u6HAdaFT0Sb?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
-  const defeatBgmUrl = "https://soundcloud.com/davis-momoyama/orehamou/s-q3IJA3aoBNH?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const victoryBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/9982b577-fb1e-4011-9436-3e13286c44f3/%E9%81%94%E6%88%90%EF%BC%81_M299.mp3?table=block&id=1ba25ac2-cb4e-807d-9743-e96dc72d32a7&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=yOX7oAp8IASCZBmVVeEBx07VyPdpWWDhsgRqWF_QQjU";
+  const defeatBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/e30ccbfa-dce6-4565-846f-299249020356/%E8%A6%87%E8%80%85%E3%81%A8%E5%91%BC%E3%81%B0%E3%82%8C%E3%81%9F%E6%95%97%E5%8C%97%E8%80%85%E3%81%AE%E6%97%A5%E5%B8%B8.mp3?table=block&id=1ba25ac2-cb4e-80ee-8559-fdcf6a1de25a&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=S3FDTFsyARhC_rBvbBLjYidq9_I_yPs0Dvi_2AqTw8s";
 
   // Get the current BGM based on battle state
   const currentBgm = battleResult === 'victory' 
