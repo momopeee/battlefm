@@ -47,18 +47,45 @@ const EndingCScreen: React.FC = () => {
         <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
           とおるは敗れた！<br>
           <br>
-          とおるの言葉はゆうじに届かなかった<br>
+          とおるの言葉は<br>
+          ゆうじに届かない<br>
+          <br>
+          馬耳東風<br>
+          <br>
+          ゆうじの耳に<br>
+          とおるの金言<br>
+          <br>
+          <br>
+          だが、それも良い<br>
+          <br>
           世界は広い<br>
           <br>
-          本当に届けたい人には<br>
-          いつだって言葉は届かない<br>
+          みんな違って、<br>
+          みんないい<br>
           <br>
-          でも嘆く事は無い<br>
-          だって、何度でも話しかける事が出来るから<br>
           <br>
-          そう、stand.fmならでコラボでお話出来る！<br>
+          だから、<br>
           <br>
-          俺達のスタエフはまだ始まったばかりだ！<br>`
+          届けたい言葉が<br>
+          <br>
+          届けたい人に届かない時<br>
+          <br>
+          嘆く必要はない<br>
+          <br>
+          <br>
+          <br>
+          何度でも話せばいい<br>
+          とおるにはそれが出来る<br>
+          <br>
+          <br>
+          そう、stand.fmなら<br>
+          <br>
+          コラボでお話出来る！<br>
+          <br>
+          <br>
+          <br>
+          俺達のスタエフは<br>
+          まだ始まったばかりだ！<br>`
         }} />
         
         <div className="space-y-4">

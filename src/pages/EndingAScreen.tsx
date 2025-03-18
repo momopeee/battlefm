@@ -50,21 +50,37 @@ const EndingAScreen: React.FC = () => {
         <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
           とおるは勝利した！<br>
           <br>
-          だが、<br>
-          人間づきあいには勝利も敗北ない<br>
+          だが、それは本質ではない<br>
           <br>
+          人間づきあいには<br>
+          勝利も敗北もないからだ<br>
+          <br>
+          俺達はいつだって、<br>
           誠実に相手に向き合い、<br>
-          そして、自分に正直に真摯に対応する。<br>
+          そして、<br>
+          自分に正直に<br>
+          真摯に対応する<br>
           <br>
-          その結果すれ違う事もある<br>
+          <br>
+          その結果<br>
+          すれ違う事もある<br>
           意見が分かれる事もある<br>
           <br>
-          だがそんな時は、<br>
           <br>
+          でも大丈夫だ<br>
+          <br>
+          そんな時は<br>
           とことん話をすればいい<br>
-          そう、stand.fmで徹底的にコラボしよう<br>
           <br>
-          俺達のスタエフはまだ始まったばかりだ！<br>`
+          <br>
+          <br>
+          そう、stand.fmで<br>
+          <br>
+          さあ徹底的にコラボしよう<br>
+          <br>
+          <br>
+          俺達のスタエフは<br>
+          まだ始まったばかりだ！<br>`
         }} />
         
         <div className="space-y-4">
