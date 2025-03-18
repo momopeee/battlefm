@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { useApp } from '@/context/AppContext';
+import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import AudioPlayer from '@/components/AudioPlayer';
 
 const EndingAScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -44,86 +44,54 @@ const EndingAScreen: React.FC = () => {
     >
       <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
       
-      {/* Star Wars style text scroll */}
-      <div className="perspective relative h-[60vh] w-full overflow-hidden">
-        <div className="rotate3d">
-          <div className="star-wars-text-content absolute w-full">
-            <div className="text-center px-8 max-w-[500px] mx-auto">
-              <h1 className="text-3xl font-bold mb-6" style={{ 
-                color: 'white', 
-                textShadow: '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 2px 0 #000, 2px 0 0 #000, 0 -2px 0 #000, -2px 0 0 #000'
-              }}>完全勝利！</h1>
-              
-              <p className="mb-8 text-lg" 
-                style={{ 
-                  fontSize: 'calc(1.125rem - 5px)',
-                  color: 'white', 
-                  textShadow: '1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 1px 0 #000, 1px 0 0 #000, 0 -1px 0 #000, -1px 0 0 #000'
-                }} 
-                dangerouslySetInnerHTML={{ __html: `
-                とおるは勝利した！<br>
-                <br>
-                だが、それは本質ではない<br>
-                <br>
-                人間づきあいには<br>
-                勝利も敗北もないからだ<br>
-                <br>
-                俺達はいつだって、<br>
-                誠実に相手に向き合い、<br>
-                そして、<br>
-                自分に正直に<br>
-                真摯に対応する<br>
-                <br>
-                <br>
-                その結果<br>
-                すれ違う事もある<br>
-                意見が分かれる事もある<br>
-                <br>
-                <br>
-                でも大丈夫だ<br>
-                <br>
-                そんな時は<br>
-                とことん話をすればいい<br>
-                <br>
-                <br>
-                <br>
-                そう、stand.fmで<br>
-                <br>
-                さあ徹底的にコラボしよう<br>
-                <br>
-                <br>
-                俺達のスタエフは<br>
-                まだ始まったばかりだ！<br>`
-              }} />
-            </div>
-          </div>
+      <div className="bg-black/50 backdrop-blur-sm rounded-lg p-8 max-w-md w-full text-center">
+        <h1 className="text-3xl font-bold mb-6">完全勝利！</h1>
+        
+        <p className="mb-8 text-lg" dangerouslySetInnerHTML={{ __html: `
+          とおるは勝利した！<br>
+          <br>
+          だが、<br>
+          人間づきあいには勝利も敗北ない<br>
+          <br>
+          誠実に相手に向き合い、<br>
+          そして、自分に正直に真摯に対応する。<br>
+          <br>
+          その結果すれ違う事もある<br>
+          意見が分かれる事もある<br>
+          <br>
+          だがそんな時は、<br>
+          <br>
+          とことん話をすればいい<br>
+          そう、stand.fmで徹底的にコラボしよう<br>
+          <br>
+          俺達のスタエフはまだ始まったばかりだ！<br>`
+        }} />
+        
+        <div className="space-y-4">
+          <Button
+            onClick={handleFollowTooru}
+            className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+          >
+            <ExternalLink size={20} />
+            とおるをフォローする
+          </Button>
+          
+          <Button
+            onClick={handleRetry}
+            className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+          >
+            <RefreshCw size={20} />
+            もう一度戦う
+          </Button>
+          
+          <Button
+            onClick={handleBackToStart}
+            className="w-full bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
+          >
+            <Home size={20} />
+            スタート画面に戻る
+          </Button>
         </div>
-      </div>
-      
-      <div className="space-y-4 mt-4 w-full max-w-md">
-        <Button
-          onClick={handleFollowTooru}
-          className="w-full bg-green-700 hover:bg-green-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
-        >
-          <ExternalLink size={20} />
-          とおるをフォローする
-        </Button>
-        
-        <Button
-          onClick={handleRetry}
-          className="w-full bg-purple-700 hover:bg-purple-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
-        >
-          <RefreshCw size={20} />
-          もう一度戦う
-        </Button>
-        
-        <Button
-          onClick={handleBackToStart}
-          className="w-full bg-gray-700 hover:bg-gray-600 py-3 px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2"
-        >
-          <Home size={20} />
-          スタート画面に戻る
-        </Button>
       </div>
       
       {/* BGM Toggle Button */}
