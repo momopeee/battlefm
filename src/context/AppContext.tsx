@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 // Character interface
@@ -19,8 +18,8 @@ export interface Comment {
   isSystem: boolean;
 }
 
-// Define the possible screens
-export type Screen = 'index' | 'start' | 'battle1' | 'victory1' | 'select' | 'battle2' | 'victory2' | 'endingA' | 'endingB' | 'endingC';
+// Define the possible screens - updated to include result1 and result2
+export type Screen = 'index' | 'start' | 'battle1' | 'victory1' | 'result1' | 'select' | 'battle2' | 'victory2' | 'result2' | 'endingA' | 'endingB' | 'endingC';
 
 // AppContext interface
 interface AppContextProps {
