@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ const MOBILE_WIDTH = 375;
 const MOBILE_HEIGHT = 812;
 const ASPECT_RATIO = MOBILE_WIDTH / MOBILE_HEIGHT;
 // アプリケーションのバージョン
-const APP_VERSION = "Ver.3.165.1";
+const APP_VERSION = "Ver.3.166.0";
 
 const Index = () => {
   const isMobile = useIsMobile();
