@@ -97,6 +97,29 @@
   box-sizing: border-box;
 }
 
+/* 9:16 Aspect Ratio Container */
+.aspect-ratio-container {
+  position: relative;
+  overflow: hidden;
+  /* On desktop, maintain 9:16 aspect ratio */
+  aspect-ratio: 9/16;
+}
+
+/* Media query to handle aspect ratio on different screen sizes */
+@media (max-aspect-ratio: 9/16) {
+  .aspect-ratio-container {
+    width: 100vw;
+    height: auto;
+  }
+}
+
+@media (min-aspect-ratio: 9/16) {
+  .aspect-ratio-container {
+    height: 100vh;
+    width: auto;
+  }
+}
+
 /* Responsive container for game screens */
 .game-container {
   width: 100%;

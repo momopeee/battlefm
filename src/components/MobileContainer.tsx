@@ -2,9 +2,9 @@
 import React, { ReactNode } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-// Constants for mobile device dimensions
+// Constants for mobile device dimensions (updated to match 9:16 aspect ratio)
 export const MOBILE_WIDTH = 375;
-export const MOBILE_HEIGHT = 812;
+export const MOBILE_HEIGHT = 667; // Changed from 812 to 667 to match 9:16 ratio (375 * 16/9 ≈ 667)
 
 interface MobileContainerProps {
   children: ReactNode;
@@ -52,9 +52,9 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
         />
       )}
       
-      {/* Main content container with mobile aspect ratio */}
+      {/* Main content container with 9:16 aspect ratio */}
       <div 
-        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full safe-area-vertical' : 'mx-auto rounded-2xl shadow-2xl'}`}
+        className={`relative z-10 overflow-hidden aspect-ratio-container ${isMobile ? 'w-full h-full safe-area-vertical' : 'mx-auto rounded-2xl shadow-2xl'}`}
         style={{
           width: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,
           maxWidth: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,
