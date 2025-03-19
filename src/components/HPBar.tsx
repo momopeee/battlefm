@@ -13,6 +13,9 @@ const HPBar: React.FC<HPBarProps> = ({ currentHP, maxHP }) => {
   
   const percentage = Math.max(0, Math.min(100, (safeCurrentHP / safeMaxHP) * 100));
   
+  // Debug log to track HP value rendering
+  console.log(`HPBar rendering: currentHP=${safeCurrentHP}, maxHP=${safeMaxHP}, percentage=${percentage}%`);
+  
   return (
     <div className="w-full">
       <div className="bg-gray-700 rounded-md overflow-hidden relative h-[20px]">

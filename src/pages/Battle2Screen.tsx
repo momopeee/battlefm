@@ -519,53 +519,68 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   };
   
-  // Handle highball offer - Updated to properly sync with player state
+  // Handle highball offer - Updated to use functional updates for reliable state
   const handleHighball = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
     addComment('とおる＠経営参謀', 'ぐびぐび、うへぇ～、もう一杯お願いします。メガで。');
     
     setTimeout(() => {
-      // Check if player's HP is less than half
-      if (playerHp < player.maxHp / 2) {
-        // Full recovery when HP is low
-        addComment('システム', "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
-        
-        // Restore player's HP and update local state
-        const newHp = player.maxHp;
-        setPlayerHp(newHp);
-        
-        // We don't need to manually update AppContext player state here
-        // as our useEffect hook will handle that based on playerHp change
-      } else {
-        // Normal highball effect
-        // Random highball effect
-        const highballEffects = [
-          "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
-          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
-          "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
-        ];
-        
-        const effectIdx = Math.floor(Math.random() * highballEffects.length);
-        addComment('システム', highballEffects[effectIdx], true);
-        
-        // Player damages himself and update local state
-        const newHp = Math.max(0, playerHp - 10);
-        setPlayerHp(newHp);
-        
-        // Set highball confusion if drinking made player confused
-        if (effectIdx === 2) {
-          setIsHighballConfused(true);
+      // Use functional update to ensure latest state
+      setPlayerHp((prevHp) => {
+        // Check if player's HP is less than or equal to half (changed condition)
+        if (prevHp <= player.maxHp / 2) {
+          // Full recovery when HP is low
+          addComment('システム', "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
+          
+          // Directly update context state for immediate visibility
+          setPlayer({
+            ...player,
+            currentHp: player.maxHp
+          });
+          
+          // Show recovery toast
+          toast.success(`HP が全回復しました！`);
+          
+          return player.maxHp;
+        } else {
+          // Normal highball effect - Random selection
+          const highballEffects = [
+            "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
+            "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
+            "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
+          ];
+          
+          const effectIdx = Math.floor(Math.random() * highballEffects.length);
+          addComment('システム', highballEffects[effectIdx], true);
+          
+          // Calculate new HP value
+          const newHp = Math.max(0, prevHp - 10);
+          
+          // Update context state directly for immediate visibility
+          setPlayer({
+            ...player,
+            currentHp: newHp
+          });
+          
+          // Set highball confusion if drinking made player confused
+          if (effectIdx === 2) {
+            setIsHighballConfused(true);
+          }
+          
+          // Check if player defeated himself
+          if (newHp <= 0) {
+            // Use setTimeout to ensure state updates are processed
+            setTimeout(() => {
+              handleDefeat();
+            }, 0);
+          }
+          
+          return newHp;
         }
-        
-        // Check if player defeated himself using the new HP value
-        if (newHp <= 0) {
-          handleDefeat();
-          return;
-        }
-      }
+      });
       
-      // End player's turn
+      // End player's turn after state updates
       setTimeout(() => {
         setIsPlayerTurn(false);
         setAttackInProgress(false);
