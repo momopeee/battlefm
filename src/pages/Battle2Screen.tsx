@@ -513,8 +513,9 @@ const Battle2Screen: React.FC = () => {
         // Full recovery when HP is low
         addComment('システム', "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
         
-        // Restore player's HP
-        setPlayerHp(player.maxHp);
+        // Restore player's HP and update local state
+        const newHp = player.maxHp;
+        setPlayerHp(newHp);
       } else {
         // Normal highball effect
         // Random highball effect
@@ -527,16 +528,17 @@ const Battle2Screen: React.FC = () => {
         const effectIdx = Math.floor(Math.random() * highballEffects.length);
         addComment('システム', highballEffects[effectIdx], true);
         
-        // Player damages himself
-        setPlayerHp(Math.max(0, playerHp - 10));
+        // Player damages himself and update local state
+        const newHp = Math.max(0, playerHp - 10);
+        setPlayerHp(newHp);
         
         // Set highball confusion if drinking made player confused
         if (effectIdx === 2) {
           setIsHighballConfused(true);
         }
         
-        // Check if player defeated himself
-        if (playerHp - 10 <= 0) {
+        // Check if player defeated himself using the new HP value
+        if (newHp <= 0) {
           handleDefeat();
           return;
         }
@@ -605,14 +607,14 @@ const Battle2Screen: React.FC = () => {
     setRedirectTimer(timer);
   };
   
-  // Check for battle end conditions
+  // Check for battle end conditions - Updated to use current state values
   useEffect(() => {
     if (playerHp <= 0 && !isBattleOver) {
       handleDefeat();
     } else if (opponentHp <= 0 && !specialModeActive && !isBattleOver) {
       handleVictory();
     }
-  }, [playerHp, opponentHp]);
+  }, [playerHp, opponentHp, specialModeActive, isBattleOver]);
 
   // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {

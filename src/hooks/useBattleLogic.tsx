@@ -283,7 +283,7 @@ export const useBattleLogic = () => {
     
     // Add attack comments
     addComment(player.name, attackComment);
-    addComment("システム", `とおるの攻撃、そーそ��は${damage}のダメージを受けた`, true);
+    addComment("システム", `とお���の攻撃、そーそ��は${damage}のダメージを受けた`, true);
     
     // Apply damage to opponent
     setOpponent1({
@@ -347,7 +347,7 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(false);
   };
 
-  // Handle drinking highball - updated with new logic
+  // Handle drinking highball - updated with proper HP check and state handling
   const handleHighball = () => {
     if (isBattleOver || !isPlayerTurn) return;
     
@@ -360,10 +360,11 @@ export const useBattleLogic = () => {
       addComment(player.name, "ぐびぐび、うへぇ～、もう一杯お願いします。メガで。");
       addComment("システム", "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
       
-      // Restore player's HP
+      // Restore player's HP with proper state update
+      const newHp = player.maxHp;
       setPlayer({
         ...player,
-        currentHp: player.maxHp
+        currentHp: newHp
       });
     } else {
       // Normal highball effect
@@ -379,7 +380,7 @@ export const useBattleLogic = () => {
       const effectIdx = Math.floor(Math.random() * highballEffects.length);
       addComment("システム", highballEffects[effectIdx], true);
       
-      // Player damages himself
+      // Player damages himself with proper state update
       const newHp = Math.max(0, player.currentHp - 10);
       setPlayer({
         ...player,
@@ -582,3 +583,4 @@ export const useBattleLogic = () => {
     handleSkip
   };
 };
+

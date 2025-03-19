@@ -7,7 +7,11 @@ interface HPBarProps {
 }
 
 const HPBar: React.FC<HPBarProps> = ({ currentHP, maxHP }) => {
-  const percentage = Math.max(0, Math.min(100, (currentHP / maxHP) * 100));
+  // Ensure we have valid numbers and calculate percentage
+  const safeCurrentHP = typeof currentHP === 'number' ? currentHP : 0;
+  const safeMaxHP = typeof maxHP === 'number' ? Math.max(1, maxHP) : 100;
+  
+  const percentage = Math.max(0, Math.min(100, (safeCurrentHP / safeMaxHP) * 100));
   
   return (
     <div className="w-full">
@@ -21,7 +25,7 @@ const HPBar: React.FC<HPBarProps> = ({ currentHP, maxHP }) => {
         >
         </div>
         <div className="absolute inset-0 flex justify-center items-center">
-          <span className="text-white text-sm z-10">残りHP: {currentHP}</span>
+          <span className="text-white text-sm z-10">残りHP: {safeCurrentHP}</span>
         </div>
       </div>
     </div>
