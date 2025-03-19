@@ -283,7 +283,7 @@ export const useBattleLogic = () => {
     
     // Add attack comments
     addComment(player.name, attackComment);
-    addComment("システム", `とおるの攻撃、そーそーは${damage}のダメージを受けた`, true);
+    addComment("システム", `とおるの攻撃、そーそ��は${damage}のダメージを受けた`, true);
     
     // Apply damage to opponent
     setOpponent1({
@@ -427,7 +427,7 @@ export const useBattleLogic = () => {
     setIsPlayerTurn(true);
   };
 
-  // UPDATED: Handle soso heal with new behavior
+  // UPDATED: Handle soso heal with new behavior - now also attacks player
   const handleSosoHeal = () => {
     if (isBattleOver) return;
     
@@ -437,9 +437,13 @@ export const useBattleLogic = () => {
     // Add collaboration comment
     addComment(opponent1.name, collaborationComment);
     
-    // Heal 20 HP per collaboration comment
+    // Heal amount and attack damage calculations
     const healAmount = 20;
+    const damageToPlayer = Math.floor(Math.random() * (opponent1.attackMax - opponent1.attackMin + 1)) + opponent1.attackMin;
+    
+    // Add system comments for both healing and attacking
     addComment("システム", `そーそーの体力が${healAmount}回復した`, true);
+    addComment("システム", `同時に、とおるは${damageToPlayer}のダメージを受けた`, true);
     
     // Heal opponent by 20 points
     setOpponent1({
@@ -450,8 +454,20 @@ export const useBattleLogic = () => {
       attackMax: opponent1.attackMax + 5
     });
     
-    // Start player's turn
-    setIsPlayerTurn(true);
+    // Apply damage to player
+    const newPlayerHp = Math.max(0, player.currentHp - damageToPlayer);
+    setPlayer({
+      ...player,
+      currentHp: newPlayerHp
+    });
+    
+    // Check if this attack defeated the player
+    if (newPlayerHp <= 0 && !isBattleOver) {
+      // We'll handle the defeat on the next render via the useEffect that checks hp
+    } else {
+      // Start player's turn if battle continues
+      setIsPlayerTurn(true);
+    }
   };
 
   const handleVictory = () => {
