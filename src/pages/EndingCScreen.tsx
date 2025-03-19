@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useApp } from '@/context/AppContext';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
@@ -40,10 +41,8 @@ const EndingCScreen: React.FC = () => {
         backgroundImage: 'url("/lovable-uploads/06195b62-3f14-4c57-b235-a8f00a43b907.png")',
         fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
         width: '100%', 
-        maxWidth: '1080px', 
         height: isMobile ? '100vh' : '1920px', 
         maxWidth: '100vw',
-        maxHeight: '100vh',
         margin: '0 auto'
       }}
     >

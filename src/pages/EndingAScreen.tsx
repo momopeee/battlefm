@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useApp } from '@/context/AppContext';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
@@ -43,8 +44,6 @@ const EndingAScreen: React.FC = () => {
         width: '100%', 
         maxWidth: '1080px', 
         height: isMobile ? '100vh' : '1920px', 
-        maxWidth: '100vw',
-        maxHeight: '100vh',
         margin: '0 auto'
       }}
     >

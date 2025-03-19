@@ -45,7 +45,7 @@ const Index = () => {
       {/* Blurred background for desktop only */}
       {!isMobile && (
         <div 
-          className="absolute inset-0 w-full h-full z-0 scale-110"
+          className="absolute inset-0 w-full h-full z-0"
           style={{
             backgroundImage: 'url(/lovable-uploads/c8b9a8dd-129e-4ba6-ba66-c03a253d63f7.png)',
             backgroundSize: 'cover',
