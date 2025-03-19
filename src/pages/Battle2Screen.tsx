@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -86,21 +85,6 @@ const Battle2Screen: React.FC = () => {
   const [isHighballConfused, setIsHighballConfused] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
-  
-  // UPDATED: BGM URLs
-  const battleBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/598bdf59-3268-45c2-bc9c-2f4d8437f4ca/ug1.mp3?table=block&id=1ba25ac2-cb4e-80e0-8e33-f7ca12ee18df&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=L8SkQ1y-492dBx6t6XdMvQ1NbAk7ljOgIysr3Bh6Lq0";
-  const victoryBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/9982b577-fb1e-4011-9436-3e13286c44f3/%E9%81%94%E6%88%90%EF%BC%81_M299.mp3?table=block&id=1ba25ac2-cb4e-807d-9743-e96dc72d32a7&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=yOX7oAp8IASCZBmVVeEBx07VyPdpWWDhsgRqWF_QQjU";
-  const defeatBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/e30ccbfa-dce6-4565-846f-299249020356/%E8%A6%87%E8%80%85%E3%81%A8%E5%91%BC%E3%81%B0%E3%82%8C%E3%81%9F%E6%95%97%E5%8C%97%E8%80%85%E3%81%AE%E6%97%A5%E5%B8%B8.mp3?table=block&id=1ba25ac2-cb4e-80ee-8559-fdcf6a1de25a&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=S3FDTFsyARhC_rBvbBLjYidq9_I_yPs0Dvi_2AqTw8s";
-  const specialModeBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/d5edfcc9-5aa1-42d4-9041-5a0ccff0ea59/ug2.m4a?table=block&id=1ba25ac2-cb4e-80f2-8dd5-dff84b49a158&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=IqH1ki9qX1fHBY5usL5wlcApVxBeiqMIP9Kb-gc5Xks";
-  
-  // Get the current BGM based on battle state
-  const currentBgm = battleResult === 'victory' 
-    ? victoryBgmUrl 
-    : battleResult === 'defeat' 
-      ? defeatBgmUrl 
-      : specialModeActive
-        ? specialModeBgmUrl
-        : battleBgmUrl;
   
   // Reset battle state on component mount and start timer
   useEffect(() => {
@@ -643,23 +627,6 @@ const Battle2Screen: React.FC = () => {
         margin: '0 auto'
       }}
     >
-      {/* Audio Player for BGM */}
-      <AudioPlayer 
-        src={currentBgm} 
-        loop={battleResult === null} 
-        autoPlay={true} 
-      />
-      
-      {/* Sound Effects */}
-      {soundEffect && (
-        <AudioPlayer 
-          src={soundEffect} 
-          loop={false} 
-          autoPlay={true} 
-          volume={0.7}
-        />
-      )}
-      
       {/* Top section with title and player info - Count timer removed from top right */}
       <div className="flex items-center mb-4">
         <img 
@@ -736,10 +703,7 @@ const Battle2Screen: React.FC = () => {
         onClick={toggleBgm}
         className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
       >
-        {bgmEnabled ? 
-          <Volume2 size={24} color="white" /> : 
-          <VolumeX size={24} color="white" />
-        }
+        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
       
       {/* Character Sheet Popup */}
@@ -749,6 +713,9 @@ const Battle2Screen: React.FC = () => {
           onClose={() => setShowCharacterSheet(false)} 
         />
       )}
+      
+      {/* Audio Player */}
+      {soundEffect && <AudioPlayer src={soundEffect} />}
     </div>
   );
 };
