@@ -521,7 +521,7 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   };
   
-  // Handle highball offer - Updated to use functional updates for reliable state
+  // Updated handleHighball function with functional state updates
   const handleHighball = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
@@ -530,16 +530,16 @@ const Battle2Screen: React.FC = () => {
     setTimeout(() => {
       // Use functional update to ensure latest state
       setPlayerHp((prevHp) => {
-        // Check if player's HP is less than or equal to half (changed condition)
+        // Check if player's HP is less than or equal to half
         if (prevHp <= player.maxHp / 2) {
           // Full recovery when HP is low
           addComment('システム', "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
           
-          // Directly update context state for immediate visibility
-          setPlayer({
-            ...player,
-            currentHp: player.maxHp
-          });
+          // Update context state with functional update
+          setPlayer((prevPlayer) => ({
+            ...prevPlayer,
+            currentHp: prevPlayer.maxHp,
+          }));
           
           // Show recovery toast
           toast.success(`HP が全回復しました！`);
@@ -559,11 +559,11 @@ const Battle2Screen: React.FC = () => {
           // Calculate new HP value
           const newHp = Math.max(0, prevHp - 10);
           
-          // Update context state directly for immediate visibility
-          setPlayer({
-            ...player,
-            currentHp: newHp
-          });
+          // Update context state with functional update
+          setPlayer((prevPlayer) => ({
+            ...prevPlayer,
+            currentHp: newHp,
+          }));
           
           // Set highball confusion if drinking made player confused
           if (effectIdx === 2) {
