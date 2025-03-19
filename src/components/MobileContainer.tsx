@@ -54,7 +54,7 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
       
       {/* Main content container with mobile aspect ratio */}
       <div 
-        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full' : 'mx-auto rounded-2xl shadow-2xl'}`}
+        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full safe-area-bottom' : 'mx-auto rounded-2xl shadow-2xl'}`}
         style={{
           width: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,
           maxWidth: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,

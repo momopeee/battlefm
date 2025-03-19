@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -81,6 +82,12 @@
     @apply bg-background text-foreground;
     font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
   }
+}
+
+/* Safe area padding for bottom of screen (for iPhone home bar) */
+.safe-area-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom) * 2);
+  box-sizing: border-box;
 }
 
 /* Responsive container for game screens */
