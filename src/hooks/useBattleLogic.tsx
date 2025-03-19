@@ -283,7 +283,7 @@ export const useBattleLogic = () => {
     
     // Add attack comments
     addComment(player.name, attackComment);
-    addComment("システム", `とお���の攻撃、そーそ��は${damage}のダメージを受けた`, true);
+    addComment("システム", `とおるの攻撃、そーそーは${damage}のダメージを受けた`, true);
     
     // Apply damage to opponent
     setOpponent1({
@@ -583,4 +583,3 @@ export const useBattleLogic = () => {
     handleSkip
   };
 };
-
