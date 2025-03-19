@@ -12,6 +12,7 @@ const Index = () => {
     <MobileContainer
       backgroundClassName="bg-[#0a0a0a]"
       backgroundImage="/lovable-uploads/c8b9a8dd-129e-4ba6-ba66-c03a253d63f7.png"
+      pcBackgroundColor="#0B0B0B"
     >
       <div className="flex flex-col items-center justify-between h-full px-4 py-8">
         <div className="flex-1 flex items-center justify-center">

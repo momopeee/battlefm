@@ -12,13 +12,15 @@ interface MobileContainerProps {
   backgroundClassName?: string;
   backgroundImage?: string;
   backgroundGradient?: string;
+  pcBackgroundColor?: string;
 }
 
 const MobileContainer: React.FC<MobileContainerProps> = ({
   children,
   backgroundClassName,
   backgroundImage,
-  backgroundGradient
+  backgroundGradient,
+  pcBackgroundColor
 }) => {
   const isMobile = useIsMobile();
 
@@ -38,8 +40,16 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
     };
   }
 
+  // Determine the container background style
+  const containerStyle: React.CSSProperties = pcBackgroundColor && !isMobile 
+    ? { backgroundColor: pcBackgroundColor }
+    : {};
+
   return (
-    <div className={`min-h-screen w-full flex items-center justify-center ${backgroundClassName || 'bg-black'} pc-fixed-container`}>
+    <div 
+      className={`min-h-screen w-full flex items-center justify-center ${backgroundClassName || 'bg-black'} pc-fixed-container`}
+      style={containerStyle}
+    >
       {/* Blurred background for desktop only */}
       {!isMobile && (
         <div 
