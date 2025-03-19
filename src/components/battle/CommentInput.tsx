@@ -3,10 +3,13 @@ import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useLocation } from 'react-router-dom';
 
 const CommentInput: React.FC = () => {
   const [comment, setComment] = useState('');
   const { addComment, player, setPlayer } = useApp();
+  const location = useLocation();
+  const isBattle2 = location.pathname === '/battle2';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
