@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -96,7 +97,7 @@
   box-sizing: border-box;
 }
 
-/* 9:16 Aspect Ratio Container - now only applied for mobile */
+/* 9:16 Aspect Ratio Container */
 .aspect-ratio-container {
   position: relative;
   overflow: hidden;
@@ -104,32 +105,18 @@
   aspect-ratio: 9/16;
 }
 
-/* PC container with no height restrictions */
-.pc-container {
-  height: auto;
-  min-height: auto;
-  overflow-y: auto;
-}
-
-/* Media query to handle aspect ratio on different screen sizes - mobile only */
-@media (max-width: 767px) {
+/* Media query to handle aspect ratio on different screen sizes */
+@media (max-aspect-ratio: 9/16) {
   .aspect-ratio-container {
     width: 100vw;
     height: auto;
   }
-  
-  @media (max-aspect-ratio: 9/16) {
-    .aspect-ratio-container {
-      width: 100vw;
-      height: auto;
-    }
-  }
+}
 
-  @media (min-aspect-ratio: 9/16) {
-    .aspect-ratio-container {
-      height: 100vh;
-      width: auto;
-    }
+@media (min-aspect-ratio: 9/16) {
+  .aspect-ratio-container {
+    height: 100vh;
+    width: auto;
   }
 }
 

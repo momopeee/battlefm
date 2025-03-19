@@ -9,7 +9,7 @@ const MOBILE_WIDTH = 375;
 const MOBILE_HEIGHT = 667; // Changed from 812 to 667 to match 9:16 ratio
 const ASPECT_RATIO = 9/16; // Updated to 9:16 (height/width)
 // アプリケーションのバージョン
-const APP_VERSION = "Ver.3.169.0";
+const APP_VERSION = "Ver.3.168.0";
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -59,15 +59,14 @@ const Index = () => {
         />
       )}
       
-      {/* Main content container with 9:16 aspect ratio for mobile, full height for desktop */}
+      {/* Main content container with 9:16 aspect ratio */}
       <div 
-        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full' : 'mx-auto rounded-2xl shadow-2xl pc-container'}`}
+        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full' : 'mx-auto rounded-2xl shadow-2xl aspect-ratio-container'}`}
         style={{
           width: isMobile ? '100%' : `${MOBILE_WIDTH}px`,
           maxWidth: isMobile ? '100%' : `${MOBILE_WIDTH}px`,
-          height: isMobile ? '100vh' : 'auto',
-          minHeight: isMobile ? 'auto' : 'auto',
-          maxHeight: isMobile ? '100vh' : 'none',
+          height: isMobile ? '100vh' : `${MOBILE_HEIGHT}px`,
+          maxHeight: isMobile ? '100vh' : `${MOBILE_HEIGHT}px`,
           backgroundColor: '#0a0a0a'
         }}
       >
