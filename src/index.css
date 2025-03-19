@@ -90,6 +90,13 @@
   box-sizing: border-box;
 }
 
+/* Safe area padding for both top and bottom with additional 7px padding */
+.safe-area-vertical {
+  padding-top: calc(env(safe-area-inset-top) + 7px);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 7px);
+  box-sizing: border-box;
+}
+
 /* Responsive container for game screens */
 .game-container {
   width: 100%;

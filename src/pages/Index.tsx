@@ -8,7 +8,7 @@ const MOBILE_WIDTH = 375;
 const MOBILE_HEIGHT = 812;
 const ASPECT_RATIO = MOBILE_WIDTH / MOBILE_HEIGHT;
 // アプリケーションのバージョン
-const APP_VERSION = "Ver.3.166.0";
+const APP_VERSION = "Ver.3.167.0";
 
 const Index = () => {
   const isMobile = useIsMobile();

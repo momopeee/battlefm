@@ -54,14 +54,14 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
       
       {/* Main content container with mobile aspect ratio */}
       <div 
-        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full safe-area-bottom' : 'mx-auto rounded-2xl shadow-2xl'}`}
+        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full safe-area-vertical' : 'mx-auto rounded-2xl shadow-2xl'}`}
         style={{
           width: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,
           maxWidth: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,
           height: isMobile ? '100vh' : `${MOBILE_HEIGHT}px`,
           maxHeight: isMobile ? '100vh' : `${MOBILE_HEIGHT}px`,
-          paddingTop: isMobile ? 'env(safe-area-inset-top)' : 0,
-          paddingBottom: isMobile ? 'env(safe-area-inset-bottom)' : 0,
+          paddingTop: isMobile ? 'calc(env(safe-area-inset-top) + 7px)' : 0,
+          paddingBottom: isMobile ? 'calc(env(safe-area-inset-bottom) + 7px)' : 0,
           paddingLeft: isMobile ? 'env(safe-area-inset-left)' : 0,
           paddingRight: isMobile ? 'env(safe-area-inset-right)' : 0,
           boxSizing: 'border-box',
