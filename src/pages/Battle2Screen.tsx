@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -8,12 +7,14 @@ import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Import the battle components
 import CharacterPortraits from '@/components/battle/CharacterPortraits';
 import GaugesDisplay from '@/components/battle/GaugesDisplay';
 import BattleActions from '@/components/battle/BattleActions';
 import CommentInput from '@/components/battle/CommentInput';
+import PlayerInfo from '@/components/battle/PlayerInfo';
 
 // Player attack comments for Yuji battle
 const playerAttackComments = [
@@ -49,6 +50,7 @@ const yujiSpecialComments = [
 
 const Battle2Screen: React.FC = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { 
     player, 
     opponent2, 
@@ -619,28 +621,37 @@ const Battle2Screen: React.FC = () => {
   return (
     <MobileContainer backgroundGradient={battleBackgroundGradient}>
       <div 
-        className="min-h-screen flex flex-col h-screen p-4 text-white relative"
+        className="flex flex-col h-full p-2 sm:p-4 text-white relative"
         style={{ 
           background: battleBackgroundGradient,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
           fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
           width: '100%',
           height: '100%',
         }}
       >
-        {/* Top section with title and player info - Count timer removed from top right */}
-        <div className="flex items-center mb-4">
-          <img 
-            src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
-            alt={player.name} 
-            className="w-12 h-12 rounded-full mr-2 border-2 border-white"
+        {/* Background Music */}
+        <AudioPlayer 
+          src="/audios/battle.mp3"
+          loop={battleResult === null}
+          autoPlay={true}
+        />
+
+        {/* Sound Effects */}
+        {soundEffect && (
+          <AudioPlayer 
+            src={soundEffect} 
+            loop={false} 
+            autoPlay={true} 
+            volume={0.7}
           />
-          <div>
-            <h1 className="text-[14px] font-bold">さよなら陽気なおじさん！</h1>
-            <p className="text-sm opacity-80">{formatTime(battleTimer)}</p>
-          </div>
-        </div>
+        )}
+        
+        {/* Top section with title and timer - Updated to use PlayerInfo component */}
+        <PlayerInfo 
+          name="とおる＠経営参謀" 
+          icon={player.icon}
+          battleTimer={battleTimer}
+        />
         
         {/* Health and special gauges */}
         <GaugesDisplay 
@@ -658,7 +669,7 @@ const Battle2Screen: React.FC = () => {
           sosoHealMode={false}
         />
         
-        {/* Yuji special mode indicator */}
+        {/* Yuji special mode indicator - keep position same */}
         {specialModeActive && (
           <div className="absolute top-1/4 left-0 right-0 flex justify-center">
             <div className="animate-pulse text-yellow-300 text-xl font-bold bg-black/50 px-4 py-2 rounded-full">
@@ -667,8 +678,8 @@ const Battle2Screen: React.FC = () => {
           </div>
         )}
         
-        {/* Comments area with fixed height */}
-        <div className="flex-1 mb-2 h-[25vh] overflow-hidden">
+        {/* Comments area with responsive height to match Battle1Screen */}
+        <div className="flex-1 mb-1 sm:mb-2 h-[20vh] sm:h-[25vh] overflow-hidden">
           <CommentArea comments={comments} />
         </div>
         
@@ -689,13 +700,13 @@ const Battle2Screen: React.FC = () => {
           <CommentInput />
         </div>
         
-        {/* Skip Button - Only shown when battle is over */}
+        {/* Skip Button - Only shown when battle is over - adjusted position to match Battle1Screen */}
         {showSkipButton && (
           <Button
             onClick={handleSkip}
-            className="fixed bottom-20 right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md animate-pulse flex items-center gap-2"
+            className="fixed bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
           >
-            <SkipForward size={20} />
+            <SkipForward size={isMobile ? 16 : 20} />
             スキップ
           </Button>
         )}
@@ -703,9 +714,12 @@ const Battle2Screen: React.FC = () => {
         {/* BGM Toggle Button */}
         <button
           onClick={toggleBgm}
-          className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
+          className="fixed top-3 sm:top-6 right-3 sm:right-6 z-20 bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-full hover:bg-white/20 transition-colors"
         >
-          {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
+          {bgmEnabled ? 
+            <Volume2 size={isMobile ? 20 : 24} color="white" /> : 
+            <VolumeX size={isMobile ? 20 : 24} color="white" />
+          }
         </button>
         
         {/* Character Sheet Popup */}
