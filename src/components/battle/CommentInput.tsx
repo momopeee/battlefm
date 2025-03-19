@@ -4,6 +4,7 @@ import { useApp } from '@/context/AppContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const CommentInput: React.FC = () => {
   const [comment, setComment] = useState('');
@@ -26,6 +27,8 @@ const CommentInput: React.FC = () => {
         // Calculate new HP but don't exceed max HP
         const newHp = Math.min(player.currentHp + recoveryAmount, player.maxHp);
         
+        console.log(`Debug HP recovery: current HP=${player.currentHp}, recovery=${recoveryAmount}, new HP=${newHp}`);
+        
         // Update player HP
         setPlayer({
           ...player,
@@ -34,6 +37,9 @@ const CommentInput: React.FC = () => {
         
         // Add system message about HP recovery
         addComment("システム", `リスナーの応援でとおるの体力が${recoveryAmount}回復した！`, true);
+        
+        // Show toast for visual feedback
+        toast.success(`HP +${recoveryAmount} 回復しました！`);
       }
       
       setComment('');

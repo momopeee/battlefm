@@ -8,6 +8,7 @@ import { Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from 'sonner';
 
 // Import the battle components
 import CharacterPortraits from '@/components/battle/CharacterPortraits';
@@ -128,6 +129,12 @@ const Battle2Screen: React.FC = () => {
       currentHp: playerHp
     }));
   }, [playerHp, setPlayer]);
+  
+  // Sync player context changes back to local state
+  useEffect(() => {
+    setPlayerHp(player.currentHp);
+    console.log("Player HP updated from context:", player.currentHp);
+  }, [player.currentHp]);
   
   // Yuji's attack comments
   const yujiAttackComments = [
