@@ -40,7 +40,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       <button 
         onClick={(e) => handleButtonClick(e, onAttack)} 
         disabled={!isPlayerTurn || isBattleOver}
-        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
+        className={`battle-action-button text-[9px] whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
         こうげき
       </button>
@@ -48,7 +48,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       <button 
         onClick={(e) => handleButtonClick(e, onSpecial)} 
         disabled={!isPlayerTurn || isBattleOver || !specialAttackAvailable}
-        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''} ${specialAttackAvailable ? 'bg-pink-500 hover:bg-pink-600' : ''}`}
+        className={`battle-action-button text-[9px] whitespace-nowrap ${!isPlayerTurn || isBattleOver || !specialAttackAvailable ? 'opacity-60' : ''} ${specialAttackAvailable ? 'bg-pink-500 hover:bg-pink-600' : ''}`}
       >
         とくぎ
       </button>
@@ -56,7 +56,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       <button 
         onClick={(e) => handleButtonClick(e, onRunAway)} 
         disabled={!isPlayerTurn || isBattleOver}
-        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
+        className={`battle-action-button text-[9px] whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
         にげる
       </button>
@@ -64,7 +64,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       <button 
         onClick={(e) => handleButtonClick(e, onHighball)} 
         disabled={!isPlayerTurn || isBattleOver}
-        className={`battle-action-button text-xs whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
+        className={`battle-action-button text-[9px] whitespace-nowrap ${!isPlayerTurn || isBattleOver ? 'opacity-60' : ''}`}
       >
         ハイボール
       </button>
