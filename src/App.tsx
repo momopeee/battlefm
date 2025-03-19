@@ -1,7 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
-import { Toaster } from 'sonner';
+import { Toaster } from './components/ui/toaster';
 
 // Import pages
 import Index from './pages/Index';
