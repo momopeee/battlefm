@@ -132,11 +132,12 @@ const Battle1Screen: React.FC = () => {
           <CommentInput />
         </div>
         
-        {/* Skip Button - Only shown when battle is over and after delay */}
+        {/* Skip Button - Fixed positioning to be inside the container on desktop */}
         {showSkipButton && (
           <Button
             onClick={handleSkip}
-            className="fixed bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-purple-600 hover:bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
+            className="absolute bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-purple-600 hover:bg-purple-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
+            style={{ position: 'absolute' }} // Ensure it's absolutely positioned within container
           >
             <SkipForward size={isMobile ? 16 : 20} />
             スキップ
@@ -146,7 +147,7 @@ const Battle1Screen: React.FC = () => {
         {/* BGM Toggle Button */}
         <button
           onClick={toggleBgm}
-          className="fixed top-3 sm:top-6 right-3 sm:right-6 z-20 bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-full hover:bg-white/20 transition-colors"
+          className="absolute top-3 sm:top-6 right-3 sm:right-6 z-20 bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-full hover:bg-white/20 transition-colors"
         >
           {bgmEnabled ? 
             <Volume2 size={isMobile ? 20 : 24} color="white" /> : 
