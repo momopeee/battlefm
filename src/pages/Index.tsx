@@ -8,6 +8,8 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 const MOBILE_WIDTH = 375;
 const MOBILE_HEIGHT = 812;
 const ASPECT_RATIO = MOBILE_WIDTH / MOBILE_HEIGHT;
+// アプリケーションのバージョン
+const APP_VERSION = "Ver.3.0.1";
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -84,19 +86,24 @@ const Index = () => {
               >
                 <Link to="/start">スタート</Link>
               </Button>
+              
+              {/* Presenter credit moved above footer */}
+              <div className="mt-4">
+                <a 
+                  href="https://stand.fm/channels/5e82bebe4afcd351043886fe" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs sm:text-sm text-white hover:text-gray-300"
+                >
+                  presented by 巨万の富男
+                </a>
+              </div>
             </div>
           </div>
           
-          {/* Presenter credit with white text */}
+          {/* Version info in footer with grey text */}
           <div className="mt-auto pb-4">
-            <a 
-              href="https://stand.fm/channels/5e82bebe4afcd351043886fe" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-xs sm:text-sm text-white hover:text-gray-300"
-            >
-              presented by 巨万の富男
-            </a>
+            <span className="text-[11px] text-gray-500">{APP_VERSION}</span>
           </div>
         </div>
       </div>
