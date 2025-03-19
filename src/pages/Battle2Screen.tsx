@@ -451,6 +451,7 @@ const Battle2Screen: React.FC = () => {
           setTimeout(() => {
             setIsPlayerTurn(true);
             setAttackInProgress(false);
+            handleEnemyAttack();
           }, 1000);
         }
       }, 500);
@@ -487,6 +488,7 @@ const Battle2Screen: React.FC = () => {
           setTimeout(() => {
             setIsPlayerTurn(true);
             setAttackInProgress(false);
+            handleEnemyAttack();
           }, 1000);
         }
       }, 500);
