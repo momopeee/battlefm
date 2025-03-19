@@ -1,7 +1,6 @@
 
 import React, { ReactNode } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import Footer from './Footer';
 
 // Constants for mobile device dimensions
 export const MOBILE_WIDTH = 375;
@@ -55,7 +54,7 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
       
       {/* Main content container with mobile aspect ratio */}
       <div 
-        className={`relative z-10 overflow-hidden flex flex-col ${isMobile ? 'w-full h-full safe-area-vertical' : 'mx-auto rounded-2xl shadow-2xl'}`}
+        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full safe-area-vertical' : 'mx-auto rounded-2xl shadow-2xl'}`}
         style={{
           width: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,
           maxWidth: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,
@@ -68,13 +67,7 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
           boxSizing: 'border-box',
         }}
       >
-        {/* Main content */}
-        <div className="flex-1 overflow-hidden">
-          {children}
-        </div>
-        
-        {/* Footer */}
-        <Footer />
+        {children}
       </div>
     </div>
   );
