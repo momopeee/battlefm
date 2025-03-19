@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -96,7 +95,8 @@ const Battle2Screen: React.FC = () => {
   // Reset battle state on component mount and start timer
   useEffect(() => {
     clearComments();
-    setPlayerHp(player.currentHp);
+    // 初期HPを100に設定
+    setPlayerHp(100);
     setOpponentHp(opponent2.currentHp);
     setAttackCount(0);
     setSpecialAttackAvailable(false);
@@ -585,38 +585,38 @@ const Battle2Screen: React.FC = () => {
     });
   };
   
-  // Handle victory with automatic redirection
+  // Handle victory with automatic redirection - タイマーを30秒に変更
   const handleVictory = () => {
     setIsBattleOver(true);
     setBattleResult('victory');
     setSoundEffect('/audios/syouri.mp3');
     showVictoryComments();
     
-    // Set up automatic redirection after 20 seconds
+    // Set up automatic redirection after 30 seconds
     const timer = setTimeout(() => {
       // Pause the battle timer before redirecting
       pauseBattleTimer();
       handleScreenTransition('victory2');
       navigate('/victory2');
-    }, 20000);
+    }, 30000); // 30秒に変更
     
     setRedirectTimer(timer);
   };
   
-  // Handle defeat - MODIFIED to redirect to result2
+  // Handle defeat - MODIFIED to redirect to result2 - タイマーを30秒に変更
   const handleDefeat = () => {
     setIsBattleOver(true);
     setBattleResult('defeat');
     setSoundEffect('/audios/orehamou.mp3');
     showDefeatComments();
     
-    // Set up automatic redirection after 20 seconds
+    // Set up automatic redirection after 30 seconds
     const timer = setTimeout(() => {
       // Pause the battle timer before redirecting
       pauseBattleTimer();
       handleScreenTransition('result2');
       navigate('/result2');
-    }, 20000);
+    }, 30000); // 30秒に変更
     
     setRedirectTimer(timer);
   };
