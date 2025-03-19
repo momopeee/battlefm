@@ -1,23 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import AudioPlayer from '@/components/AudioPlayer';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
-
-const MOBILE_WIDTH = 375;
-const MOBILE_HEIGHT = 812;
-const ASPECT_RATIO = MOBILE_WIDTH / MOBILE_HEIGHT;
+import MobileContainer from '@/components/MobileContainer';
 
 const StartScreen = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
   const [showText, setShowText] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const isMobile = useIsMobile();
-  const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   
   // Define the background image URL
@@ -25,29 +19,6 @@ const StartScreen = () => {
   
   // Define the opening BGM URL
   const openingBgmUrl = "https://soundcloud.com/davis-momoyama/hazime/s-QTRlO3TfBkE?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
-  
-  // Update container dimensions on resize
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        setContainerDimensions({
-          width: containerRef.current.offsetWidth,
-          height: containerRef.current.offsetHeight
-        });
-      }
-    };
-    
-    // Initial update
-    updateDimensions();
-    
-    // Add event listener for window resize
-    window.addEventListener('resize', updateDimensions);
-    
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', updateDimensions);
-    };
-  }, []);
   
   useEffect(() => {
     // Start the intro text scrolling animation after a delay
@@ -85,36 +56,8 @@ const StartScreen = () => {
   };
   
   return (
-    <div 
-      ref={containerRef}
-      className="min-h-screen w-full flex items-center justify-center bg-black relative overflow-hidden"
-    >
-      {/* Blurred background for desktop only */}
-      {!isMobile && (
-        <div 
-          className="absolute inset-0 w-full h-full z-0"
-          style={{
-            backgroundImage: `url(${backgroundImageUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'blur(30px)',
-            opacity: 0.7,
-            transform: 'scale(1.1)'
-          }}
-        />
-      )}
-      
-      {/* Main content container with mobile aspect ratio */}
-      <div 
-        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full' : 'mx-auto rounded-2xl shadow-2xl'}`}
-        style={{
-          width: isMobile ? '100%' : `${MOBILE_WIDTH}px`,
-          maxWidth: isMobile ? '100%' : `${MOBILE_WIDTH}px`,
-          height: isMobile ? '100vh' : `${MOBILE_HEIGHT}px`,
-          maxHeight: isMobile ? '100vh' : `${MOBILE_HEIGHT}px`,
-          backgroundColor: '#000000'
-        }}
-      >
+    <MobileContainer backgroundImage={backgroundImageUrl}>
+      <div className="relative w-full h-full bg-black overflow-hidden">
         {/* BGM Audio Player */}
         <AudioPlayer src={openingBgmUrl} loop autoPlay />
         
@@ -216,7 +159,7 @@ const StartScreen = () => {
           <SkipForward size={18} />
         </Button>
       </div>
-    </div>
+    </MobileContainer>
   );
 };
 
