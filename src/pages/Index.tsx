@@ -9,7 +9,7 @@ const MOBILE_WIDTH = 375;
 const MOBILE_HEIGHT = 812;
 const ASPECT_RATIO = MOBILE_WIDTH / MOBILE_HEIGHT;
 // アプリケーションのバージョン
-const APP_VERSION = "Ver.3.163.1";
+const APP_VERSION = "Ver.3.164.1";
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -87,13 +87,13 @@ const Index = () => {
                 <Link to="/start">スタート</Link>
               </Button>
               
-              {/* Presenter credit moved above footer - now with smaller font and gray color */}
+              {/* Presenter credit moved above footer - now with smaller font and gray color matching version info */}
               <div className="mt-4">
                 <a 
                   href="https://stand.fm/channels/5e82bebe4afcd351043886fe" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-[10px] sm:text-[13px] text-gray-400 hover:text-gray-300"
+                  className="text-[10px] sm:text-[13px] text-gray-500 hover:text-gray-300"
                 >
                   presented by 巨万の富男
                 </a>
