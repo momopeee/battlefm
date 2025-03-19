@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -13,7 +14,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import CharacterPortraits from '@/components/battle/CharacterPortraits';
 import GaugesDisplay from '@/components/battle/GaugesDisplay';
 import BattleActions from '@/components/battle/BattleActions';
-import CommentInput from '@/components/BattleInput';
+import CommentInput from '@/components/battle/CommentInput';
 import PlayerInfo from '@/components/battle/PlayerInfo';
 
 // Player attack comments for Yuji battle
