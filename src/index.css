@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -219,14 +218,14 @@
   height: 36px; /* Fixed height to ensure oval shape */
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.6rem;
+  font-size: 0.9rem;
 }
 
 @media (min-width: 640px) {
   .battle-action-button {
     padding: 10px 15px;
     min-width: 70px;
-    font-size: 0.7rem;
+    font-size: 1rem;
   }
 }
 
