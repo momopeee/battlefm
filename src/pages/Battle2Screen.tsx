@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -6,6 +7,7 @@ import CharacterSheet from '@/components/CharacterSheet';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import MobileContainer from '@/components/MobileContainer';
 
 // Import the battle components
 import CharacterPortraits from '@/components/battle/CharacterPortraits';
@@ -612,111 +614,112 @@ const Battle2Screen: React.FC = () => {
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  const battleBackgroundGradient = 'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))';
+
   return (
-    <div 
-      className="min-h-screen flex flex-col h-screen p-4 text-white relative"
-      style={{ 
-        background: 'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
-        width: '1080px',
-        height: '1920px',
-        maxWidth: '100vw',
-        maxHeight: '100vh',
-        margin: '0 auto'
-      }}
-    >
-      {/* Top section with title and player info - Count timer removed from top right */}
-      <div className="flex items-center mb-4">
-        <img 
-          src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
-          alt={player.name} 
-          className="w-12 h-12 rounded-full mr-2 border-2 border-white"
-        />
-        <div>
-          <h1 className="text-[14px] font-bold">さよなら陽気なおじさん！</h1>
-          <p className="text-sm opacity-80">{formatTime(battleTimer)}</p>
-        </div>
-      </div>
-      
-      {/* Health and special gauges */}
-      <GaugesDisplay 
-        player={{...player, currentHp: playerHp}}
-        opponent={{...opponent2, currentHp: opponentHp}}
-        attackCount={attackCount}
-        sosoHealMode={false}
-      />
-      
-      {/* Character portraits */}
-      <CharacterPortraits 
-        player={{...player, currentHp: playerHp}}
-        opponent={{...opponent2, currentHp: opponentHp}}
-        onCharacterClick={handleCharacterClick}
-        sosoHealMode={false}
-      />
-      
-      {/* Yuji special mode indicator - Updated text here */}
-      {specialModeActive && (
-        <div className="absolute top-1/4 left-0 right-0 flex justify-center">
-          <div className="animate-pulse text-yellow-300 text-xl font-bold bg-black/50 px-4 py-2 rounded-full">
-            ゆうじ、クラファン中！！
+    <MobileContainer backgroundGradient={battleBackgroundGradient}>
+      <div 
+        className="min-h-screen flex flex-col h-screen p-4 text-white relative"
+        style={{ 
+          background: battleBackgroundGradient,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        {/* Top section with title and player info - Count timer removed from top right */}
+        <div className="flex items-center mb-4">
+          <img 
+            src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
+            alt={player.name} 
+            className="w-12 h-12 rounded-full mr-2 border-2 border-white"
+          />
+          <div>
+            <h1 className="text-[14px] font-bold">さよなら陽気なおじさん！</h1>
+            <p className="text-sm opacity-80">{formatTime(battleTimer)}</p>
           </div>
         </div>
-      )}
-      
-      {/* Comments area with fixed height */}
-      <div className="flex-1 mb-2 h-[25vh] overflow-hidden">
-        <CommentArea comments={comments} />
-      </div>
-      
-      {/* Battle actions at bottom */}
-      <div className="mt-auto">
-        {/* Battle actions buttons */}
-        <BattleActions 
-          isPlayerTurn={isPlayerTurn}
-          isBattleOver={isBattleOver}
-          specialAttackAvailable={specialAttackAvailable}
-          onAttack={handlePlayerAttack}
-          onSpecial={handlePlayerSpecial}
-          onRunAway={handleRunAway}
-          onHighball={handleHighball}
+        
+        {/* Health and special gauges */}
+        <GaugesDisplay 
+          player={{...player, currentHp: playerHp}}
+          opponent={{...opponent2, currentHp: opponentHp}}
+          attackCount={attackCount}
+          sosoHealMode={false}
         />
         
-        {/* Comment input - always at bottom */}
-        <CommentInput />
-      </div>
-      
-      {/* Skip Button - Only shown when battle is over */}
-      {showSkipButton && (
-        <Button
-          onClick={handleSkip}
-          className="fixed bottom-20 right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md animate-pulse flex items-center gap-2"
-        >
-          <SkipForward size={20} />
-          スキップ
-        </Button>
-      )}
-      
-      {/* BGM Toggle Button */}
-      <button
-        onClick={toggleBgm}
-        className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
-      >
-        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
-      </button>
-      
-      {/* Character Sheet Popup */}
-      {showCharacterSheet && (
-        <CharacterSheet 
-          character={currentCharacterSheet} 
-          onClose={() => setShowCharacterSheet(false)} 
+        {/* Character portraits */}
+        <CharacterPortraits 
+          player={{...player, currentHp: playerHp}}
+          opponent={{...opponent2, currentHp: opponentHp}}
+          onCharacterClick={handleCharacterClick}
+          sosoHealMode={false}
         />
-      )}
-      
-      {/* Audio Player */}
-      {soundEffect && <AudioPlayer src={soundEffect} />}
-    </div>
+        
+        {/* Yuji special mode indicator */}
+        {specialModeActive && (
+          <div className="absolute top-1/4 left-0 right-0 flex justify-center">
+            <div className="animate-pulse text-yellow-300 text-xl font-bold bg-black/50 px-4 py-2 rounded-full">
+              ゆうじ、クラファン中！！
+            </div>
+          </div>
+        )}
+        
+        {/* Comments area with fixed height */}
+        <div className="flex-1 mb-2 h-[25vh] overflow-hidden">
+          <CommentArea comments={comments} />
+        </div>
+        
+        {/* Battle actions at bottom */}
+        <div className="mt-auto">
+          {/* Battle actions buttons */}
+          <BattleActions 
+            isPlayerTurn={isPlayerTurn}
+            isBattleOver={isBattleOver}
+            specialAttackAvailable={specialAttackAvailable}
+            onAttack={handlePlayerAttack}
+            onSpecial={handlePlayerSpecial}
+            onRunAway={handleRunAway}
+            onHighball={handleHighball}
+          />
+          
+          {/* Comment input - always at bottom */}
+          <CommentInput />
+        </div>
+        
+        {/* Skip Button - Only shown when battle is over */}
+        {showSkipButton && (
+          <Button
+            onClick={handleSkip}
+            className="fixed bottom-20 right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md animate-pulse flex items-center gap-2"
+          >
+            <SkipForward size={20} />
+            スキップ
+          </Button>
+        )}
+        
+        {/* BGM Toggle Button */}
+        <button
+          onClick={toggleBgm}
+          className="fixed top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
+        >
+          {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
+        </button>
+        
+        {/* Character Sheet Popup */}
+        {showCharacterSheet && (
+          <CharacterSheet 
+            character={currentCharacterSheet} 
+            onClose={() => setShowCharacterSheet(false)} 
+          />
+        )}
+        
+        {/* Audio Player */}
+        {soundEffect && <AudioPlayer src={soundEffect} />}
+      </div>
+    </MobileContainer>
   );
 };
 
