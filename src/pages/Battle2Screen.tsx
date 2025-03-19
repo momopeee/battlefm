@@ -236,14 +236,14 @@ const Battle2Screen: React.FC = () => {
       addComment('システム', 'ゆうじはクラウドファンディングを発動した', true);
       addComment('システム', 'ゆうじのHPゲージが満タンになった', true);
       
+      // Removed: "ゆうじ確変モードに突入" message
+      
+      addComment('システム', 'ゆうじは特性「のれんに腕押し」を発動した', true);
+      setSpecialModeActive(true);
+      
       // Restore Yuji's HP - only once when activating special mode
       setOpponentHp(opponent2.maxHp);
       
-      setTimeout(() => {
-        addComment('システム', 'ゆうじ確変モードに突入', true);
-        addComment('システム', 'ゆうじは特性「のれんに腕押し」を発動した', true);
-        setSpecialModeActive(true);
-      }, 1000);
     }, 1000);
   };
   
@@ -270,7 +270,7 @@ const Battle2Screen: React.FC = () => {
     }
   };
   
-  // Player attack function
+  // Player attack function - UPDATED with probability-based damage reduction
   const handlePlayerAttack = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
@@ -316,10 +316,22 @@ const Battle2Screen: React.FC = () => {
     
     // Apply damage with delay for animation
     setTimeout(() => {
-      // Check if Yuji is in special mode
+      // Check if Yuji is in special mode with modified behavior
       if (specialModeActive) {
-        addComment('システム', 'ゆうじはのれんに腕押しを発動した。とおるの言葉は響かない。ゆうじは0ダメージを受けた。', true);
+        // Generate random number for probability check (1, 2, or 3)
+        const randomChance = Math.floor(Math.random() * 3) + 1;
+        
+        if (randomChance <= 2) {
+          // 2 out of 3 chance (66%): Only 5 damage gets through
+          setOpponentHp(Math.max(0, opponentHp - 5));
+          addComment('システム', 'ゆうじはのれんに腕押しを発動した。とおるの言葉は響かない。ゆうじは5ダメージしか受けなかった。', true);
+        } else {
+          // 1 out of 3 chance (33%): Full damage gets through
+          setOpponentHp(Math.max(0, opponentHp - damage));
+          addComment('システム', `さすがのゆうじも耳が痛い！！${damage}のダメージを受けた`, true);
+        }
       } else {
+        // Normal mode - full damage
         setOpponentHp(Math.max(0, opponentHp - damage));
         addComment('システム', `とおるの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
       }
@@ -386,7 +398,7 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   };
   
-  // UPDATED: Handle enemy attack to remove double damage during special mode
+  // UPDATED: Handle enemy attack to remove HP recovery during special mode
   const handleEnemyAttack = () => {
     if (isBattleOver) return;
     
@@ -400,20 +412,18 @@ const Battle2Screen: React.FC = () => {
       const specialComment = yujiSpecialComments[Math.floor(Math.random() * yujiSpecialComments.length)];
       addComment('ゆうじ＠陽気なおじさん', specialComment);
       
-      // Calculate damage using normal damage values (not doubled)
+      // Calculate damage using normal damage values
       const min = opponent2.attackMin;
       const max = opponent2.attackMax;
       const damage = Math.floor(Math.random() * (max - min + 1)) + min;
       
       setTimeout(() => {
-        // Apply damage to player (same as normal mode)
+        // Apply damage to player
         setPlayerHp(Math.max(0, playerHp - damage));
         
-        // Heal Yuji by 30 HP per turn during special mode
-        setOpponentHp(Math.min(opponent2.maxHp, opponentHp + 30));
+        // Removed HP recovery code
         
-        addComment('システム', `確変モード中！ゆうじの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
-        addComment('システム', `ゆうじは30HP回復した！`, true);
+        addComment('システム', `ゆうじの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
         
         // Check if player defeated
         if (playerHp - damage <= 0) {
