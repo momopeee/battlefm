@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
@@ -20,25 +19,20 @@ const SelectScreen: React.FC = () => {
   const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([]);
   
   useEffect(() => {
-    // Reset any game state for the next battle
     return () => {
-      // Clear all timeouts when component unmounts
       timeouts.forEach(timeout => clearTimeout(timeout));
     };
   }, [timeouts]);
   
   const handleSelectClick = () => {
-    // Start assault mode sequence
     setShowAssault(true);
     setAssaultAlarm(true);
     
-    // Play alarm for 3 seconds, then show scrolling text
     const alarmTimeout = setTimeout(() => {
       setAssaultAlarm(false);
       setAssaultText(true);
     }, 3000);
     
-    // Move to battle2 after 15 seconds total
     const battleTimeout = setTimeout(() => {
       handleScreenTransition('battle2');
     }, 15000);
@@ -47,9 +41,7 @@ const SelectScreen: React.FC = () => {
   };
 
   const handleSkip = () => {
-    // Clear any existing timeouts
     timeouts.forEach(timeout => clearTimeout(timeout));
-    // Skip directly to battle2
     handleScreenTransition('battle2');
     navigate('/battle2');
   };
@@ -58,7 +50,6 @@ const SelectScreen: React.FC = () => {
     e.stopPropagation();
     setShowWarning(true);
     
-    // Hide warning after 3 seconds
     const warningTimeout = setTimeout(() => {
       setShowWarning(false);
     }, 3000);
@@ -70,19 +61,23 @@ const SelectScreen: React.FC = () => {
     <MobileContainer backgroundClassName={!showAssault ? "bg-white" : "bg-black"}>
       {!showAssault ? (
         <div className="flex flex-col h-full bg-white">
-          {/* Header */}
           <div className="p-4 border-b flex items-center">
             <div className="mr-4">
               <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 18l-6-6 6-6" />
               </svg>
             </div>
-            <h1 className="text-xl font-medium">いまバトっているライブ</h1>
+            <h1 className="text-xl font-medium" style={{
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontStyle: 'normal',
+              fontWeight: 500,
+              color: 'rgb(0, 0, 0)',
+              fontSize: '18px',
+              lineHeight: '27px'
+            }}>いまバトっているライブ</h1>
           </div>
           
-          {/* Main content */}
           <div className="flex-1 overflow-y-auto" onClick={handleSelectClick}>
-            {/* Stream preview */}
             <div className="p-4 border-b">
               <div className="flex items-start space-x-3">
                 <div className="relative">
@@ -99,14 +94,20 @@ const SelectScreen: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h2 className="font-bold text-lg mb-1">さよならワンマン経営！最高の経営チームを作ろう！を語る</h2>
+                  <h2 className="mb-1" style={{
+                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontStyle: 'normal',
+                    fontWeight: 300,
+                    color: 'rgb(0, 0, 0)',
+                    fontSize: '15px',
+                    lineHeight: '20px'
+                  }}>さよならワンマン経営！最高の経営チームを作ろう！を語る</h2>
                   <p className="text-gray-600 text-sm">やまね 🔥 とおる【経営参謀】</p>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Bottom menu */}
           <div className="border-t p-4">
             <div className="flex justify-around">
               <button className="flex flex-col items-center" onClick={handleMenuButtonClick}>
@@ -158,14 +159,12 @@ const SelectScreen: React.FC = () => {
             </div>
           </div>
           
-          {/* Warning message */}
           {showWarning && (
             <div className="absolute left-1/2 transform -translate-x-1/2 bottom-24 bg-black bg-opacity-80 text-white px-4 py-2 rounded-full text-sm">
               余計なボタンを押さずに、ゲームに集中して下さい。まじで
             </div>
           )}
           
-          {/* BGM Toggle Button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -178,10 +177,8 @@ const SelectScreen: React.FC = () => {
         </div>
       ) : (
         <div className="min-h-full bg-black relative overflow-hidden">
-          {/* Audio */}
           {assaultAlarm && <AudioPlayer src="/audios/keihou.mp3" loop={false} autoPlay />}
           
-          {/* Flashing image during alarm */}
           {assaultAlarm && (
             <div className="absolute inset-0 z-10 animate-pulse">
               <img 
@@ -192,7 +189,6 @@ const SelectScreen: React.FC = () => {
             </div>
           )}
           
-          {/* Static image and scrolling text after alarm */}
           {assaultText && (
             <>
               <img 
@@ -217,7 +213,6 @@ const SelectScreen: React.FC = () => {
                 </div>
               </div>
               
-              {/* Skip button - only show when text is scrolling */}
               <div className="absolute bottom-12 right-12 z-20">
                 <Button 
                   onClick={handleSkip}
@@ -231,7 +226,7 @@ const SelectScreen: React.FC = () => {
           )}
         </div>
       )}
-
+      
       <style>
         {`
         @keyframes star-wars {
