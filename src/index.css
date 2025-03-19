@@ -72,6 +72,22 @@
     padding: 0;
     overflow-x: hidden;
   }
+
+  /* Fixed container settings for PC */
+  @media (min-width: 768px) {
+    html, body {
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    .pc-fixed-container {
+      height: 100vh;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+  }
 }
 
 @layer base {

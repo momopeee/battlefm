@@ -38,7 +38,7 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
   }
 
   return (
-    <div className={`min-h-screen w-full flex items-center justify-center ${backgroundClassName || 'bg-black'}`}>
+    <div className={`min-h-screen w-full flex items-center justify-center ${backgroundClassName || 'bg-black'} pc-fixed-container`}>
       {/* Blurred background for desktop only */}
       {!isMobile && (
         <div 

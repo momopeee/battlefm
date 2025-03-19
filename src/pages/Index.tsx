@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -41,7 +42,7 @@ const Index = () => {
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen w-full flex items-center justify-center bg-[#0a0a0a] relative overflow-hidden"
+      className="min-h-screen w-full flex items-center justify-center bg-[#0a0a0a] relative overflow-hidden pc-fixed-container"
     >
       {/* Blurred background for desktop only */}
       {!isMobile && (
