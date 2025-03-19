@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
@@ -102,7 +103,13 @@ const SelectScreen: React.FC = () => {
                     fontSize: '15px',
                     lineHeight: '20px'
                   }}>さよならワンマン経営！最高の経営チームを作ろう！を語る</h2>
-                  <p className="text-gray-600 text-sm">やまね 🔥 とおる【経営参謀】</p>
+                  <p className="text-gray-600 text-sm hover:text-black transition-colors" style={{
+                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    fontSize: '12px',
+                    lineHeight: '16px'
+                  }}>やまね 🔥 とおる【経営参謀】</p>
                 </div>
               </div>
             </div>
