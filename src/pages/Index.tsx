@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,10 +5,10 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 const MOBILE_WIDTH = 375;
-const MOBILE_HEIGHT = 667; // Changed from 812 to 667 to match 9:16 ratio
-const ASPECT_RATIO = 9/16; // Updated to 9:16 (height/width)
+const MOBILE_HEIGHT = 812;
+const ASPECT_RATIO = MOBILE_WIDTH / MOBILE_HEIGHT;
 // アプリケーションのバージョン
-const APP_VERSION = "Ver.3.168.0";
+const APP_VERSION = "Ver.3.167.0";
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -59,9 +58,9 @@ const Index = () => {
         />
       )}
       
-      {/* Main content container with 9:16 aspect ratio */}
+      {/* Main content container with mobile aspect ratio */}
       <div 
-        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full' : 'mx-auto rounded-2xl shadow-2xl aspect-ratio-container'}`}
+        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full' : 'mx-auto rounded-2xl shadow-2xl'}`}
         style={{
           width: isMobile ? '100%' : `${MOBILE_WIDTH}px`,
           maxWidth: isMobile ? '100%' : `${MOBILE_WIDTH}px`,
