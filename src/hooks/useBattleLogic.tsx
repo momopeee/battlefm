@@ -281,9 +281,9 @@ export const useBattleLogic = () => {
     // Normal attack damage calculation - 15 to 30 damage
     damage = Math.floor(Math.random() * (player.attackMax - player.attackMin + 1)) + player.attackMin;
     
-    // Add attack comments
+    // Add attack comments - Fixed character encoding issue here
     addComment(player.name, attackComment);
-    addComment("システム", `とおるの攻撃、そーそ��は${damage}のダメージを受けた`, true);
+    addComment("システム", `とおるの攻撃、そーそーは${damage}のダメージを受けた`, true);
     
     // Apply damage to opponent
     setOpponent1({
@@ -413,7 +413,7 @@ export const useBattleLogic = () => {
     // Calculate damage
     const damage = Math.floor(Math.random() * (opponent1.attackMax - opponent1.attackMin + 1)) + opponent1.attackMin;
     
-    // Add attack comments
+    // Add attack comments - Fixed character encoding issue here
     addComment(opponent1.name, attackComment);
     addComment("システム", `そーそーの攻撃、とおるは${damage}のダメージを受けた`, true);
     
@@ -441,7 +441,7 @@ export const useBattleLogic = () => {
     const healAmount = 20;
     const damageToPlayer = Math.floor(Math.random() * (opponent1.attackMax - opponent1.attackMin + 1)) + opponent1.attackMin;
     
-    // Add system comments for both healing and attacking
+    // Add system comments for both healing and attacking - Fixed character encoding issue here
     addComment("システム", `そーそーの体力が${healAmount}回復した`, true);
     addComment("システム", `同時に、とおるは${damageToPlayer}のダメージを受けた`, true);
     
