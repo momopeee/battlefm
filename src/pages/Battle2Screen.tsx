@@ -13,7 +13,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import CharacterPortraits from '@/components/battle/CharacterPortraits';
 import GaugesDisplay from '@/components/battle/GaugesDisplay';
 import BattleActions from '@/components/battle/BattleActions';
-import CommentInput from '@/components/battle/CommentInput';
+import CommentInput from '@/components/BattleInput';
 import PlayerInfo from '@/components/battle/PlayerInfo';
 
 // Player attack comments for Yuji battle
@@ -72,7 +72,9 @@ const Battle2Screen: React.FC = () => {
     setAttackCount,
     setSpecialAttackAvailable,
     setYujiSpecialMode,
-    handleScreenTransition
+    handleScreenTransition,
+    // Add these to access player state updates
+    setPlayer
   } = useApp();
   
   // Battle state
@@ -117,6 +119,14 @@ const Battle2Screen: React.FC = () => {
       pauseBattleTimer();
     };
   }, []);
+  
+  // Sync playerHp changes to the AppContext player state
+  useEffect(() => {
+    setPlayer(prev => ({
+      ...prev,
+      currentHp: playerHp
+    }));
+  }, [playerHp, setPlayer]);
   
   // Yuji's attack comments
   const yujiAttackComments = [
@@ -501,7 +511,7 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   };
   
-  // Handle highball offer - Updated to prevent HP going to 0 after recovery
+  // Handle highball offer - Updated to properly sync with player state
   const handleHighball = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
@@ -516,6 +526,9 @@ const Battle2Screen: React.FC = () => {
         // Restore player's HP and update local state
         const newHp = player.maxHp;
         setPlayerHp(newHp);
+        
+        // We don't need to manually update AppContext player state here
+        // as our useEffect hook will handle that based on playerHp change
       } else {
         // Normal highball effect
         // Random highball effect
@@ -665,7 +678,7 @@ const Battle2Screen: React.FC = () => {
           battleTimer={battleTimer}
         />
         
-        {/* Health and special gauges */}
+        {/* Health and special gauges - Use playerHp for accurate HP display */}
         <GaugesDisplay 
           player={{...player, currentHp: playerHp}}
           opponent={{...opponent2, currentHp: opponentHp}}
@@ -673,7 +686,7 @@ const Battle2Screen: React.FC = () => {
           sosoHealMode={false}
         />
         
-        {/* Character portraits */}
+        {/* Character portraits - Use playerHp for accurate HP display */}
         <CharacterPortraits 
           player={{...player, currentHp: playerHp}}
           opponent={{...opponent2, currentHp: opponentHp}}
@@ -716,17 +729,18 @@ const Battle2Screen: React.FC = () => {
         {showSkipButton && (
           <Button
             onClick={handleSkip}
-            className="fixed bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
+            className="absolute bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
+            style={{ position: 'absolute' }} // Match Battle1Screen style
           >
             <SkipForward size={isMobile ? 16 : 20} />
             スキップ
           </Button>
         )}
         
-        {/* BGM Toggle Button */}
+        {/* BGM Toggle Button - Changed from fixed to absolute to match Battle1Screen */}
         <button
           onClick={toggleBgm}
-          className="fixed top-3 sm:top-6 right-3 sm:right-6 z-20 bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-full hover:bg-white/20 transition-colors"
+          className="absolute top-3 sm:top-6 right-3 sm:right-6 z-20 bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-full hover:bg-white/20 transition-colors"
         >
           {bgmEnabled ? 
             <Volume2 size={isMobile ? 20 : 24} color="white" /> : 
