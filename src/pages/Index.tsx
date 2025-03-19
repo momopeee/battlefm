@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ const MOBILE_WIDTH = 375;
 const MOBILE_HEIGHT = 812;
 const ASPECT_RATIO = MOBILE_WIDTH / MOBILE_HEIGHT;
 // アプリケーションのバージョン
-const APP_VERSION = "Ver.3.162.1";
+const APP_VERSION = "Ver.3.163.1";
 
 const Index = () => {
   const isMobile = useIsMobile();
@@ -86,13 +87,13 @@ const Index = () => {
                 <Link to="/start">スタート</Link>
               </Button>
               
-              {/* Presenter credit moved above footer */}
+              {/* Presenter credit moved above footer - now with smaller font and gray color */}
               <div className="mt-4">
                 <a 
                   href="https://stand.fm/channels/5e82bebe4afcd351043886fe" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-xs sm:text-sm text-white hover:text-gray-300"
+                  className="text-[10px] sm:text-[13px] text-gray-400 hover:text-gray-300"
                 >
                   presented by 巨万の富男
                 </a>
