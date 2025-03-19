@@ -283,7 +283,7 @@ export const useBattleLogic = () => {
     
     // Add attack comments
     addComment(player.name, attackComment);
-    addComment("システム", `とおるの攻撃、そーそーは${damage}のダメージを受けた`, true);
+    addComment("システム", `とおるの攻撃、そーそ��は${damage}のダメージを受けた`, true);
     
     // Apply damage to opponent
     setOpponent1({
@@ -380,14 +380,21 @@ export const useBattleLogic = () => {
       addComment("システム", highballEffects[effectIdx], true);
       
       // Player damages himself
+      const newHp = Math.max(0, player.currentHp - 10);
       setPlayer({
         ...player,
-        currentHp: Math.max(0, player.currentHp - 10)
+        currentHp: newHp
       });
       
       // Set highball mode if drinking made player confused
       if (effectIdx === 2) {
         setHighballMode(true);
+      }
+      
+      // Check for defeat using the new HP value
+      if (newHp <= 0) {
+        handleDefeat();
+        return;
       }
     }
     
