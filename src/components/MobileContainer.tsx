@@ -52,14 +52,15 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
         />
       )}
       
-      {/* Main content container with 9:16 aspect ratio */}
+      {/* Main content container with 9:16 aspect ratio for mobile, full height for desktop */}
       <div 
-        className={`relative z-10 overflow-hidden aspect-ratio-container ${isMobile ? 'w-full h-full safe-area-vertical' : 'mx-auto rounded-2xl shadow-2xl'}`}
+        className={`relative z-10 overflow-hidden ${isMobile ? 'w-full h-full safe-area-vertical' : 'mx-auto rounded-2xl shadow-2xl pc-container'}`}
         style={{
           width: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,
           maxWidth: isMobile ? '100vw' : `${MOBILE_WIDTH}px`,
-          height: isMobile ? '100vh' : `${MOBILE_HEIGHT}px`,
-          maxHeight: isMobile ? '100vh' : `${MOBILE_HEIGHT}px`,
+          height: isMobile ? '100vh' : 'auto',
+          minHeight: isMobile ? '100vh' : 'auto',
+          maxHeight: isMobile ? '100vh' : 'none',
           paddingTop: isMobile ? 'calc(env(safe-area-inset-top) + 7px)' : 0,
           paddingBottom: isMobile ? 'calc(env(safe-area-inset-bottom) + 7px)' : 0,
           paddingLeft: isMobile ? 'env(safe-area-inset-left)' : 0,
