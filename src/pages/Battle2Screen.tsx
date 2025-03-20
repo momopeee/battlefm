@@ -149,4 +149,262 @@ const Battle2Screen: React.FC = () => {
     "佐川の集荷呼ぶだけでこんなに難しいなんて・・・",
     "僕は常にかゆいところに手が届く存在でありたい",
     "2025年以降の目標を立てて、めっちゃワクワクした！",
-    "今日の予定？
+    "今日の予定？企画作って、Zoomで打ち合わせ",
+    "ここ最近風呂でブログ書いています",
+    "嫁についてyoutube撮影しました"
+  ];
+  
+  // Timer to potentially redirect after the battle
+  useEffect(() => {
+    if (isBattleOver) {
+      const timer = setTimeout(() => {
+        // 勝敗結果に応じて画面遷移
+        if (battleResult === 'victory') {
+          handleScreenTransition('victory2');
+          navigate('/victory2');
+        } else if (battleResult === 'defeat') {
+          handleScreenTransition('result2');
+          navigate('/result2');
+        }
+      }, 3000); // 3秒後にリダイレクト
+      
+      setRedirectTimer(timer);
+      
+      return () => {
+        if (redirectTimer) clearTimeout(redirectTimer);
+      };
+    }
+  }, [isBattleOver, battleResult, navigate, handleScreenTransition, redirectTimer]);
+  
+  // Function to handle player attack
+  const handlePlayerAttack = () => {
+    if (!isPlayerTurn || attackInProgress || isBattleOver) return;
+    
+    setAttackInProgress(true);
+    
+    // Player's attack damage calculation
+    const playerDamage = Math.floor(Math.random() * (player.attackMax - player.attackMin + 1)) + player.attackMin;
+    
+    // Determine comment based on attack count
+    const commentIndex = attackCount % playerAttackComments.length;
+    addComment(player.name, playerAttackComments[commentIndex]);
+    
+    // Play attack sound effect
+    setSoundEffect('/sounds/attack.mp3');
+    
+    // Update attack count
+    setAttackCount(prevCount => prevCount + 1);
+    
+    // Check if special attack is available
+    if (attackCount > 2) {
+      setSpecialAttackAvailable(true);
+    }
+    
+    // Apply damage to opponent
+    setTimeout(() => {
+      setOpponentHp(prevHp => {
+        const newOpponentHp = Math.max(0, prevHp - playerDamage);
+        
+        if (newOpponentHp === 0) {
+          // If opponent's HP is 0, set battle result to victory
+          setIsBattleOver(true);
+          setBattleResult('victory');
+          addComment('システム', 'ゆうじ＠陽気なおじさんを倒した！', true);
+        }
+        
+        return newOpponentHp;
+      });
+      
+      setIsPlayerTurn(false);
+      setAttackInProgress(false);
+      
+      // Opponent's turn after a delay
+      setTimeout(handleOpponentAttack, 2000);
+    }, 1000);
+  };
+  
+  // Function to handle player special attack
+  const handlePlayerSpecial = () => {
+    if (!isPlayerTurn || attackInProgress || !specialAttackAvailable || isBattleOver) return;
+    
+    setAttackInProgress(true);
+    setSpecialAttackAvailable(false);
+    
+    // Player's special attack damage calculation
+    const playerSpecialDamage = player.specialPower;
+    
+    // Determine special comment
+    const commentIndex = attackCount % playerSpecialComments.length;
+    addComment(player.name, playerSpecialComments[commentIndex]);
+    
+    // Play special attack sound effect
+    setSoundEffect('/sounds/special.mp3');
+    
+    // Apply damage to opponent
+    setTimeout(() => {
+      setOpponentHp(prevHp => {
+        const newOpponentHp = Math.max(0, prevHp - playerSpecialDamage);
+        
+        if (newOpponentHp === 0) {
+          // If opponent's HP is 0, set battle result to victory
+          setIsBattleOver(true);
+          setBattleResult('victory');
+          addComment('システム', 'ゆうじ＠陽気なおじさんを倒した！', true);
+        }
+        
+        return newOpponentHp;
+      });
+      
+      setIsPlayerTurn(false);
+      setAttackInProgress(false);
+      
+      // Opponent's turn after a delay
+      setTimeout(handleOpponentAttack, 2000);
+    }, 1000);
+  };
+  
+  // Function to handle opponent attack
+  const handleOpponentAttack = () => {
+    if (isPlayerTurn || attackInProgress || isBattleOver) return;
+    
+    setAttackInProgress(true);
+    
+    // Opponent's attack damage calculation
+    let opponentDamage = Math.floor(Math.random() * (opponent2.attackMax - opponent2.attackMin + 1)) + opponent2.attackMin;
+    
+    // Determine comment
+    const commentIndex = attackCount % yujiAttackComments.length;
+    addComment(opponent2.name, yujiAttackComments[commentIndex]);
+    
+    // Play attack sound effect
+    setSoundEffect('/sounds/attack.mp3');
+    
+    // Apply damage to player
+    setTimeout(() => {
+      setPlayerHp(prevHp => {
+        let newPlayerHp = Math.max(0, prevHp - opponentDamage);
+        
+        if (newPlayerHp === 0) {
+          // If player's HP is 0, set battle result to defeat
+          setIsBattleOver(true);
+          setBattleResult('defeat');
+          addComment('システム', 'とおるは倒れた...', true);
+        }
+        
+        return newPlayerHp;
+      });
+      
+      setIsPlayerTurn(true);
+      setAttackInProgress(false);
+    }, 1000);
+  };
+  
+  // Function to handle skip battle
+  const handleSkipBattle = () => {
+    setShowSkipButton(false);
+    setIsBattleOver(true);
+    setBattleResult('defeat');
+    addComment('システム', 'とおるは逃げ出した...', true);
+  };
+  
+  // Function to toggle character sheet display
+  const toggleCharacterSheet = (character: 'player' | 'opponent1' | 'opponent2') => {
+    if (showCharacterSheet && currentCharacterSheet === character) {
+      setShowCharacterSheet(false);
+      setCurrentCharacterSheet(null);
+    } else {
+      setShowCharacterSheet(true);
+      setCurrentCharacterSheet(character);
+    }
+  };
+  
+  return (
+    <MobileContainer>
+      <div className="min-h-screen bg-gray-900 text-white flex flex-col">
+        
+        {/* Battle arena */}
+        <div className="flex-grow flex flex-col justify-center items-center">
+          
+          {/* Character portraits and HP gauges */}
+          <div className="w-full max-w-3xl mx-auto flex justify-between items-center mb-4">
+            <PlayerInfo 
+              character={player} 
+              currentHp={playerHp}
+              toggleCharacterSheet={() => toggleCharacterSheet('player')}
+            />
+            <CharacterPortraits />
+            <PlayerInfo 
+              character={opponent2} 
+              currentHp={opponentHp}
+              toggleCharacterSheet={() => toggleCharacterSheet('opponent2')}
+            />
+          </div>
+          
+          {/* Gauges display */}
+          <GaugesDisplay 
+            playerHp={playerHp} 
+            opponentHp={opponentHp} 
+            playerMaxHp={player.maxHp} 
+            opponentMaxHp={opponent2.maxHp} 
+          />
+          
+          {/* Battle actions */}
+          <BattleActions
+            isPlayerTurn={isPlayerTurn}
+            onAttack={handlePlayerAttack}
+            onSpecial={handlePlayerSpecial}
+            specialAttackAvailable={specialAttackAvailable}
+          />
+          
+          {/* Audio player */}
+          <div className="absolute top-4 right-4 flex items-center">
+            <Button 
+              variant="ghost"
+              size="icon" 
+              onClick={toggleBgm}
+            >
+              {bgmEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            </Button>
+            <AudioPlayer 
+              src="/music/battle2.mp3" 
+              enabled={bgmEnabled} 
+            />
+          </div>
+          
+          {/* Skip battle button */}
+          <div className="absolute bottom-4 right-4">
+            {showSkipButton && (
+              <Button 
+                variant="destructive"
+                onClick={handleSkipBattle}
+              >
+                Skip Battle <SkipForward className="h-4 w-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        </div>
+        
+        {/* Comment area */}
+        <div className="w-full max-w-3xl mx-auto p-4">
+          <CommentArea comments={comments} />
+          <CommentInput />
+        </div>
+      </div>
+      
+      {/* Character sheet */}
+      {showCharacterSheet && currentCharacterSheet && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="bg-gray-800 p-4 rounded-lg">
+            <CharacterSheet character={
+              currentCharacterSheet === 'player' ? player :
+                currentCharacterSheet === 'opponent1' ? opponent1 :
+                  opponent2
+            } onClose={() => toggleCharacterSheet(currentCharacterSheet)} />
+          </div>
+        </div>
+      )}
+    </MobileContainer>
+  );
+};
+
+export default Battle2Screen;
