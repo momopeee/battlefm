@@ -4,7 +4,6 @@ import { useApp } from '@/context/AppContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'react-router-dom';
-import { toast } from 'sonner';
 
 const CommentInput: React.FC = () => {
   const [comment, setComment] = useState('');
@@ -24,25 +23,17 @@ const CommentInput: React.FC = () => {
       
       // Only recover if player HP isn't already at max
       if (player.currentHp < player.maxHp) {
-        // Use functional update via setPlayer to ensure most recent state
-        setPlayer(prevPlayer => {
-          // Calculate new HP but don't exceed max HP
-          const newHp = Math.min(prevPlayer.currentHp + recoveryAmount, prevPlayer.maxHp);
-          
-          console.log(`Debug HP recovery: previous HP=${prevPlayer.currentHp}, recovery=${recoveryAmount}, new HP=${newHp}`);
-          
-          // Add system message about HP recovery
-          addComment("システム", `リスナーの応援でとおるの体力が${recoveryAmount}回復した！`, true);
-          
-          // Show toast for visual feedback
-          toast.success(`HP +${recoveryAmount} 回復しました！`);
-          
-          // Return the updated player object
-          return {
-            ...prevPlayer,
-            currentHp: newHp
-          };
+        // Calculate new HP but don't exceed max HP
+        const newHp = Math.min(player.currentHp + recoveryAmount, player.maxHp);
+        
+        // Update player HP
+        setPlayer({
+          ...player,
+          currentHp: newHp
         });
+        
+        // Add system message about HP recovery
+        addComment("システム", `リスナーの応援でとおるの体力が${recoveryAmount}回復した！`, true);
       }
       
       setComment('');
