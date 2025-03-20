@@ -1,5 +1,6 @@
 
 import React, { useRef, useEffect } from 'react';
+import AudioPlayer from '@/components/AudioPlayer';
 
 interface BattleActionsProps {
   isPlayerTurn: boolean;
