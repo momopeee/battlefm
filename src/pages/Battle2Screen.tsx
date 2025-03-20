@@ -363,7 +363,7 @@ const Battle2Screen: React.FC = () => {
         addComment('システム', `とおるの必殺技が炸裂！ゆうじののれんに腕押しをわずかに通過した。 ${damage}ポイントのダメージ！`, true);
       } else {
         setOpponentHp(Math.max(0, opponentHp - damage));
-        addComment('システム', `とおるの必殺技が炸裂！ ${damage}ポイントの大ダメージ！`, true);
+        addComment('システム', `とおるの必殺技が��裂！ ${damage}ポイントの大ダメージ！`, true);
       }
       
       if (opponentHp - damage <= 0) {
@@ -686,8 +686,8 @@ const Battle2Screen: React.FC = () => {
           <CharacterPortraits
             player={player}
             opponent={opponent2}
-            onPlayerClick={() => handleCharacterClick('player')}
-            onOpponentClick={() => handleCharacterClick('opponent2')}
+            onCharacterClick={handleCharacterClick}
+            sosoHealMode={false}
           />
         </div>
         
@@ -695,20 +695,18 @@ const Battle2Screen: React.FC = () => {
         <div className="mb-2">
           <GaugesDisplay
             player={player}
-            opponent={opponent2}
-            opponentHp={opponentHp}
+            opponent={{...opponent2, currentHp: opponentHp}}
             attackCount={attackCount}
-            specialAttackAvailable={specialAttackAvailable}
-            specialModeActive={specialModeActive}
+            sosoHealMode={false}
           />
         </div>
         
         {/* Player Info */}
         <div className="mb-2">
           <PlayerInfo
-            player={player}
-            isPlayerTurn={isPlayerTurn}
-            isBattleOver={isBattleOver}
+            name={player.name}
+            icon={player.icon}
+            battleTimer={battleTimer}
           />
         </div>
         
@@ -716,11 +714,10 @@ const Battle2Screen: React.FC = () => {
         <div className="mb-2">
           <BattleActions
             isPlayerTurn={isPlayerTurn}
-            attackInProgress={attackInProgress}
-            specialAttackAvailable={specialAttackAvailable}
             isBattleOver={isBattleOver}
+            specialAttackAvailable={specialAttackAvailable}
             onAttack={handlePlayerAttack}
-            onSpecialAttack={handlePlayerSpecial}
+            onSpecial={handlePlayerSpecial}
             onRunAway={handleRunAway}
             onHighball={handleHighball}
           />
@@ -729,7 +726,7 @@ const Battle2Screen: React.FC = () => {
         {/* Comment Input (For Debug/Testing) */}
         {process.env.NODE_ENV === 'development' && (
           <div className="mb-2">
-            <CommentInput onSubmit={(text) => addComment('Debug', text)} />
+            <CommentInput />
           </div>
         )}
         
@@ -743,4 +740,3 @@ const Battle2Screen: React.FC = () => {
 };
 
 export default Battle2Screen;
-
