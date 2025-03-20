@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -121,12 +122,24 @@ const Battle2Screen: React.FC = () => {
     };
   }, []);
   
-  // Sync playerHp changes to the AppContext player state
+  // 新しい双方向同期ロジック：グローバル状態からローカル状態への同期
   useEffect(() => {
-    setPlayer(prev => ({
-      ...prev,
-      currentHp: playerHp
-    }));
+    if (player.currentHp !== playerHp) {
+      setPlayerHp(player.currentHp);
+    }
+  }, [player.currentHp, playerHp]);
+  
+  // 新しい双方向同期ロジック：ローカル状態からグローバル状態への同期
+  useEffect(() => {
+    setPlayer(prev => {
+      if (prev.currentHp !== playerHp) {
+        return {
+          ...prev,
+          currentHp: playerHp,
+        };
+      }
+      return prev;
+    });
   }, [playerHp, setPlayer]);
   
   // Yuji's attack comments
@@ -234,7 +247,7 @@ const Battle2Screen: React.FC = () => {
       // Ensure timer is paused when redirecting
       pauseBattleTimer();
     };
-  }, [redirectTimer]);
+  }, [redirectTimer, pauseBattleTimer]);
   
   // UPDATED: Activate Yuji's special mode
   const activateYujiSpecialMode = () => {
@@ -672,14 +685,14 @@ const Battle2Screen: React.FC = () => {
           />
         )}
         
-        {/* Top section with title and timer - Updated to use PlayerInfo component */}
+        {/* Top section with title and timer */}
         <PlayerInfo 
           name="とおる＠経営参謀" 
           icon={player.icon}
           battleTimer={battleTimer}
         />
         
-        {/* Health and special gauges - Use playerHp for accurate HP display */}
+        {/* Health and special gauges */}
         <GaugesDisplay 
           player={{...player, currentHp: playerHp}}
           opponent={{...opponent2, currentHp: opponentHp}}
@@ -687,7 +700,7 @@ const Battle2Screen: React.FC = () => {
           sosoHealMode={false}
         />
         
-        {/* Character portraits - Use playerHp for accurate HP display */}
+        {/* Character portraits */}
         <CharacterPortraits 
           player={{...player, currentHp: playerHp}}
           opponent={{...opponent2, currentHp: opponentHp}}
@@ -756,9 +769,6 @@ const Battle2Screen: React.FC = () => {
             onClose={() => setShowCharacterSheet(false)} 
           />
         )}
-        
-        {/* Audio Player */}
-        {soundEffect && <AudioPlayer src={soundEffect} />}
       </div>
     </MobileContainer>
   );

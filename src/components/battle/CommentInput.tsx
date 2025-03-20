@@ -23,17 +23,20 @@ const CommentInput: React.FC = () => {
       
       // Only recover if player HP isn't already at max
       if (player.currentHp < player.maxHp) {
-        // Calculate new HP but don't exceed max HP
-        const newHp = Math.min(player.currentHp + recoveryAmount, player.maxHp);
-        
-        // Update player HP
-        setPlayer({
-          ...player,
-          currentHp: newHp
+        // レースコンディションを避けるためにfunctional updateパターンを使用
+        setPlayer(prevPlayer => {
+          // Calculate new HP but don't exceed max HP
+          const newHp = Math.min(prevPlayer.currentHp + recoveryAmount, prevPlayer.maxHp);
+          
+          // システムメッセージを追加（ここに配置して確実に最新のHPを参照できるようにする）
+          addComment("システム", `リスナーの応援でとおるの体力が${recoveryAmount}回復した！`, true);
+          
+          // Update player HP
+          return {
+            ...prevPlayer,
+            currentHp: newHp
+          };
         });
-        
-        // Add system message about HP recovery
-        addComment("システム", `リスナーの応援でとおるの体力が${recoveryAmount}回復した！`, true);
       }
       
       setComment('');
