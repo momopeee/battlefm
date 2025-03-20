@@ -62,6 +62,8 @@ const SelectScreen: React.FC = () => {
     <MobileContainer backgroundClassName={!showAssault ? "bg-white" : "bg-black"}>
       {!showAssault ? (
         <div className="flex flex-col h-full bg-white">
+          <AudioPlayer src="/audios/select.mp3" loop autoPlay />
+          
           <div className="p-4 border-b flex items-center">
             <div className="mr-4">
               <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">

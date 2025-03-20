@@ -45,17 +45,16 @@ const Battle1Screen: React.FC = () => {
     soundEffect
   } = useBattleLogic();
 
-  // BGM URLs
-  const battleBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/25dcdcc6-7a5a-47a2-9406-e65a76e382ba/toru.mp3?table=block&id=1ba25ac2-cb4e-8044-92be-e2545318adf3&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=MHFbJx9mCs0X6KbOv59pptHsCjNnl8kiLkpKAHHl-_U";
-  const victoryBgmUrl = "https://soundcloud.com/davis-momoyama/syouri/s-u6HAdaFT0Sb?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
-  const defeatBgmUrl = "https://soundcloud.com/davis-momoyama/orehamou/s-q3IJA3aoBNH?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
-
   // Get the current BGM based on battle state
-  const currentBgm = battleResult === 'victory' 
-    ? victoryBgmUrl 
-    : battleResult === 'defeat' 
-      ? defeatBgmUrl 
-      : battleBgmUrl;
+  const getCurrentBgm = () => {
+    if (battleResult === 'victory') {
+      return '/audios/syouri.mp3';
+    } else if (battleResult === 'defeat') {
+      return '/audios/orehamou.mp3';
+    } else {
+      return '/audios/battle.mp3';
+    }
+  };
 
   return (
     <MobileContainer
@@ -72,7 +71,7 @@ const Battle1Screen: React.FC = () => {
       >
         {/* Background Music */}
         <AudioPlayer 
-          src={currentBgm} 
+          src={getCurrentBgm()} 
           loop={battleResult === null} 
           autoPlay={true} 
         />
