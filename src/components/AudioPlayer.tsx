@@ -7,15 +7,13 @@ interface AudioPlayerProps {
   loop?: boolean;
   autoPlay?: boolean;
   volume?: number;
-  startPosition?: number;
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ 
   src, 
   loop = false, 
   autoPlay = true,
-  volume = 1.0,
-  startPosition = 0
+  volume = 1.0
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { bgmEnabled } = useApp();
@@ -31,15 +29,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     // Update source if it changes
     if (audioRef.current.src !== src) {
       audioRef.current.src = src;
-      
-      // Apply start position if specified
-      if (startPosition > 0) {
-        try {
-          audioRef.current.currentTime = startPosition;
-        } catch (error) {
-          console.error("Failed to set audio currentTime:", error);
-        }
-      }
     }
 
     // Update loop setting if it changes
@@ -69,7 +58,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         audioRef.current = null;
       }
     };
-  }, [src, loop, bgmEnabled, autoPlay, volume, startPosition]);
+  }, [src, loop, bgmEnabled, autoPlay, volume]);
 
   // Effect to handle bgmEnabled changes
   useEffect(() => {

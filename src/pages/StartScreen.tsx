@@ -15,7 +15,10 @@ const StartScreen = () => {
   const navigate = useNavigate();
   
   // Define the background image URL
-  const backgroundImageUrl = "/lovable-uploads/c1b2b6d0-3acd-4ea0-b336-0631411ff128.png";
+  const backgroundImageUrl = "https://pbs.twimg.com/profile_images/1343537293798199296/is99I-hS_400x400.jpg";
+  
+  // Define the opening BGM URL
+  const openingBgmUrl = "https://soundcloud.com/davis-momoyama/hazime/s-QTRlO3TfBkE?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
   
   useEffect(() => {
     // Start the intro text scrolling animation after a delay
@@ -56,7 +59,7 @@ const StartScreen = () => {
     <MobileContainer backgroundImage={backgroundImageUrl}>
       <div className="relative w-full h-full bg-black overflow-hidden">
         {/* BGM Audio Player */}
-        <AudioPlayer src="/audios/opening.mp3" loop autoPlay />
+        <AudioPlayer src={openingBgmUrl} loop autoPlay />
         
         {/* Background Image */}
         <img 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -20,7 +19,7 @@ import PlayerInfo from '@/components/battle/PlayerInfo';
 // Player attack comments for Yuji battle
 const playerAttackComments = [
   "ゆうじは人の相談にのってはいけない人間だと確信している",
-  "正論を言われた時に、拗ねて逃げていては成長に繋がらないだろ",
+  "正論を言われた時に、拗ねて逃げていては成長に繋がらな��だろ",
   "もっと漢として、大地に根を張って、自信をもって堂々としろ！",
   "自分に反抗しない人を探して、適当にアドバイスをするのは相手の方に失礼だ！",
   "タムタムやリコさんに逃げるな！！",
@@ -49,6 +48,7 @@ const yujiSpecialComments = [
   "式場の利益よりもプランナーの地位向上のが大事なんです、それが分からない式場は全部だめですよ"
 ];
 
+// Define the missing arrays
 // Define yujiAttackComments which was referenced but not defined
 const yujiAttackComments = [
   "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
@@ -271,7 +271,7 @@ const Battle2Screen: React.FC = () => {
       addComment('とおる＠経営参謀', 'え？ちょっとまって、なに？なに？ちょっとまって？えっ？');
       
       setTimeout(() => {
-        addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた', true);
+        addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10の���メージを受けた', true);
         
         setPlayer(prev => ({
           ...prev,
@@ -483,7 +483,7 @@ const Battle2Screen: React.FC = () => {
       } else {
         const highballEffects = [
           "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
-          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
+          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった��\nとおるは10のダメージを受けた",
           "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
         ];
         
@@ -592,19 +592,6 @@ const Battle2Screen: React.FC = () => {
 
   const battleBackgroundGradient = 'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))';
 
-  // Determine which audio should be playing based on battle state
-  const getBattleBgm = () => {
-    if (battleResult === 'victory') {
-      return '/audios/syouri.mp3';
-    } else if (battleResult === 'defeat') {
-      return '/audios/orehamou.mp3';
-    } else if (specialModeActive) {
-      return '/audios/battle_special.mp3';
-    } else {
-      return '/audios/battle.mp3';
-    }
-  };
-
   return (
     <MobileContainer backgroundGradient={battleBackgroundGradient}>
       <div 
@@ -617,10 +604,9 @@ const Battle2Screen: React.FC = () => {
         }}
       >
         <AudioPlayer 
-          src={getBattleBgm()}
+          src="/audios/battle.mp3"
           loop={battleResult === null}
           autoPlay={true}
-          startPosition={specialModeActive ? 12 : 0}
         />
 
         {soundEffect && (
