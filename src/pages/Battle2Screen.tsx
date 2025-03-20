@@ -483,7 +483,7 @@ const Battle2Screen: React.FC = () => {
       } else {
         const highballEffects = [
           "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
-          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった��\nとおるは10のダメージを受けた",
+          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった��\nとおるは10のダメージを受��た",
           "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
         ];
         
@@ -622,6 +622,7 @@ const Battle2Screen: React.FC = () => {
           name="とおる＠経営参謀" 
           icon={player.icon}
           battleTimer={battleTimer}
+          title="さよなら！陽気なおじさん！！"
         />
         
         <GaugesDisplay 

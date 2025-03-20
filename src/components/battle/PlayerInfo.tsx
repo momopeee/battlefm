@@ -5,9 +5,10 @@ interface PlayerInfoProps {
   name: string;
   icon: string;
   battleTimer: number;
+  title?: string;
 }
 
-const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer }) => {
+const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer, title = "さよならクソリプそーそー！" }) => {
   const [displayTime, setDisplayTime] = useState(battleTimer);
   const [localTimer, setLocalTimer] = useState(battleTimer);
   const [isTimerActive, setIsTimerActive] = useState(true);
@@ -50,7 +51,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer }) => {
 
   return (
     <div className="text-center mb-2">
-      <h1 className="text-[13px] font-bold mb-2">さよならクソリプそーそー！</h1>
+      <h1 className="text-[13px] font-bold mb-2">{title}</h1>
       <div className="flex items-start justify-start gap-4">
         <img 
           src={icon} 
