@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import CommentArea from '@/components/CommentArea';
@@ -93,6 +92,10 @@ const Battle2Screen: React.FC = () => {
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   
+  // 状態同期の制御フラグ
+  const isUpdatingGlobal = useRef(false);
+  const isUpdatingLocal = useRef(false);
+  
   // Reset battle state on component mount and start timer
   useEffect(() => {
     clearComments();
@@ -122,25 +125,40 @@ const Battle2Screen: React.FC = () => {
     };
   }, []);
   
-  // 新しい双方向同期ロジック：グローバル状態からローカル状態への同期
+  // グローバル状態からローカル状態への同期（無限ループ防止）
   useEffect(() => {
+    // ローカル状態を更新中の場合はスキップ
+    if (isUpdatingLocal.current) return;
+    
     if (player.currentHp !== playerHp) {
+      // グローバルからローカルへの更新フラグを立てる
+      isUpdatingLocal.current = true;
       setPlayerHp(player.currentHp);
+      // 非同期でフラグをリセット
+      setTimeout(() => {
+        isUpdatingLocal.current = false;
+      }, 0);
     }
   }, [player.currentHp, playerHp]);
   
-  // 新しい双方向同期ロジック：ローカル状態からグローバル状態への同期
+  // ローカル状態からグローバル状態への同期（無限ループ防止）
   useEffect(() => {
-    setPlayer(prev => {
-      if (prev.currentHp !== playerHp) {
-        return {
-          ...prev,
-          currentHp: playerHp,
-        };
-      }
-      return prev;
-    });
-  }, [playerHp, setPlayer]);
+    // グローバル状態を更新中の場合はスキップ
+    if (isUpdatingGlobal.current) return;
+    
+    if (player.currentHp !== playerHp) {
+      // ローカルからグローバルへの更新フラグを立てる
+      isUpdatingGlobal.current = true;
+      setPlayer(prev => ({
+        ...prev,
+        currentHp: playerHp
+      }));
+      // 非同期でフラグをリセット
+      setTimeout(() => {
+        isUpdatingGlobal.current = false;
+      }, 0);
+    }
+  }, [playerHp, player.currentHp, setPlayer]);
   
   // Yuji's attack comments
   const yujiAttackComments = [
