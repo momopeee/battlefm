@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
+import AudioPlayer from '@/components/AudioPlayer';
 
 const Result1Screen: React.FC = () => {
   const { 
@@ -20,6 +21,9 @@ const Result1Screen: React.FC = () => {
   const navigate = useNavigate();
   const [isFollowed, setIsFollowed] = useState(false);
   const [finalBattleTime, setFinalBattleTime] = useState("");
+  
+  // Defeat BGM URL
+  const defeatBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/e30ccbfa-dce6-4565-846f-299249020356/%E8%A6%87%E8%80%85%E3%81%A8%E5%91%BC%E3%81%B0%E3%82%8C%E3%81%9F%E6%95%97%E5%8C%97%E8%80%85%E3%81%AE%E6%97%A5%E5%B8%B8.mp3?table=block&id=1ba25ac2-cb4e-80ee-8559-fdcf6a1de25a&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=Z6J2lRT9AL_7HyFiCAYGvUWFC4JNaio4ounIuRFN7y0&downloadName=%E8%A6%87%E8%80%85%E3%81%A8%E5%91%BC%E3%81%B0%E3%82%8C%E3%81%9F%E6%95%97%E5%8C%97%E8%80%85%E3%81%AE%E6%97%A5%E5%B8%B8.mp3";
   
   // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {
@@ -74,6 +78,9 @@ const Result1Screen: React.FC = () => {
 
   return (
     <MobileContainer backgroundClassName="bg-white">
+      {/* Defeat BGM */}
+      <AudioPlayer src={defeatBgmUrl} loop={true} autoPlay={true} />
+      
       <div 
         className="bg-white text-black flex flex-col items-center justify-between h-full"
         style={{ 

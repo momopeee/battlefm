@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +17,7 @@ const StartScreen = () => {
   const backgroundImageUrl = "https://pbs.twimg.com/profile_images/1343537293798199296/is99I-hS_400x400.jpg";
   
   // Define the opening BGM URL
-  const openingBgmUrl = "https://soundcloud.com/davis-momoyama/hazime/s-QTRlO3TfBkE?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
+  const openingBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/5e3369ce-83e4-48ed-8370-3bab3400f167/hazime.mp3?table=block&id=1ba25ac2-cb4e-80e6-a41d-c8ed64b71f8e&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=SDXFmL74Mtm0ts76Nks-p_FlfRcf44i0y5TZiYX-MBI&downloadName=hazime.mp3";
   
   useEffect(() => {
     // Start the intro text scrolling animation after a delay
@@ -92,7 +91,7 @@ const StartScreen = () => {
                   一つの業種を一生涯やる必要がない自由な空気
                   <br />
                   <br />
-                  嫌な上司に我慢することなく転職できる環境
+                  嫌な上司に我慢することなく転職できる環���
                   <br />
                   <br />
                   大企業が良いとか中小企業がダメだとか
