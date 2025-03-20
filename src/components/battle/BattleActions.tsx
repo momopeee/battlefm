@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import AudioPlayer from '@/components/AudioPlayer';
 
 interface BattleActionsProps {
@@ -27,8 +27,11 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   const runAwaySoundUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/4f645f2c-f0b8-448b-8d50-456bfdb5784d/%E9%80%83%E8%B5%B0.mp3?table=block&id=1ba25ac2-cb4e-80de-baa2-f9f7e72e4251&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=Vew8Jvfv5--7TdBz1-ncCz0gra2kd8gA6FhOV6uxLWQ&downloadName=%E9%80%83%E8%B5%B0.mp3";
   const highballSoundUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/d464a1a7-f003-4989-a25e-1c171564db92/%E3%82%B0%E3%83%A9%E3%82%B9%E3%81%AB%E6%B0%B4%E3%82%92%E6%B3%A8%E3%81%90.mp3?table=block&id=1ba25ac2-cb4e-8048-97ee-d8e9d2325185&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=ghJit1q5IKzZSfrx3QMg3tRJDVvtgntEvKce1rcsI_U&downloadName=%E3%82%B0%E3%83%A9%E3%82%B9%E3%81%AB%E6%B0%B4%E3%82%92%E6%B3%A8%E3%81%90.mp3";
   
-  // State to track which sound to play
-  const [soundToPlay, setSoundToPlay] = React.useState<string | null>(null);
+  // State to track which sound to play - using unique key to force rerender
+  const [soundToPlay, setSoundToPlay] = useState<{ src: string | null, key: number }>({ 
+    src: null, 
+    key: 0 
+  });
 
   // Function to handle button animation on click
   const handleButtonAnimation = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -42,34 +45,38 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   // Combined click handler for animation, sound, and action
   const handleAttackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     handleButtonAnimation(e);
-    setSoundToPlay(attackSoundUrl);
+    setSoundToPlay({ src: attackSoundUrl, key: Date.now() });
+    console.log("Playing attack sound");
     onAttack();
   };
 
   const handleSpecialClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     handleButtonAnimation(e);
-    setSoundToPlay(specialSoundUrl);
+    setSoundToPlay({ src: specialSoundUrl, key: Date.now() });
+    console.log("Playing special sound");
     onSpecial();
   };
 
   const handleRunAwayClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     handleButtonAnimation(e);
-    setSoundToPlay(runAwaySoundUrl);
+    setSoundToPlay({ src: runAwaySoundUrl, key: Date.now() });
+    console.log("Playing run away sound");
     onRunAway();
   };
 
   const handleHighballClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     handleButtonAnimation(e);
-    setSoundToPlay(highballSoundUrl);
+    setSoundToPlay({ src: highballSoundUrl, key: Date.now() });
+    console.log("Playing highball sound");
     onHighball();
   };
 
   // Reset sound after playing
   useEffect(() => {
-    if (soundToPlay) {
+    if (soundToPlay.src) {
       const timer = setTimeout(() => {
-        setSoundToPlay(null);
-      }, 1000);
+        setSoundToPlay({ src: null, key: soundToPlay.key });
+      }, 1500); // Longer timeout to ensure sound completes
       return () => clearTimeout(timer);
     }
   }, [soundToPlay]);
@@ -77,7 +84,15 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   return (
     <>
       {/* Sound effect player */}
-      {soundToPlay && <AudioPlayer src={soundToPlay} loop={false} autoPlay={true} volume={0.7} />}
+      {soundToPlay.src && (
+        <AudioPlayer 
+          src={soundToPlay.src} 
+          loop={false} 
+          autoPlay={true} 
+          volume={0.7} 
+          key={`sound-effect-${soundToPlay.key}`} 
+        />
+      )}
       
       <div className="grid grid-cols-4 gap-2 mb-2">
         <button 

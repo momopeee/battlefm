@@ -1,14 +1,48 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
+import { useApp } from '@/context/AppContext';
 
 // アプリケーションのバージョン
 const APP_VERSION = "Ver.3.167.0";
 
 const Index = () => {
+  const { bgmEnabled } = useApp();
+  
+  // Add user interaction logging
+  useEffect(() => {
+    console.log("Index page loaded. BGM enabled:", bgmEnabled);
+    
+    // Attempt to unblock audio context with a silent audio element
+    const unblockAudio = () => {
+      const silentAudio = new Audio();
+      silentAudio.play().then(() => {
+        console.log("Audio context unblocked by user interaction");
+        silentAudio.pause();
+      }).catch(err => {
+        console.log("Could not unblock audio context:", err);
+      });
+    };
+    
+    // Add event listener to unblock audio on first user interaction
+    const handleUserInteraction = () => {
+      unblockAudio();
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+    };
+    
+    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('touchstart', handleUserInteraction);
+    
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+    };
+  }, [bgmEnabled]);
+  
   return (
     <MobileContainer
       backgroundClassName="bg-[#0a0a0a]"
@@ -20,6 +54,8 @@ const Index = () => {
         src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/df4d3cfd-d360-49ea-90b4-2446850bab38/kyoman.mp3?table=block&id=1ba25ac2-cb4e-800d-8735-d8d4f50eada9&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=fiCeZebhy4g4pgfsYTURb9NYxKWhQmK4yoTSOQ6BSR8&downloadName=kyoman.mp3" 
         loop={true} 
         autoPlay={true} 
+        volume={0.7}
+        key="index-bgm"
       />
 
       <div className="flex flex-col items-center justify-between h-full px-4 py-8">

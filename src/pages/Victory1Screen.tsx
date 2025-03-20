@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -7,6 +6,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
+import AudioTester from '@/components/AudioTester';
 
 const Victory1Screen: React.FC = () => {
   const { 
@@ -20,10 +20,8 @@ const Victory1Screen: React.FC = () => {
   const navigate = useNavigate();
   const [isFollowed, setIsFollowed] = useState(false);
   
-  // Victory BGM URL
   const victoryBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/9982b577-fb1e-4011-9436-3e13286c44f3/%E9%81%94%E6%88%90%EF%BC%81_M299.mp3?table=block&id=1ba25ac2-cb4e-807d-9743-e96dc72d32a7&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=cMCLQEHa79ZJd8i0yGAsN_dvwXvOXTZ_UDkRRMz_Sxk&downloadName=%E9%81%94%E6%88%90%EF%BC%81_M299.mp3";
   
-  // Format battle time as minutes:seconds - using static battleTimer value from context
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -31,13 +29,13 @@ const Victory1Screen: React.FC = () => {
   };
 
   useEffect(() => {
-    // Show victory toast
     toast.success('そーそーに勝利しました！', {
       description: 'おめでとうございます！',
       duration: 3000,
     });
     
     console.log('Rendered Victory1Screen');
+    console.log('Attempting to play victory BGM:', victoryBgmUrl);
   }, []);
 
   const handleContinue = () => {
@@ -47,7 +45,6 @@ const Victory1Screen: React.FC = () => {
   };
   
   const handleReturnToStart = () => {
-    // Reset battle state and redirect to index page
     console.log('Returning to start from Victory1Screen');
     resetBattleState();
     handleScreenTransition('index');
@@ -55,7 +52,6 @@ const Victory1Screen: React.FC = () => {
   };
   
   const handleFightAgain = () => {
-    // Reset battle state and redirect to battle1
     console.log('Fighting again from Victory1Screen');
     resetBattleState();
     handleScreenTransition('battle1');
@@ -63,10 +59,8 @@ const Victory1Screen: React.FC = () => {
   };
   
   const handleFollow = () => {
-    // Update followed state
     setIsFollowed(!isFollowed);
     
-    // Open link in new tab when following
     if (!isFollowed) {
       window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
     }
@@ -74,8 +68,15 @@ const Victory1Screen: React.FC = () => {
 
   return (
     <MobileContainer backgroundClassName="bg-white">
-      {/* Victory BGM */}
-      <AudioPlayer src={victoryBgmUrl} loop={true} autoPlay={true} />
+      <AudioPlayer 
+        src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/9982b577-fb1e-4011-9436-3e13286c44f3/%E9%81%94%E6%88%90%EF%BC%81_M299.mp3?table=block&id=1ba25ac2-cb4e-807d-9743-e96dc72d32a7&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=cMCLQEHa79ZJd8i0yGAsN_dvwXvOXTZ_UDkRRMz_Sxk&downloadName=%E9%81%94%E6%88%90%EF%BC%81_M299.mp3" 
+        loop={true} 
+        autoPlay={true} 
+        volume={0.7}
+        key="victory-bgm" 
+      />
+      
+      <AudioTester />
       
       <div 
         className="bg-white text-black flex flex-col items-center justify-between h-full"
@@ -84,25 +85,20 @@ const Victory1Screen: React.FC = () => {
           boxSizing: 'border-box'
         }}
       >
-        {/* Main content - centered vertically */}
         <div className="w-full flex flex-col items-center justify-center flex-1">
-          {/* Live ended text */}
           <div className="text-center mb-6">
             <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
             
-            {/* Time display - uses static battleTimer from context */}
             <div className="text-[12px] text-gray-500 mb-2">
               {formatTime(battleTimer)}
             </div>
             
-            {/* Comment count - updated to show total comments */}
             <div className="flex items-center justify-center gap-1 text-[12px] text-gray-500">
               <MessageCircle size={16} strokeWidth={1.5} />
               <span>{comments.length}</span>
             </div>
           </div>
           
-          {/* Player profile with follow button */}
           <div className="flex items-center justify-center gap-2 mb-6">
             <img 
               src={player.icon} 
@@ -128,7 +124,6 @@ const Victory1Screen: React.FC = () => {
           </div>
         </div>
         
-        {/* Action buttons at the bottom */}
         <div className="w-full space-y-3 pb-4">
           <Button
             onClick={handleContinue}
