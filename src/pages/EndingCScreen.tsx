@@ -27,8 +27,8 @@ const EndingCScreen: React.FC = () => {
   const handleBackToStart = () => {
     // Reset battle state when returning to start
     resetBattleState();
-    handleScreenTransition('start');
-    navigate('/start');
+    handleScreenTransition('index');
+    navigate('/');
   };
 
   const handleFollowYuji = () => {
