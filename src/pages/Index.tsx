@@ -4,11 +4,15 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
+import { useApp } from '@/context/AppContext';
+import { Volume2, VolumeX } from 'lucide-react';
 
 // アプリケーションのバージョン
 const APP_VERSION = "Ver.3.167.0";
 
 const Index = () => {
+  const { bgmEnabled, toggleBgm } = useApp();
+
   return (
     <MobileContainer
       backgroundClassName="bg-[#0a0a0a]"
@@ -46,6 +50,14 @@ const Index = () => {
           <span className="text-[11px] text-gray-500">{APP_VERSION}</span>
         </div>
       </div>
+
+      {/* BGM On/Off Button */}
+      <button
+        onClick={toggleBgm}
+        className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
+      >
+        {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
+      </button>
     </MobileContainer>
   );
 };
