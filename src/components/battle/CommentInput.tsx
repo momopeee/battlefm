@@ -26,11 +26,11 @@ const CommentInput: React.FC = () => {
         // Calculate new HP but don't exceed max HP
         const newHp = Math.min(player.currentHp + recoveryAmount, player.maxHp);
         
-        // Update player HP using functional update to avoid race conditions
-        setPlayer(prevPlayer => ({
-          ...prevPlayer,
+        // Update player HP
+        setPlayer({
+          ...player,
           currentHp: newHp
-        }));
+        });
         
         // Add system message about HP recovery
         addComment("システム", `リスナーの応援でとおるの体力が${recoveryAmount}回復した！`, true);
