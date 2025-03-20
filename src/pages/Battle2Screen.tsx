@@ -53,7 +53,7 @@ const yujiSpecialComments = [
 const yujiAttackComments = [
   "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
   "経営の何がわからないのかわからないってのが経営なんですよぉ〜",
-  "経営を上手くやるには、波長の合う人とやるのがいちばんですね〜",
+  "経営を上手くやるには、波長の合う人とやるのがいちばんで��ね〜",
   "売上を上げるには、まずは表に出て顔と名前を売るのが大事ですよ",
   "ビジネスを成長させるには友達の数を増やすことですね",
   "やまにーの言うことは難しすぎて、僕には理解できないんですよぉ〜",
@@ -123,6 +123,12 @@ const Battle2Screen: React.FC = () => {
   const [isHighballConfused, setIsHighballConfused] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
+  
+  // BGM URLs
+  const normalBattleBgm = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/598bdf59-3268-45c2-bc9c-2f4d8437f4ca/ug1.mp3?table=block&id=1ba25ac2-cb4e-80e0-8e33-f7ca12ee18df&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=FwYfOW9KGJU_1dXqlzJUyIxX3ufZrmpV1cpxKFKLtzY";
+  const specialModeBgm = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/d5edfcc9-5aa1-42d4-9041-5a0ccff0ea59/ug2.m4a?table=block&id=1ba25ac2-cb4e-80f2-8dd5-dff84b49a158&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=ys-p2Pfxnk3fN8NNNUUZSiqB1rVJD1NxreYeke7NVyc";
+  const victoryBgm = "/audios/syouri.mp3";
+  const defeatBgm = "/audios/orehamou.mp3";
   
   // Reset battle state on component mount and start timer with fresh timer value
   useEffect(() => {
@@ -484,7 +490,7 @@ const Battle2Screen: React.FC = () => {
         const highballEffects = [
           "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
           "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった��\nとおるは10のダメージを受けた",
-          "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
+          "と��るはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
         ];
         
         const effectIdx = Math.floor(Math.random() * highballEffects.length);
@@ -592,6 +598,19 @@ const Battle2Screen: React.FC = () => {
 
   const battleBackgroundGradient = 'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))';
 
+  // Determine which audio should be playing based on battle state
+  const getBattleBgm = () => {
+    if (battleResult === 'victory') {
+      return victoryBgm;
+    } else if (battleResult === 'defeat') {
+      return defeatBgm;
+    } else if (specialModeActive) {
+      return specialModeBgm;
+    } else {
+      return normalBattleBgm;
+    }
+  };
+
   return (
     <MobileContainer backgroundGradient={battleBackgroundGradient}>
       <div 
@@ -604,96 +623,9 @@ const Battle2Screen: React.FC = () => {
         }}
       >
         <AudioPlayer 
-          src="/audios/battle.mp3"
+          src={getBattleBgm()}
           loop={battleResult === null}
           autoPlay={true}
-        />
+          startPosition={specialModeActive ? 12 : 0}
 
-        {soundEffect && (
-          <AudioPlayer 
-            src={soundEffect} 
-            loop={false} 
-            autoPlay={true} 
-            volume={0.7}
-          />
-        )}
-        
-        <PlayerInfo 
-          name="とおる＠経営参謀" 
-          icon={player.icon}
-          battleTimer={battleTimer}
-        />
-        
-        <GaugesDisplay 
-          player={player}
-          opponent={{...opponent2, currentHp: opponentHp}}
-          attackCount={attackCount}
-          sosoHealMode={false}
-        />
-        
-        <CharacterPortraits 
-          player={player}
-          opponent={{...opponent2, currentHp: opponentHp}}
-          onCharacterClick={handleCharacterClick}
-          sosoHealMode={false}
-        />
-        
-        {specialModeActive && (
-          <div className="absolute top-1/4 left-0 right-0 flex justify-center">
-            <div className="animate-pulse text-yellow-300 text-xl font-bold bg-black/50 px-4 py-2 rounded-full">
-              ゆうじ、クラファン中！！
-            </div>
-          </div>
-        )}
-        
-        <div className="flex-1 mb-1 sm:mb-2 h-[20vh] sm:h-[25vh] overflow-hidden">
-          <CommentArea comments={comments} />
-        </div>
-        
-        <div className="mt-auto">
-          <BattleActions 
-            isPlayerTurn={isPlayerTurn}
-            isBattleOver={isBattleOver}
-            specialAttackAvailable={specialAttackAvailable}
-            onAttack={handlePlayerAttack}
-            onSpecial={handlePlayerSpecial}
-            onRunAway={handleRunAway}
-            onHighball={handleHighball}
-          />
-          
-          <CommentInput />
-        </div>
-        
-        {showSkipButton && (
-          <Button
-            onClick={handleSkip}
-            className="absolute bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
-            style={{ position: 'absolute' }}
-          >
-            <SkipForward size={isMobile ? 16 : 20} />
-            スキップ
-          </Button>
-        )}
-        
-        <button
-          onClick={toggleBgm}
-          className="absolute top-3 sm:top-6 right-3 sm:right-6 z-20 bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-full hover:bg-white/20 transition-colors"
-        >
-          {bgmEnabled ? 
-            <Volume2 size={isMobile ? 20 : 24} color="white" /> : 
-            <VolumeX size={isMobile ? 20 : 24} color="white" />
-          }
-        </button>
-        
-        {showCharacterSheet && (
-          <CharacterSheet 
-            character={currentCharacterSheet} 
-            onClose={() => setShowCharacterSheet(false)} 
-          />
-        )}
-      </div>
-    </MobileContainer>
-  );
-};
 
-export default Battle2Screen;
