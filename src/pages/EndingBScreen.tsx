@@ -101,29 +101,33 @@ const EndingBScreen: React.FC = () => {
           </div>
         </div>
         
-        <div className="space-y-2 sm:space-y-4 mt-2 sm:mt-4 w-full max-w-xs sm:max-w-md">
+        {/* Action buttons at the bottom - スタイルを統一 */}
+        <div className="w-full space-y-3 pb-4">
           <Button
             onClick={handleFollowSoso}
-            className="w-full bg-green-700 hover:bg-green-600 py-2 sm:py-3 px-3 sm:px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="w-full py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm"
+            style={{ height: '40px' }}
           >
-            <ExternalLink size={isMobile ? 16 : 20} />
+            <ExternalLink size={isMobile ? 16 : 20} className="mr-2" />
             そーそーをフォローする
           </Button>
           
           <Button
             onClick={handleRetry}
-            className="w-full bg-purple-700 hover:bg-purple-600 py-2 sm:py-3 px-3 sm:px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="w-full py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm"
+            style={{ height: '40px' }}
           >
-            <RefreshCw size={isMobile ? 16 : 20} />
+            <RefreshCw size={isMobile ? 16 : 20} className="mr-2" />
             もう一度戦う
           </Button>
           
           <Button
             onClick={handleBackToStart}
-            className="w-full bg-gray-700 hover:bg-gray-600 py-2 sm:py-3 px-3 sm:px-4 rounded-md font-bold transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="w-full py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm"
+            style={{ height: '40px' }}
           >
-            <Home size={isMobile ? 16 : 20} />
-            スタート画面に戻る
+            <Home size={isMobile ? 16 : 20} className="mr-2" />
+            スタートへ戻る
           </Button>
         </div>
         
