@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
+import AudioPlayer from '@/components/AudioPlayer';
 
 // アプリケーションのバージョン
 const APP_VERSION = "Ver.3.167.0";
@@ -14,6 +15,13 @@ const Index = () => {
       backgroundImage="/lovable-uploads/c8b9a8dd-129e-4ba6-ba66-c03a253d63f7.png"
       pcBackgroundColor="#0B0B0B"
     >
+      {/* Index BGM */}
+      <AudioPlayer 
+        src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/347fb19e-9f51-4b28-b1a5-038b53491d7e/kyoman.m4a?table=block&id=1ba25ac2-cb4e-80e7-ab17-e55dbcd295e1&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=vAf3k_SCNNP3GocwUykfjOamF26fv8hNvFPAlBXZKQ8"
+        loop={true}
+        autoPlay={true}
+      />
+      
       <div className="flex flex-col items-center justify-between h-full px-4 py-8">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center flex flex-col items-center justify-center gap-6 sm:gap-10">
