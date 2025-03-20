@@ -20,7 +20,7 @@ const Victory2Screen: React.FC = () => {
   const navigate = useNavigate();
   const [isFollowed, setIsFollowed] = useState(false);
   const [isFromDefeat, setIsFromDefeat] = useState(false);
-  const [finalBattleTime, setFinalBattleTime] = useState("");
+  const [finalBattleTime, setFinalBattleTime] = useState("00:00");
   
   // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {
@@ -37,8 +37,16 @@ const Victory2Screen: React.FC = () => {
     // Ensure timer is stopped
     pauseBattleTimer();
     
-    // Save the final battle time
-    setFinalBattleTime(formatTime(battleTimer));
+    // 保存されたタイマー値があれば使用する
+    const savedTime = sessionStorage.getItem('finalBattleTime');
+    if (savedTime) {
+      setFinalBattleTime(savedTime);
+    } else {
+      // Save the final battle time
+      const formattedTime = formatTime(battleTimer);
+      setFinalBattleTime(formattedTime);
+      sessionStorage.setItem('finalBattleTime', formattedTime);
+    }
     
     // Check if this screen was reached after a defeat
     const currentPath = window.location.pathname;

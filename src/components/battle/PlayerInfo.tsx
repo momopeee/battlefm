@@ -9,11 +9,37 @@ interface PlayerInfoProps {
 
 const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer }) => {
   const [displayTime, setDisplayTime] = useState(battleTimer);
+  const [localTimer, setLocalTimer] = useState(battleTimer);
+  const [isTimerActive, setIsTimerActive] = useState(true);
 
-  // Update display time when battleTimer changes
+  // タイマーのカウントアップロジック
   useEffect(() => {
-    setDisplayTime(battleTimer);
+    let interval: NodeJS.Timeout | null = null;
+    
+    // タイマーがアクティブな場合、1秒ごとにカウントアップ
+    if (isTimerActive) {
+      interval = setInterval(() => {
+        setLocalTimer(prevTime => prevTime + 1);
+      }, 1000);
+    }
+    
+    // クリーンアップ関数
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerActive]);
+
+  // 初期値変更時に同期
+  useEffect(() => {
+    if (battleTimer > 0) {
+      setLocalTimer(battleTimer);
+    }
   }, [battleTimer]);
+
+  // 表示する時間を更新
+  useEffect(() => {
+    setDisplayTime(localTimer);
+  }, [localTimer]);
 
   // Format timer display
   const formatTime = (seconds: number) => {
