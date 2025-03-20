@@ -129,9 +129,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   
   // Reset battle timer
   const resetBattleTimer = () => {
-    if (timerInterval) clearInterval(timerInterval);
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      setTimerInterval(null);
+    }
     setBattleTimer(0);
-    setTimerInterval(null);
+    console.log('Battle timer reset to 0');
   };
   
   // Screen transition

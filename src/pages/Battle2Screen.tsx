@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -20,7 +19,7 @@ import PlayerInfo from '@/components/battle/PlayerInfo';
 // Player attack comments for Yuji battle
 const playerAttackComments = [
   "ゆうじは人の相談にのってはいけない人間だと確信している",
-  "正論を言われた時に、拗ねて逃げていては成長に繋がらないだろ",
+  "正論を言われた時に、拗ねて逃げていては成長に繋がらな��だろ",
   "もっと漢として、大地に根を張って、自信をもって堂々としろ！",
   "自分に反抗しない人を探して、適当にアドバイスをするのは相手の方に失礼だ！",
   "タムタムやリコさんに逃げるな！！",
@@ -93,6 +92,7 @@ const Battle2Screen: React.FC = () => {
     battleTimer,
     startBattleTimer,
     pauseBattleTimer,
+    resetBattleTimer,
     comments,
     attackCount,
     specialAttackAvailable, 
@@ -124,16 +124,16 @@ const Battle2Screen: React.FC = () => {
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   
-  // Reset battle state on component mount and start timer
-  // UPDATED: Reset player HP to 100 at the start of battle2, regardless of previous state
+  // Reset battle state on component mount and start timer with fresh timer value
   useEffect(() => {
     clearComments();
     
-    // Always reset player HP to 100 at the start of Battle2
     setPlayer(prev => ({
       ...prev,
       currentHp: 100
     }));
+    
+    resetBattleTimer();
     
     setOpponentHp(opponent2.currentHp);
     setAttackCount(0);
@@ -271,7 +271,7 @@ const Battle2Screen: React.FC = () => {
       addComment('とおる＠経営参謀', 'え？ちょっとまって、なに？なに？ちょっとまって？えっ？');
       
       setTimeout(() => {
-        addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた', true);
+        addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10の���メージを受けた', true);
         
         setPlayer(prev => ({
           ...prev,
@@ -483,7 +483,7 @@ const Battle2Screen: React.FC = () => {
       } else {
         const highballEffects = [
           "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
-          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
+          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった��\nとおるは10のダメージを受けた",
           "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
         ];
         
@@ -538,8 +538,12 @@ const Battle2Screen: React.FC = () => {
     setSoundEffect('/audios/syouri.mp3');
     showVictoryComments();
     
+    // Log information for debugging
+    console.log('Scheduling victory transition in 30 seconds...');
+    
     const timer = setTimeout(() => {
       pauseBattleTimer();
+      console.log('Executing automatic victory transition to victory2');
       handleScreenTransition('victory2');
       navigate('/victory2');
     }, 30000);
@@ -554,8 +558,12 @@ const Battle2Screen: React.FC = () => {
     setSoundEffect('/audios/orehamou.mp3');
     showDefeatComments();
     
+    // Log information for debugging
+    console.log('Scheduling defeat transition in 30 seconds...');
+    
     const timer = setTimeout(() => {
       pauseBattleTimer();
+      console.log('Executing automatic defeat transition to result2');
       handleScreenTransition('result2');
       navigate('/result2');
     }, 30000);

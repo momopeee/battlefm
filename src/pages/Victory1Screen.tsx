@@ -32,15 +32,19 @@ const Victory1Screen: React.FC = () => {
       description: 'おめでとうございます！',
       duration: 3000,
     });
+    
+    console.log('Rendered Victory1Screen');
   }, []);
 
   const handleContinue = () => {
+    console.log('Navigating to select screen from Victory1Screen');
     handleScreenTransition('select');
     navigate('/select');
   };
   
   const handleReturnToStart = () => {
     // Reset battle state and redirect to index page
+    console.log('Returning to start from Victory1Screen');
     resetBattleState();
     handleScreenTransition('index');
     navigate('/');
@@ -48,6 +52,7 @@ const Victory1Screen: React.FC = () => {
   
   const handleFightAgain = () => {
     // Reset battle state and redirect to battle1
+    console.log('Fighting again from Victory1Screen');
     resetBattleState();
     handleScreenTransition('battle1');
     navigate('/battle1');
