@@ -17,7 +17,7 @@ const Index = () => {
     >
       {/* Index BGM */}
       <AudioPlayer 
-        src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/347fb19e-9f51-4b28-b1a5-038b53491d7e/kyoman.m4a?table=block&id=1ba25ac2-cb4e-80e7-ab17-e55dbcd295e1&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=vAf3k_SCNNP3GocwUykfjOamF26fv8hNvFPAlBXZKQ8"
+        src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/df4d3cfd-d360-49ea-90b4-2446850bab38/kyoman.mp3?table=block&id=1ba25ac2-cb4e-800d-8735-d8d4f50eada9&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742392800000&signature=55En8UbWaUhN7U8jwfd7ByUOoaIrl9BU-lVrSzwFos0"
         loop={true}
         autoPlay={true}
       />
