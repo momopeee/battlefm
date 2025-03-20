@@ -48,6 +48,39 @@ const yujiSpecialComments = [
   "式場の利益よりもプランナーの地位向上のが大事なんです、それが分からない式場は全部だめですよ"
 ];
 
+// Define the missing arrays
+// Define yujiAttackComments which was referenced but not defined
+const yujiAttackComments = [
+  "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
+  "経営の何がわからないのかわからないってのが経営なんですよぉ〜",
+  "経営を上手くやるには、波長の合う人とやるのがいちばんですね〜",
+  "売上を上げるには、まずは表に出て顔と名前を売るのが大事ですよ",
+  "ビジネスを成長させるには友達の数を増やすことですね",
+  "やまにーの言うことは難しすぎて、僕には理解できないんですよぉ〜",
+  "経営は楽しくやるのが一番大事です",
+  "すべての決断はコスパで判断するのがいいですよ",
+  "成功するにはポジティブであることが大事です",
+  "失敗しても気にしない、前向きな姿勢こそがビジネスの秘訣です"
+];
+
+// Define victory and defeat comment arrays
+const victoryComments = [
+  "とおるはゆうじの経営論を打ち砕いた！",
+  "ゆうじはとおるの言葉を受け入れ、考えを改めることを決意した。",
+  "「やまにぃ... 僕、これからは本当の意味で人の役に立てる経営者になります...」",
+  "とおるはゆうじに勝利した！",
+  "次の相手は...",
+  "まだ見ぬ最後のボスが待ち受けている..."
+];
+
+const defeatComments = [
+  "とおるはゆうじのポジティブさに負けてしまった...",
+  "「やまにぃの言ってることが難しすぎるんですよぉ〜もっと簡単に言わないと伝わらないですよぉ〜」",
+  "「僕は今まで通りやり続けますよ〜みんなが褒めてくれるから〜」",
+  "とおるは敗北した...",
+  "もう一度挑戦するか？"
+];
+
 const Battle2Screen: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -73,7 +106,6 @@ const Battle2Screen: React.FC = () => {
     setSpecialAttackAvailable,
     setYujiSpecialMode,
     handleScreenTransition,
-    // Add these to access player state updates
     setPlayer
   } = useApp();
   
@@ -94,7 +126,6 @@ const Battle2Screen: React.FC = () => {
   // Reset battle state on component mount and start timer
   useEffect(() => {
     clearComments();
-    // グローバル状態のみを使用するように修正
     setOpponentHp(opponent2.currentHp);
     setAttackCount(0);
     setSpecialAttackAvailable(false);
@@ -104,16 +135,13 @@ const Battle2Screen: React.FC = () => {
     setSpecialModeActive(false);
     setIsHighballConfused(false);
     
-    // Start the battle timer when component mounts
     startBattleTimer();
     
-    // Initial system message
     setTimeout(() => {
       addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
       addComment('ゆうじ＠陽気なおじさん', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
     }, 1000);
     
-    // Cleanup function - pause timer when component unmounts
     return () => {
       pauseBattleTimer();
     };
@@ -128,7 +156,6 @@ const Battle2Screen: React.FC = () => {
   // Check for Yuji's special mode activation
   useEffect(() => {
     if (opponentHp <= 20 && !yujiInSpecialMode && !isBattleOver && !specialModeActive) {
-      // Activate Yuji's special mode
       activateYujiSpecialMode();
     }
   }, [opponentHp, yujiInSpecialMode, isBattleOver, specialModeActive]);
@@ -142,7 +169,6 @@ const Battle2Screen: React.FC = () => {
         setSpecialModeTimer(prev => {
           const newTime = prev + 1;
           if (newTime >= 40) {
-            // End special mode after 40 seconds
             setSpecialModeActive(false);
             addComment('システム', 'ゆうじ確変モードが終了した', true);
             return 0;
@@ -164,11 +190,11 @@ const Battle2Screen: React.FC = () => {
     if (isBattleOver && battleResult === 'victory') {
       skipButtonTimer = setTimeout(() => {
         setShowSkipButton(true);
-      }, 10000); // 10 seconds for victory
+      }, 10000);
     } else if (isBattleOver && battleResult === 'defeat') {
       skipButtonTimer = setTimeout(() => {
         setShowSkipButton(true);
-      }, 15000); // 15 seconds for defeat
+      }, 15000);
     }
     
     return () => {
@@ -182,7 +208,6 @@ const Battle2Screen: React.FC = () => {
       if (redirectTimer) {
         clearTimeout(redirectTimer);
       }
-      // Ensure timer is paused when redirecting
       pauseBattleTimer();
     };
   }, [redirectTimer, pauseBattleTimer]);
@@ -201,7 +226,6 @@ const Battle2Screen: React.FC = () => {
       addComment('システム', 'ゆうじは特性「のれんに腕押し」を発動した', true);
       setSpecialModeActive(true);
       
-      // Restore Yuji's HP - only once when activating special mode
       setOpponentHp(opponent2.maxHp);
       
     }, 1000);
@@ -211,20 +235,17 @@ const Battle2Screen: React.FC = () => {
   const handleSkip = () => {
     if (!isBattleOver) return;
     
-    // Cancel any pending timers
     if (redirectTimer) {
       clearTimeout(redirectTimer);
       setRedirectTimer(null);
     }
     
-    // Pause the battle timer
     pauseBattleTimer();
     
     if (battleResult === 'victory') {
       handleScreenTransition('victory2');
       navigate('/victory2');
     } else if (battleResult === 'defeat') {
-      // Update to redirect to result2 instead of endingC on defeat
       handleScreenTransition('result2');
       navigate('/result2');
     }
@@ -237,14 +258,12 @@ const Battle2Screen: React.FC = () => {
     setAttackInProgress(true);
     setSoundEffect('/audios/attack.mp3');
     
-    // Handle highball confusion first if active
     if (isHighballConfused) {
       addComment('とおる＠経営参謀', 'え？ちょっとまって、なに？なに？ちょっとまって？えっ？');
       
       setTimeout(() => {
         addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた', true);
         
-        // Player damages himself - use global state directly
         setPlayer(prev => ({
           ...prev,
           currentHp: Math.max(0, prev.currentHp - 10)
@@ -252,11 +271,9 @@ const Battle2Screen: React.FC = () => {
         
         setIsHighballConfused(false);
         
-        // Check if player defeated himself
         if (player.currentHp - 10 <= 0) {
           handleDefeat();
         } else {
-          // Enemy turn
           setTimeout(() => {
             setIsPlayerTurn(false);
             setAttackInProgress(false);
@@ -268,50 +285,39 @@ const Battle2Screen: React.FC = () => {
       return;
     }
     
-    // Get random attack comment
     const randomIndex = Math.floor(Math.random() * playerAttackComments.length);
     const attackComment = playerAttackComments[randomIndex];
     addComment('とおる＠経営参謀', attackComment);
     
-    // Calculate damage
     const min = player.attackMin;
     const max = player.attackMax;
     const damage = Math.floor(Math.random() * (max - min + 1)) + min;
     
-    // Apply damage with delay for animation
     setTimeout(() => {
-      // Check if Yuji is in special mode with modified behavior
       if (specialModeActive) {
-        // Generate random number for probability check (1, 2, or 3)
         const randomChance = Math.floor(Math.random() * 3) + 1;
         
         if (randomChance <= 2) {
-          // 2 out of 3 chance (66%): Only 5 damage gets through
           setOpponentHp(Math.max(0, opponentHp - 5));
           addComment('システム', 'ゆうじはのれんに腕押しを発動した。とおるの言葉は響かない。ゆうじは5ダメージしか受けなかった。', true);
         } else {
-          // 1 out of 3 chance (33%): Full damage gets through
           setOpponentHp(Math.max(0, opponentHp - damage));
           addComment('システム', `さすがのゆうじも耳が痛い！！${damage}のダメージを受けた`, true);
         }
       } else {
-        // Normal mode - full damage
         setOpponentHp(Math.max(0, opponentHp - damage));
         addComment('システム', `とおるの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
       }
       
-      // Update attack count for special meter
       const newAttackCount = attackCount + 1;
       setAttackCount(newAttackCount);
       if (newAttackCount >= 3) {
         setSpecialAttackAvailable(true);
       }
       
-      // Check if opponent defeated
       if (opponentHp - damage <= 0 && !specialModeActive) {
         handleVictory();
       } else {
-        // Enemy turn
         setTimeout(() => {
           setIsPlayerTurn(false);
           setAttackInProgress(false);
@@ -330,16 +336,13 @@ const Battle2Screen: React.FC = () => {
     setSpecialAttackAvailable(false);
     setAttackCount(0);
     
-    // Get random special attack comment
     const randomIndex = Math.floor(Math.random() * playerSpecialComments.length);
     const specialComment = playerSpecialComments[randomIndex];
     addComment('とおる＠経営参謀', specialComment);
     
-    // Special attack damage - Modified to be fixed 10 damage during special mode
     const damage = specialModeActive ? 10 : player.specialPower;
     
     setTimeout(() => {
-      // Check if Yuji is in special mode
       if (specialModeActive) {
         setOpponentHp(Math.max(0, opponentHp - damage));
         addComment('システム', `とおるの必殺技が炸裂！ゆうじののれんに腕押しをわずかに通過した。 ${damage}ポイントのダメージ！`, true);
@@ -348,11 +351,9 @@ const Battle2Screen: React.FC = () => {
         addComment('システム', `とおるの必殺技が炸裂！ ${damage}ポイントの大ダメージ！`, true);
       }
       
-      // Check if opponent defeated
       if (opponentHp - damage <= 0) {
         handleVictory();
       } else {
-        // Enemy turn
         setTimeout(() => {
           setIsPlayerTurn(false);
           setAttackInProgress(false);
@@ -368,21 +369,17 @@ const Battle2Screen: React.FC = () => {
     
     setAttackInProgress(true);
     
-    // Special attack if in special mode
     if (specialModeActive) {
       setSoundEffect('/audios/enemy_special.mp3');
       
-      // Get random special attack comment from the list
       const specialComment = yujiSpecialComments[Math.floor(Math.random() * yujiSpecialComments.length)];
       addComment('ゆうじ＠陽気なおじさん', specialComment);
       
-      // Calculate damage using normal damage values
       const min = opponent2.attackMin;
       const max = opponent2.attackMax;
       const damage = Math.floor(Math.random() * (max - min + 1)) + min;
       
       setTimeout(() => {
-        // Apply damage directly to global state
         setPlayer(prev => ({
           ...prev,
           currentHp: Math.max(0, prev.currentHp - damage)
@@ -390,11 +387,9 @@ const Battle2Screen: React.FC = () => {
         
         addComment('システム', `ゆうじの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
         
-        // Check if player defeated
         if (player.currentHp - damage <= 0) {
           handleDefeat();
         } else {
-          // Player's turn
           setTimeout(() => {
             setIsPlayerTurn(true);
             setAttackInProgress(false);
@@ -402,26 +397,20 @@ const Battle2Screen: React.FC = () => {
         }
       }, 500);
     } else if (opponentHp < opponent2.maxHp * 0.3 && !yujiInSpecialMode) {
-      // This would be for first activation, but we already handle it in useEffect
-      // Keeping this condition branch for clarity
       setTimeout(() => {
         setIsPlayerTurn(true);
         setAttackInProgress(false);
       }, 1000);
     } else {
-      // Regular attack
       setSoundEffect('/audios/enemy_attack.mp3');
       
-      // Get random attack comment
       const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
       
-      // Calculate damage
       const min = opponent2.attackMin;
       const max = opponent2.attackMax;
       const damage = Math.floor(Math.random() * (max - min + 1)) + min;
       
       setTimeout(() => {
-        // Apply damage directly to global state
         setPlayer(prev => ({
           ...prev,
           currentHp: Math.max(0, prev.currentHp - damage)
@@ -430,11 +419,9 @@ const Battle2Screen: React.FC = () => {
         addComment('ゆうじ＠陽気なおじさん', attackComment);
         addComment('システム', `ゆうじの陽気なトークが突き刺さる！ ${damage}ポイントのダメージ！`, true);
         
-        // Check if player defeated
         if (player.currentHp - damage <= 0) {
           handleDefeat();
         } else {
-          // Player's turn
           setTimeout(() => {
             setIsPlayerTurn(true);
             setAttackInProgress(false);
@@ -453,17 +440,14 @@ const Battle2Screen: React.FC = () => {
     setTimeout(() => {
       addComment('システム', "とおるは逃げようとしたが、漢として本当に逃げていいのか、逃げた先にいったい何がある？ここで逃げたら俺は一生逃げ続ける。不毛でも立ち向かわなければならない。無駄だとしても、踏ん張らなければあかん時があるやろ！！と思いなおし、自分の頬を思いっきりビンタした。とおるは10のダメージを受けた。", true);
       
-      // Player damages himself - use global state
       setPlayer(prev => ({
         ...prev,
         currentHp: Math.max(0, prev.currentHp - 10)
       }));
       
-      // Check if player defeated himself
       if (player.currentHp - 10 <= 0) {
         handleDefeat();
       } else {
-        // Enemy turn
         setTimeout(() => {
           setIsPlayerTurn(false);
           setAttackInProgress(false);
@@ -480,19 +464,14 @@ const Battle2Screen: React.FC = () => {
     addComment('とおる＠経営参謀', 'ぐびぐび、うへぇ～、もう一杯お願いします。メガで。');
     
     setTimeout(() => {
-      // Check if player's HP is less than half
       if (player.currentHp < player.maxHp / 2) {
-        // Full recovery when HP is low - use global state
         addComment('システム', "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
         
-        // Update global state directly
         setPlayer(prev => ({
           ...prev,
           currentHp: prev.maxHp
         }));
       } else {
-        // Normal highball effect
-        // Random highball effect
         const highballEffects = [
           "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
           "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
@@ -502,25 +481,21 @@ const Battle2Screen: React.FC = () => {
         const effectIdx = Math.floor(Math.random() * highballEffects.length);
         addComment('システム', highballEffects[effectIdx], true);
         
-        // Update global state directly
         setPlayer(prev => ({
           ...prev,
           currentHp: Math.max(0, prev.currentHp - 10)
         }));
         
-        // Set highball confusion if drinking made player confused
         if (effectIdx === 2) {
           setIsHighballConfused(true);
         }
         
-        // Check if player defeated himself
         if (player.currentHp - 10 <= 0) {
           handleDefeat();
           return;
         }
       }
       
-      // End player's turn
       setTimeout(() => {
         setIsPlayerTurn(false);
         setAttackInProgress(false);
@@ -534,7 +509,7 @@ const Battle2Screen: React.FC = () => {
     victoryComments.forEach((comment, index) => {
       setTimeout(() => {
         addComment('システム', comment, true);
-      }, index * 3000); // Show each comment with a 3-second delay
+      }, index * 3000);
     });
   };
   
@@ -543,7 +518,7 @@ const Battle2Screen: React.FC = () => {
     defeatComments.forEach((comment, index) => {
       setTimeout(() => {
         addComment('システム', comment, true);
-      }, index * 3000); // Show each comment with a 3-second delay
+      }, index * 3000);
     });
   };
   
@@ -554,13 +529,11 @@ const Battle2Screen: React.FC = () => {
     setSoundEffect('/audios/syouri.mp3');
     showVictoryComments();
     
-    // Set up automatic redirection after 30 seconds
     const timer = setTimeout(() => {
-      // Pause the battle timer before redirecting
       pauseBattleTimer();
       handleScreenTransition('victory2');
       navigate('/victory2');
-    }, 30000); // 30秒に変更
+    }, 30000);
     
     setRedirectTimer(timer);
   };
@@ -572,13 +545,11 @@ const Battle2Screen: React.FC = () => {
     setSoundEffect('/audios/orehamou.mp3');
     showDefeatComments();
     
-    // Set up automatic redirection after 30 seconds
     const timer = setTimeout(() => {
-      // Pause the battle timer before redirecting
       pauseBattleTimer();
       handleScreenTransition('result2');
       navigate('/result2');
-    }, 30000); // 30秒に変更
+    }, 30000);
     
     setRedirectTimer(timer);
   };
@@ -592,10 +563,8 @@ const Battle2Screen: React.FC = () => {
     }
   }, [player.currentHp, opponentHp, specialModeActive, isBattleOver]);
 
-  // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {
-    // Ensure timer resets at 99:99
-    if (seconds > 6000) { // 60 sec * 100 min
+    if (seconds > 6000) {
       return "99:99";
     }
     
@@ -617,14 +586,12 @@ const Battle2Screen: React.FC = () => {
           height: '100%',
         }}
       >
-        {/* Background Music */}
         <AudioPlayer 
           src="/audios/battle.mp3"
           loop={battleResult === null}
           autoPlay={true}
         />
 
-        {/* Sound Effects */}
         {soundEffect && (
           <AudioPlayer 
             src={soundEffect} 
@@ -634,14 +601,12 @@ const Battle2Screen: React.FC = () => {
           />
         )}
         
-        {/* Top section with title and timer */}
         <PlayerInfo 
           name="とおる＠経営参謀" 
           icon={player.icon}
           battleTimer={battleTimer}
         />
         
-        {/* Health and special gauges - Update to use global state directly */}
         <GaugesDisplay 
           player={player}
           opponent={{...opponent2, currentHp: opponentHp}}
@@ -649,7 +614,6 @@ const Battle2Screen: React.FC = () => {
           sosoHealMode={false}
         />
         
-        {/* Character portraits - Update to use global state directly */}
         <CharacterPortraits 
           player={player}
           opponent={{...opponent2, currentHp: opponentHp}}
@@ -657,7 +621,6 @@ const Battle2Screen: React.FC = () => {
           sosoHealMode={false}
         />
         
-        {/* Yuji special mode indicator - keep position same */}
         {specialModeActive && (
           <div className="absolute top-1/4 left-0 right-0 flex justify-center">
             <div className="animate-pulse text-yellow-300 text-xl font-bold bg-black/50 px-4 py-2 rounded-full">
@@ -666,14 +629,11 @@ const Battle2Screen: React.FC = () => {
           </div>
         )}
         
-        {/* Comments area with responsive height to match Battle1Screen */}
         <div className="flex-1 mb-1 sm:mb-2 h-[20vh] sm:h-[25vh] overflow-hidden">
           <CommentArea comments={comments} />
         </div>
         
-        {/* Battle actions at bottom */}
         <div className="mt-auto">
-          {/* Battle actions buttons */}
           <BattleActions 
             isPlayerTurn={isPlayerTurn}
             isBattleOver={isBattleOver}
@@ -684,23 +644,20 @@ const Battle2Screen: React.FC = () => {
             onHighball={handleHighball}
           />
           
-          {/* Comment input - always at bottom */}
           <CommentInput />
         </div>
         
-        {/* Skip Button - Only shown when battle is over - adjusted position to match Battle1Screen */}
         {showSkipButton && (
           <Button
             onClick={handleSkip}
             className="absolute bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
-            style={{ position: 'absolute' }} // Match Battle1Screen style
+            style={{ position: 'absolute' }}
           >
             <SkipForward size={isMobile ? 16 : 20} />
             スキップ
           </Button>
         )}
         
-        {/* BGM Toggle Button - Changed from fixed to absolute to match Battle1Screen */}
         <button
           onClick={toggleBgm}
           className="absolute top-3 sm:top-6 right-3 sm:right-6 z-20 bg-white/10 backdrop-blur-sm p-2 sm:p-3 rounded-full hover:bg-white/20 transition-colors"
@@ -711,7 +668,6 @@ const Battle2Screen: React.FC = () => {
           }
         </button>
         
-        {/* Character Sheet Popup */}
         {showCharacterSheet && (
           <CharacterSheet 
             character={currentCharacterSheet} 
