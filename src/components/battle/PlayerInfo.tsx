@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface PlayerInfoProps {
   name: string;
@@ -8,7 +8,14 @@ interface PlayerInfoProps {
 }
 
 const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer }) => {
-  // Format timer display - static formatting without counting
+  const [displayTime, setDisplayTime] = useState(battleTimer);
+
+  // Update display time when battleTimer changes
+  useEffect(() => {
+    setDisplayTime(battleTimer);
+  }, [battleTimer]);
+
+  // Format timer display
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -26,7 +33,7 @@ const PlayerInfo: React.FC<PlayerInfoProps> = ({ name, icon, battleTimer }) => {
         />
         <div className="flex flex-col items-start">
           <span className="text-[11px]">{name}</span>
-          <span className="text-[10px]">{formatTime(battleTimer)}</span>
+          <span className="text-[10px]">{formatTime(displayTime)}</span>
         </div>
       </div>
     </div>
