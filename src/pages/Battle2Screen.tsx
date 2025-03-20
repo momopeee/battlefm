@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -124,8 +125,16 @@ const Battle2Screen: React.FC = () => {
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   
   // Reset battle state on component mount and start timer
+  // UPDATED: Reset player HP to 100 at the start of battle2, regardless of previous state
   useEffect(() => {
     clearComments();
+    
+    // Always reset player HP to 100 at the start of Battle2
+    setPlayer(prev => ({
+      ...prev,
+      currentHp: 100
+    }));
+    
     setOpponentHp(opponent2.currentHp);
     setAttackCount(0);
     setSpecialAttackAvailable(false);
