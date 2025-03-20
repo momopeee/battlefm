@@ -8,8 +8,8 @@ interface HPBarProps {
 
 const HPBar: React.FC<HPBarProps> = ({ currentHP, maxHP }) => {
   // Ensure we have valid numbers and calculate percentage
-  const safeCurrentHP = typeof currentHP === 'number' ? currentHP : 0;
-  const safeMaxHP = typeof maxHP === 'number' ? Math.max(1, maxHP) : 100;
+  const safeCurrentHP = isNaN(currentHP) ? 0 : Math.max(0, currentHP);
+  const safeMaxHP = isNaN(maxHP) ? 100 : Math.max(1, maxHP);
   
   const percentage = Math.max(0, Math.min(100, (safeCurrentHP / safeMaxHP) * 100));
   

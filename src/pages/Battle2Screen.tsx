@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import CommentArea from '@/components/CommentArea';
@@ -80,7 +80,6 @@ const Battle2Screen: React.FC = () => {
   // Battle state
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleOver, setIsBattleOver] = useState(false);
-  const [playerHp, setPlayerHp] = useState(player.currentHp);
   const [opponentHp, setOpponentHp] = useState(opponent2.currentHp);
   const [attackInProgress, setAttackInProgress] = useState(false);
   const [soundEffect, setSoundEffect] = useState<string | null>(null);
@@ -92,15 +91,10 @@ const Battle2Screen: React.FC = () => {
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   
-  // 状態同期の制御フラグ
-  const isUpdatingGlobal = useRef(false);
-  const isUpdatingLocal = useRef(false);
-  
   // Reset battle state on component mount and start timer
   useEffect(() => {
     clearComments();
-    // 初期HPを100に設定
-    setPlayerHp(100);
+    // グローバル状態のみを使用するように修正
     setOpponentHp(opponent2.currentHp);
     setAttackCount(0);
     setSpecialAttackAvailable(false);
@@ -124,80 +118,6 @@ const Battle2Screen: React.FC = () => {
       pauseBattleTimer();
     };
   }, []);
-  
-  // グローバル状態からローカル状態への同期（無限ループ防止）
-  useEffect(() => {
-    // ローカル状態を更新中の場合はスキップ
-    if (isUpdatingLocal.current) return;
-    
-    if (player.currentHp !== playerHp) {
-      // グローバルからローカルへの更新フラグを立てる
-      isUpdatingLocal.current = true;
-      setPlayerHp(player.currentHp);
-      // 非同期でフラグをリセット
-      setTimeout(() => {
-        isUpdatingLocal.current = false;
-      }, 0);
-    }
-  }, [player.currentHp, playerHp]);
-  
-  // ローカル状態からグローバル状態への同期（無限ループ防止）
-  useEffect(() => {
-    // グローバル状態を更新中の場合はスキップ
-    if (isUpdatingGlobal.current) return;
-    
-    if (player.currentHp !== playerHp) {
-      // ローカルからグローバルへの更新フラグを立てる
-      isUpdatingGlobal.current = true;
-      setPlayer(prev => ({
-        ...prev,
-        currentHp: playerHp
-      }));
-      // 非同期でフラグをリセット
-      setTimeout(() => {
-        isUpdatingGlobal.current = false;
-      }, 0);
-    }
-  }, [playerHp, player.currentHp, setPlayer]);
-  
-  // Yuji's attack comments
-  const yujiAttackComments = [
-    "しいたけ しか勝たん！！俺はしいたけ占いしか信じてないんすよ～",
-    "年収1000万目指します、まじで",
-    "「やればやるほど、楽しくなっていく」今まさにそんな状態！",
-    "佐川の集荷呼ぶだけでこんなに難しいなんて・・・",
-    "僕は常にかゆいところに手が届く存在でありたい",
-    "2025年以降の目標を立てて、めっちゃワクワクした！",
-    "今日の予定？タイミー"
-  ];
-  
-  // Victory comments array
-  const victoryComments = [
-    "とおるが勝利した、ゆうじは拗ねてタムタムにLINEをした",
-    "タムタムからの返事がない、ゆうじはリコさんにLINEをした",
-    "リコさんからの返事がない",
-    "ゆうじは殻に閉じこもってしまった",
-    "その後、風のうわさでゆうじが米国大統領に当選したと聞いた",
-    "とおるはゆうじを倒した。",
-    "でも本当は、ゆうじを倒したくなかった。",
-    "永遠にゆうじとの戯れをつづけたかった。",
-    "だが、とおるはゆうじを倒してしまった。",
-    "この戦いに勝利者はいない",
-    "とおるは一人涙して、今日もハイボールを飲む、とおるの心に7兆のダメージ"
-  ];
-  
-  // Defeat comments array
-  const defeatComments = [
-    "とおるが敗北した、ゆうじは調子にのってしまった",
-    "とおるは5億の経験値を得た",
-    "とおるは敗北からも学べる男だった",
-    "とおるはレベルが7000上がった",
-    "だが、ゆうじはどんどん悪い方向に成長した",
-    "とおるは危機感を覚えた",
-    "あの時俺が本気でぶん殴って目を覚まさせてやればこんなことには・・・",
-    "とおるは悔やんだ、そしてハイボールを飲んだ",
-    "夜空に輝く星の瞬きが、今日だけはいつもよりも多く感じた"
-  ];
   
   // Handle character sheet display
   const handleCharacterClick = (character: 'player' | 'opponent1' | 'opponent2') => {
@@ -278,8 +198,6 @@ const Battle2Screen: React.FC = () => {
       addComment('システム', 'ゆうじはクラウドファンディングを発動した', true);
       addComment('システム', 'ゆうじのHPゲージが満タンになった', true);
       
-      // Removed: "ゆうじ確変モードに突入" message
-      
       addComment('システム', 'ゆうじは特性「のれんに腕押し」を発動した', true);
       setSpecialModeActive(true);
       
@@ -312,7 +230,7 @@ const Battle2Screen: React.FC = () => {
     }
   };
   
-  // Player attack function - UPDATED with probability-based damage reduction
+  // Player attack function - UPDATED to use global state directly
   const handlePlayerAttack = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
@@ -326,12 +244,16 @@ const Battle2Screen: React.FC = () => {
       setTimeout(() => {
         addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた', true);
         
-        // Player damages himself
-        setPlayerHp(Math.max(0, playerHp - 10));
+        // Player damages himself - use global state directly
+        setPlayer(prev => ({
+          ...prev,
+          currentHp: Math.max(0, prev.currentHp - 10)
+        }));
+        
         setIsHighballConfused(false);
         
         // Check if player defeated himself
-        if (playerHp - 10 <= 0) {
+        if (player.currentHp - 10 <= 0) {
           handleDefeat();
         } else {
           // Enemy turn
@@ -399,7 +321,7 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   };
   
-  // Player special attack
+  // Player special attack - UPDATED to use global state directly
   const handlePlayerSpecial = () => {
     if (!isPlayerTurn || attackInProgress || !specialAttackAvailable || isBattleOver) return;
     
@@ -440,7 +362,7 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   };
   
-  // UPDATED: Handle enemy attack to remove HP recovery during special mode
+  // UPDATED: Handle enemy attack to use global state directly
   const handleEnemyAttack = () => {
     if (isBattleOver) return;
     
@@ -460,15 +382,16 @@ const Battle2Screen: React.FC = () => {
       const damage = Math.floor(Math.random() * (max - min + 1)) + min;
       
       setTimeout(() => {
-        // Apply damage to player
-        setPlayerHp(Math.max(0, playerHp - damage));
-        
-        // Removed HP recovery code
+        // Apply damage directly to global state
+        setPlayer(prev => ({
+          ...prev,
+          currentHp: Math.max(0, prev.currentHp - damage)
+        }));
         
         addComment('システム', `ゆうじの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
         
         // Check if player defeated
-        if (playerHp - damage <= 0) {
+        if (player.currentHp - damage <= 0) {
           handleDefeat();
         } else {
           // Player's turn
@@ -498,13 +421,17 @@ const Battle2Screen: React.FC = () => {
       const damage = Math.floor(Math.random() * (max - min + 1)) + min;
       
       setTimeout(() => {
-        setPlayerHp(Math.max(0, playerHp - damage));
+        // Apply damage directly to global state
+        setPlayer(prev => ({
+          ...prev,
+          currentHp: Math.max(0, prev.currentHp - damage)
+        }));
         
         addComment('ゆうじ＠陽気なおじさん', attackComment);
         addComment('システム', `ゆうじの陽気なトークが突き刺さる！ ${damage}ポイントのダメージ！`, true);
         
         // Check if player defeated
-        if (playerHp - damage <= 0) {
+        if (player.currentHp - damage <= 0) {
           handleDefeat();
         } else {
           // Player's turn
@@ -517,7 +444,7 @@ const Battle2Screen: React.FC = () => {
     }
   };
   
-  // Handle running away
+  // Handle running away - UPDATED to use global state
   const handleRunAway = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
@@ -526,11 +453,14 @@ const Battle2Screen: React.FC = () => {
     setTimeout(() => {
       addComment('システム', "とおるは逃げようとしたが、漢として本当に逃げていいのか、逃げた先にいったい何がある？ここで逃げたら俺は一生逃げ続ける。不毛でも立ち向かわなければならない。無駄だとしても、踏ん張らなければあかん時があるやろ！！と思いなおし、自分の頬を思いっきりビンタした。とおるは10のダメージを受けた。", true);
       
-      // Player damages himself
-      setPlayerHp(Math.max(0, playerHp - 10));
+      // Player damages himself - use global state
+      setPlayer(prev => ({
+        ...prev,
+        currentHp: Math.max(0, prev.currentHp - 10)
+      }));
       
       // Check if player defeated himself
-      if (playerHp - 10 <= 0) {
+      if (player.currentHp - 10 <= 0) {
         handleDefeat();
       } else {
         // Enemy turn
@@ -543,7 +473,7 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   };
   
-  // Handle highball offer - Updated to properly sync with player state
+  // Handle highball offer - UPDATED to use global state directly
   const handleHighball = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
@@ -551,16 +481,15 @@ const Battle2Screen: React.FC = () => {
     
     setTimeout(() => {
       // Check if player's HP is less than half
-      if (playerHp < player.maxHp / 2) {
-        // Full recovery when HP is low
+      if (player.currentHp < player.maxHp / 2) {
+        // Full recovery when HP is low - use global state
         addComment('システム', "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
         
-        // Restore player's HP and update local state
-        const newHp = player.maxHp;
-        setPlayerHp(newHp);
-        
-        // We don't need to manually update AppContext player state here
-        // as our useEffect hook will handle that based on playerHp change
+        // Update global state directly
+        setPlayer(prev => ({
+          ...prev,
+          currentHp: prev.maxHp
+        }));
       } else {
         // Normal highball effect
         // Random highball effect
@@ -573,17 +502,19 @@ const Battle2Screen: React.FC = () => {
         const effectIdx = Math.floor(Math.random() * highballEffects.length);
         addComment('システム', highballEffects[effectIdx], true);
         
-        // Player damages himself and update local state
-        const newHp = Math.max(0, playerHp - 10);
-        setPlayerHp(newHp);
+        // Update global state directly
+        setPlayer(prev => ({
+          ...prev,
+          currentHp: Math.max(0, prev.currentHp - 10)
+        }));
         
         // Set highball confusion if drinking made player confused
         if (effectIdx === 2) {
           setIsHighballConfused(true);
         }
         
-        // Check if player defeated himself using the new HP value
-        if (newHp <= 0) {
+        // Check if player defeated himself
+        if (player.currentHp - 10 <= 0) {
           handleDefeat();
           return;
         }
@@ -652,14 +583,14 @@ const Battle2Screen: React.FC = () => {
     setRedirectTimer(timer);
   };
   
-  // Check for battle end conditions - Updated to use current state values
+  // Check for battle end conditions - Updated to use global state values
   useEffect(() => {
-    if (playerHp <= 0 && !isBattleOver) {
+    if (player.currentHp <= 0 && !isBattleOver) {
       handleDefeat();
     } else if (opponentHp <= 0 && !specialModeActive && !isBattleOver) {
       handleVictory();
     }
-  }, [playerHp, opponentHp, specialModeActive, isBattleOver]);
+  }, [player.currentHp, opponentHp, specialModeActive, isBattleOver]);
 
   // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {
@@ -710,17 +641,17 @@ const Battle2Screen: React.FC = () => {
           battleTimer={battleTimer}
         />
         
-        {/* Health and special gauges */}
+        {/* Health and special gauges - Update to use global state directly */}
         <GaugesDisplay 
-          player={{...player, currentHp: playerHp}}
+          player={player}
           opponent={{...opponent2, currentHp: opponentHp}}
           attackCount={attackCount}
           sosoHealMode={false}
         />
         
-        {/* Character portraits */}
+        {/* Character portraits - Update to use global state directly */}
         <CharacterPortraits 
-          player={{...player, currentHp: playerHp}}
+          player={player}
           opponent={{...opponent2, currentHp: opponentHp}}
           onCharacterClick={handleCharacterClick}
           sosoHealMode={false}
