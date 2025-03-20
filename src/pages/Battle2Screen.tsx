@@ -627,5 +627,120 @@ const Battle2Screen: React.FC = () => {
           loop={battleResult === null}
           autoPlay={true}
           startPosition={specialModeActive ? 12 : 0}
+        />
+        
+        {soundEffect && (
+          <AudioPlayer
+            src={soundEffect}
+            loop={false}
+            autoPlay={true}
+            volume={0.7}
+          />
+        )}
+        
+        {/* Show character sheet if active */}
+        {showCharacterSheet && (
+          <CharacterSheet
+            character={currentCharacterSheet === 'player' ? player : 
+                     currentCharacterSheet === 'opponent1' ? null : opponent2}
+            onClose={() => setShowCharacterSheet(false)}
+          />
+        )}
+        
+        {/* Battle Timer Display */}
+        <div className="absolute top-0 left-0 m-2 flex items-center">
+          <div className="bg-black/50 text-white px-2 py-1 rounded font-mono">
+            {formatTime(battleTimer)}
+          </div>
+        </div>
+        
+        {/* Battle Sound Toggle */}
+        <div className="absolute top-0 right-0 m-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleBgm}
+            className="h-8 w-8 rounded-full bg-black/50 text-white"
+          >
+            {bgmEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          </Button>
+        </div>
+        
+        {/* Skip button for after battle is over */}
+        {showSkipButton && (
+          <div className="absolute top-12 right-0 m-2">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleSkip}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white flex items-center gap-1"
+            >
+              <SkipForward size={14} />
+              <span>進む</span>
+            </Button>
+          </div>
+        )}
+        
+        {/* Character Portraits */}
+        <div className="mb-2">
+          <CharacterPortraits
+            player={player}
+            opponent={opponent2}
+            onPlayerClick={() => handleCharacterClick('player')}
+            onOpponentClick={() => handleCharacterClick('opponent2')}
+          />
+        </div>
+        
+        {/* HP Gauges and Attack Count */}
+        <div className="mb-2">
+          <GaugesDisplay
+            player={player}
+            opponent={opponent2}
+            opponentHp={opponentHp}
+            attackCount={attackCount}
+            specialAttackAvailable={specialAttackAvailable}
+            specialModeActive={specialModeActive}
+          />
+        </div>
+        
+        {/* Player Info */}
+        <div className="mb-2">
+          <PlayerInfo
+            player={player}
+            isPlayerTurn={isPlayerTurn}
+            isBattleOver={isBattleOver}
+          />
+        </div>
+        
+        {/* Battle Actions */}
+        <div className="mb-2">
+          <BattleActions
+            isPlayerTurn={isPlayerTurn}
+            attackInProgress={attackInProgress}
+            specialAttackAvailable={specialAttackAvailable}
+            isBattleOver={isBattleOver}
+            onAttack={handlePlayerAttack}
+            onSpecialAttack={handlePlayerSpecial}
+            onRunAway={handleRunAway}
+            onHighball={handleHighball}
+          />
+        </div>
+        
+        {/* Comment Input (For Debug/Testing) */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mb-2">
+            <CommentInput onSubmit={(text) => addComment('Debug', text)} />
+          </div>
+        )}
+        
+        {/* Comments Display */}
+        <div className="flex-1 overflow-auto">
+          <CommentArea comments={comments} />
+        </div>
+      </div>
+    </MobileContainer>
+  );
+};
 
+export default Battle2Screen;
 
