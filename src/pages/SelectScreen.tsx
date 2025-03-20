@@ -18,7 +18,6 @@ const SelectScreen: React.FC = () => {
   const [showBottomMenu, setShowBottomMenu] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([]);
-  const [assaultBgmPlaying, setAssaultBgmPlaying] = useState(false);
   
   useEffect(() => {
     return () => {
@@ -33,7 +32,6 @@ const SelectScreen: React.FC = () => {
     const alarmTimeout = setTimeout(() => {
       setAssaultAlarm(false);
       setAssaultText(true);
-      setAssaultBgmPlaying(true);
     }, 3000);
     
     const battleTimeout = setTimeout(() => {
@@ -62,33 +60,6 @@ const SelectScreen: React.FC = () => {
 
   return (
     <MobileContainer backgroundClassName={!showAssault ? "bg-white" : "bg-black"}>
-      {/* Select Screen BGM */}
-      {!showAssault && (
-        <AudioPlayer 
-          src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/ae0e945c-84c2-4272-b702-4ad2bd0aa8cb/%E3%81%8A%E6%97%A5%E6%A7%98%E3%81%A8%E5%B0%91%E5%A5%B3.mp3?table=block&id=1ba25ac2-cb4e-80b3-a0b4-c8d5ac4f223d&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=R411RNajqlmCZWMlkfQkcO2krTCgr_gbZadQ43xvE5U"
-          loop={true}
-          autoPlay={true}
-        />
-      )}
-
-      {/* Alarm sound for assault mode */}
-      {assaultAlarm && (
-        <AudioPlayer 
-          src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/270027e7-c38f-4c1e-a4c8-63627ad75857/keihou.mp3?table=block&id=1ba25ac2-cb4e-8097-bf5b-fbd90ec67685&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=AWhlmCIAAdpGQZ89hhfJ8wghwbMXKbWbU3ra4JVybbQ"
-          loop={false}
-          autoPlay={true}
-        />
-      )}
-
-      {/* BGM for Yuji assault mode */}
-      {assaultBgmPlaying && (
-        <AudioPlayer 
-          src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/cd7733b1-e48e-4e13-b2aa-996303c01390/%E4%BF%BA%E3%81%AF%E3%82%86%E3%81%86%E3%81%98%E3%80%81%E3%81%8A%E3%81%8A%E3%81%8F%E3%81%BC%E3%82%86%E3%81%86%E3%81%98.mp3?table=block&id=1ba25ac2-cb4e-8035-8682-c3baf8c96f62&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=mjK5VRx5h17LF6YMyj1yfa9EDrZA0CJKAjSYMF3cKpw"
-          loop={true}
-          autoPlay={true}
-        />
-      )}
-
       {!showAssault ? (
         <div className="flex flex-col h-full bg-white">
           <div className="p-4 border-b flex items-center">
@@ -213,6 +184,8 @@ const SelectScreen: React.FC = () => {
         </div>
       ) : (
         <div className="min-h-full bg-black relative overflow-hidden">
+          {assaultAlarm && <AudioPlayer src="/audios/keihou.mp3" loop={false} autoPlay />}
+          
           {assaultAlarm && (
             <div className="absolute inset-0 z-10 animate-pulse">
               <img 

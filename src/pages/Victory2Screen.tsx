@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -5,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
-import AudioPlayer from '@/components/AudioPlayer';
 
 const Victory2Screen: React.FC = () => {
   const { 
@@ -22,8 +22,10 @@ const Victory2Screen: React.FC = () => {
   const [isFromDefeat, setIsFromDefeat] = useState(false);
   const [finalBattleTime, setFinalBattleTime] = useState("00:00");
   
+  // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {
-    if (seconds > 6000) {
+    // Ensure timer resets at 99:99
+    if (seconds > 6000) { // 60 sec * 100 min
       return "99:99";
     }
     const minutes = Math.floor(seconds / 60);
@@ -32,31 +34,38 @@ const Victory2Screen: React.FC = () => {
   };
 
   useEffect(() => {
+    // Ensure timer is stopped
     pauseBattleTimer();
     
+    // 保存されたタイマー値があれば使用する
     const savedTime = sessionStorage.getItem('finalBattleTime');
     if (savedTime) {
       setFinalBattleTime(savedTime);
     } else {
+      // Save the final battle time
       const formattedTime = formatTime(battleTimer);
       setFinalBattleTime(formattedTime);
       sessionStorage.setItem('finalBattleTime', formattedTime);
     }
     
+    // Check if this screen was reached after a defeat
     const currentPath = window.location.pathname;
     const urlParams = new URLSearchParams(window.location.search);
     const fromDefeat = urlParams.get('from') === 'defeat' || sessionStorage.getItem('fromDefeat') === 'true';
     
     setIsFromDefeat(fromDefeat);
     
+    // Show appropriate toast based on victory/defeat status
     if (fromDefeat) {
-      sessionStorage.setItem('fromDefeat', 'true');
+      sessionStorage.setItem('fromDefeat', 'true'); // Remember defeat status
       toast.error('ゆうじに敗北しました', {
         description: '次回は頑張りましょう！',
         duration: 3000,
       });
     } else {
+      // Clear any previous defeat status
       sessionStorage.removeItem('fromDefeat');
+      // Show victory toast
       toast.success('ゆうじに勝利しました！', {
         description: 'おめでとうございます！',
         duration: 3000,
@@ -66,15 +75,18 @@ const Victory2Screen: React.FC = () => {
 
   const handleContinue = () => {
     if (isFromDefeat) {
+      // If coming from defeat, go to endingC
       handleScreenTransition('endingC');
       navigate('/endingC');
     } else {
+      // Normal flow - go to endingA
       handleScreenTransition('endingA');
       navigate('/endingA');
     }
   };
   
   const handleReturnToStart = () => {
+    // Reset battle state, clear defeat status, and redirect to index page
     sessionStorage.removeItem('fromDefeat');
     resetBattleState();
     handleScreenTransition('index');
@@ -82,6 +94,7 @@ const Victory2Screen: React.FC = () => {
   };
   
   const handleFightAgain = () => {
+    // Reset battle state and clear defeat status
     sessionStorage.removeItem('fromDefeat');
     resetBattleState();
     handleScreenTransition('battle2');
@@ -89,8 +102,10 @@ const Victory2Screen: React.FC = () => {
   };
   
   const handleFollow = () => {
+    // Update followed state
     setIsFollowed(!isFollowed);
     
+    // Open link in new tab when following
     if (!isFollowed) {
       window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
     }
@@ -98,12 +113,6 @@ const Victory2Screen: React.FC = () => {
 
   return (
     <MobileContainer backgroundClassName="bg-white">
-      <AudioPlayer 
-        src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/a44a510a-0da9-46d6-9d70-ddeb68b9f3c0/syouri.mp3?table=block&id=1ba25ac2-cb4e-8053-b5be-d99d848c557b&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=MedUZRSs0R4-GLmakmxYgAZ_HxcnwR6meCjmouLfKVE" 
-        loop={false} 
-        autoPlay={true} 
-      />
-      
       <div 
         className="bg-white text-black flex flex-col items-center justify-between h-full"
         style={{ 
@@ -111,20 +120,25 @@ const Victory2Screen: React.FC = () => {
           boxSizing: 'border-box'
         }}
       >
+        {/* Main content - centered vertically */}
         <div className="w-full flex flex-col items-center justify-center flex-1">
+          {/* Live ended text */}
           <div className="text-center mb-6">
             <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
             
+            {/* Time display - shows final battle time */}
             <div className="text-[12px] text-gray-500 mb-2">
               {finalBattleTime}
             </div>
             
+            {/* Comment count */}
             <div className="flex items-center justify-center gap-1 text-[12px] text-gray-500">
               <MessageCircle size={16} strokeWidth={1.5} />
               <span>{totalComments}</span>
             </div>
           </div>
           
+          {/* Player profile with follow button */}
           <div className="flex items-center justify-center gap-2 mb-6">
             <img 
               src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
@@ -150,6 +164,7 @@ const Victory2Screen: React.FC = () => {
           </div>
         </div>
         
+        {/* Action buttons at the bottom */}
         <div className="w-full space-y-3 pb-4">
           <Button
             onClick={handleContinue}

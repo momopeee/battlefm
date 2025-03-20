@@ -7,15 +7,13 @@ interface AudioPlayerProps {
   loop?: boolean;
   autoPlay?: boolean;
   volume?: number;
-  startPosition?: number; // Add support for starting position in seconds
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ 
   src, 
   loop = false, 
   autoPlay = true,
-  volume = 1.0,
-  startPosition = 0 // Default to starting at the beginning
+  volume = 1.0
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { bgmEnabled } = useApp();
@@ -39,11 +37,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     // Update volume
     audioRef.current.volume = volume;
 
-    // Set the start position if specified
-    if (startPosition > 0) {
-      audioRef.current.currentTime = startPosition;
-    }
-
     // Play or pause based on bgmEnabled state and autoPlay setting
     if (bgmEnabled && autoPlay) {
       // Using a promise to handle autoplay restrictions
@@ -65,24 +58,20 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         audioRef.current = null;
       }
     };
-  }, [src, loop, bgmEnabled, autoPlay, volume, startPosition]);
+  }, [src, loop, bgmEnabled, autoPlay, volume]);
 
   // Effect to handle bgmEnabled changes
   useEffect(() => {
     if (!audioRef.current) return;
     
-    // Only control BGM playback with the bgmEnabled flag
-    // Sound effects should play regardless
-    if (loop) {
-      if (bgmEnabled) {
-        audioRef.current.play().catch(error => {
-          console.error("Audio playback prevented by browser:", error);
-        });
-      } else {
-        audioRef.current.pause();
-      }
+    if (bgmEnabled) {
+      audioRef.current.play().catch(error => {
+        console.error("Audio playback prevented by browser:", error);
+      });
+    } else {
+      audioRef.current.pause();
     }
-  }, [bgmEnabled, loop]);
+  }, [bgmEnabled]);
 
   return null; // This component doesn't render anything
 };

@@ -47,19 +47,15 @@ const Battle1Screen: React.FC = () => {
 
   // BGM URLs
   const battleBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/25dcdcc6-7a5a-47a2-9406-e65a76e382ba/toru.mp3?table=block&id=1ba25ac2-cb4e-8044-92be-e2545318adf3&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=MHFbJx9mCs0X6KbOv59pptHsCjNnl8kiLkpKAHHl-_U";
-  const victoryBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/a44a510a-0da9-46d6-9d70-ddeb68b9f3c0/syouri.mp3?table=block&id=1ba25ac2-cb4e-8053-b5be-d99d848c557b&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=MedUZRSs0R4-GLmakmxYgAZ_HxcnwR6meCjmouLfKVE";
+  const victoryBgmUrl = "https://soundcloud.com/davis-momoyama/syouri/s-u6HAdaFT0Sb?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
   const defeatBgmUrl = "https://soundcloud.com/davis-momoyama/orehamou/s-q3IJA3aoBNH?in=davis-momoyama/sets/battlefm/s-NbrA67b7tx5";
-  // New BGM for Soso's special skill
-  const sosoSpecialBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/1c45cbeb-2096-44c9-bb81-88def03f8f3c/%E3%81%98%E3%81%8D%E3%81%9D%E3%81%86%E3%81%9D%E3%81%86.mp3?table=block&id=1bb25ac2-cb4e-80bc-a1b1-f329bfa138f5&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=6P7r540RJ3gTPZwAhXxoSN6yiQCsgL0z1OxYDhi-y0U";
 
   // Get the current BGM based on battle state
   const currentBgm = battleResult === 'victory' 
     ? victoryBgmUrl 
     : battleResult === 'defeat' 
       ? defeatBgmUrl 
-      : sosoHealMode
-        ? sosoSpecialBgmUrl
-        : battleBgmUrl;
+      : battleBgmUrl;
 
   return (
     <MobileContainer

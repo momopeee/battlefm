@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
-import AudioPlayer from '@/components/AudioPlayer';
 
 const Victory1Screen: React.FC = () => {
   const { 
@@ -71,13 +70,6 @@ const Victory1Screen: React.FC = () => {
 
   return (
     <MobileContainer backgroundClassName="bg-white">
-      {/* Victory BGM */}
-      <AudioPlayer 
-        src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/a44a510a-0da9-46d6-9d70-ddeb68b9f3c0/syouri.mp3?table=block&id=1ba25ac2-cb4e-8053-b5be-d99d848c557b&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742335200000&signature=MedUZRSs0R4-GLmakmxYgAZ_HxcnwR6meCjmouLfKVE" 
-        loop={false} 
-        autoPlay={true} 
-      />
-      
       <div 
         className="bg-white text-black flex flex-col items-center justify-between h-full"
         style={{ 
