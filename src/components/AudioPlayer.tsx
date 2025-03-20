@@ -64,14 +64,18 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   useEffect(() => {
     if (!audioRef.current) return;
     
-    if (bgmEnabled) {
-      audioRef.current.play().catch(error => {
-        console.error("Audio playback prevented by browser:", error);
-      });
-    } else {
-      audioRef.current.pause();
+    // Only control BGM playback with the bgmEnabled flag
+    // Sound effects should play regardless
+    if (loop) {
+      if (bgmEnabled) {
+        audioRef.current.play().catch(error => {
+          console.error("Audio playback prevented by browser:", error);
+        });
+      } else {
+        audioRef.current.pause();
+      }
     }
-  }, [bgmEnabled]);
+  }, [bgmEnabled, loop]);
 
   return null; // This component doesn't render anything
 };
