@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -6,6 +7,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
+import { RESULT_SCREEN_BGM } from '@/constants/audioUrls';
 
 const Result2Screen: React.FC = () => {
   const { 
@@ -77,7 +79,7 @@ const Result2Screen: React.FC = () => {
 
   return (
     <MobileContainer backgroundClassName="bg-white">
-      <AudioPlayer src={defeatBgmUrl} loop={true} autoPlay={true} />
+      <AudioPlayer src={RESULT_SCREEN_BGM} loop={true} autoPlay={true} id="result2-bgm" />
       
       <div 
         className="bg-white text-black flex flex-col items-center justify-between h-full"

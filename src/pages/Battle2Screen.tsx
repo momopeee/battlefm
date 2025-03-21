@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -25,7 +24,9 @@ import {
   DEFEAT_BGM, 
   BUTTON_SOUND,
   ATTACK_SOUND,
-  SPECIAL_SOUND
+  SPECIAL_SOUND,
+  RUN_AWAY_SOUND,
+  HIGHBALL_SOUND
 } from '@/constants/audioUrls';
 
 // Player attack comments for Yuji battle - 文字化け修正
@@ -285,7 +286,7 @@ const Battle2Screen: React.FC = () => {
       addComment('とおる＠経営参謀', 'え？ちょっとまって、なに？なに？ちょっとまって？えっ？');
       
       setTimeout(() => {
-        addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10の���メージを受けた', true);
+        addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた', true);
         
         setPlayer(prev => ({
           ...prev,
@@ -393,7 +394,7 @@ const Battle2Screen: React.FC = () => {
     setAttackInProgress(true);
     
     if (specialModeActive) {
-      setSoundEffect('/audios/enemy_special.mp3');
+      setSoundEffect(SPECIAL_SOUND);
       
       const specialComment = yujiSpecialComments[Math.floor(Math.random() * yujiSpecialComments.length)];
       addComment('ゆうじ＠陽気なおじさん', specialComment);
@@ -425,7 +426,7 @@ const Battle2Screen: React.FC = () => {
         setAttackInProgress(false);
       }, 1000);
     } else {
-      setSoundEffect('/audios/enemy_attack.mp3');
+      setSoundEffect(ATTACK_SOUND);
       
       const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
       
@@ -458,6 +459,7 @@ const Battle2Screen: React.FC = () => {
   const handleRunAway = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
+    setSoundEffect(RUN_AWAY_SOUND);
     addComment('とおる＠経営参謀', "逃げよう...");
     
     setTimeout(() => {
@@ -484,6 +486,7 @@ const Battle2Screen: React.FC = () => {
   const handleHighball = () => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
+    setSoundEffect(HIGHBALL_SOUND);
     addComment('とおる＠経営参謀', 'ぐびぐび、うへぇ～、もう一杯お願いします。メガで。');
     
     setTimeout(() => {
@@ -497,7 +500,7 @@ const Battle2Screen: React.FC = () => {
       } else {
         const highballEffects = [
           "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
-          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった��\nとおるは10のダメージを受��た",
+          "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
           "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
         ];
         
