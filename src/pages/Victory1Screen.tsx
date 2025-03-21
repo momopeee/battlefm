@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -7,7 +6,6 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
-import AudioTester from '@/components/AudioTester';
 import { VICTORY_SCREEN_BGM, BUTTON_SOUND } from '@/constants/audioUrls';
 
 const Victory1Screen: React.FC = () => {
@@ -124,8 +122,6 @@ const Victory1Screen: React.FC = () => {
           onEnded={handleSoundEnded}
         />
       )}
-      
-      <AudioTester />
       
       <div 
         className="bg-white text-black flex flex-col items-center justify-between h-full"
