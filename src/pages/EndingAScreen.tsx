@@ -90,8 +90,13 @@ const EndingAScreen: React.FC = () => {
         
         <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden perspective">
           <div className="absolute w-full max-w-3xl text-center transform rotate3d">
-            <div className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-4 sm:p-6 rounded" 
-              style={{ fontSize: isMobile ? 'calc(0.875rem + 2px)' : 'calc(1.125rem + 4px)' }}>
+            <div 
+              className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-4 sm:p-6 rounded" 
+              style={{ 
+                fontSize: isMobile ? 'calc(0.875rem + 2px)' : 'calc(1.125rem + 4px)',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 5px #000000e6, 0 0 10px #0006'
+              }}
+            >
               <p>
                 とおるは勝利した！<br />
                 <br />

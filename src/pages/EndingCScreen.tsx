@@ -1,11 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileContainer from '@/components/MobileContainer';
+import AudioPlayer from '@/components/AudioPlayer';
+import { ENDING_BGM, BUTTON_SOUND } from '@/constants/audioUrls';
 
 const EndingCScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -16,23 +18,41 @@ const EndingCScreen: React.FC = () => {
     handleScreenTransition,
     resetBattleState
   } = useApp();
+  const [buttonSound, setButtonSound] = useState<string | null>(null);
+
+  // ボタンクリック時の効果音を再生し、十分な再生時間を確保するヘルパー関数
+  const playButtonSoundAndDoAction = (action: () => void) => {
+    setButtonSound(BUTTON_SOUND);
+    // 効果音の再生に十分な時間を確保
+    setTimeout(() => {
+      action();
+      // 音声が終了する前に新しい画面に遷移するため、タイマーでリセット
+      setTimeout(() => setButtonSound(null), 500);
+    }, 200);
+  };
 
   const handleRetry = () => {
-    // Reset battle state and redirect to battle2
-    resetBattleState();
-    handleScreenTransition('battle2');
-    navigate('/battle2');
+    playButtonSoundAndDoAction(() => {
+      // Reset battle state and redirect to battle2
+      resetBattleState();
+      handleScreenTransition('battle2');
+      navigate('/battle2');
+    });
   };
 
   const handleBackToStart = () => {
-    // Reset battle state when returning to start
-    resetBattleState();
-    handleScreenTransition('index');
-    navigate('/');
+    playButtonSoundAndDoAction(() => {
+      // Reset battle state when returning to start
+      resetBattleState();
+      handleScreenTransition('index');
+      navigate('/');
+    });
   };
 
   const handleFollowYuji = () => {
-    window.open('https://stand.fm/channels/5eb17436f654bbcab4e54fa0', '_blank');
+    playButtonSoundAndDoAction(() => {
+      window.open('https://stand.fm/channels/5eb17436f654bbcab4e54fa0', '_blank');
+    });
   };
 
   return (
@@ -44,6 +64,26 @@ const EndingCScreen: React.FC = () => {
           fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
         }}
       >
+        {/* BGM Player */}
+        <AudioPlayer 
+          src={ENDING_BGM}
+          loop={true}
+          autoPlay={true}
+          volume={0.7}
+          id="ending-c-bgm"
+        />
+        
+        {/* Button sound effect player */}
+        {buttonSound && (
+          <AudioPlayer 
+            src={buttonSound} 
+            loop={false} 
+            autoPlay={true} 
+            volume={0.7}
+            id="button-sound" 
+          />
+        )}
+        
         {/* 敗北 Header */}
         <div className="w-full text-center mb-4 sm:mb-6 z-10">
           <h1 
@@ -62,8 +102,13 @@ const EndingCScreen: React.FC = () => {
         
         <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden perspective">
           <div className="absolute w-full max-w-3xl text-center transform rotate3d">
-            <div className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-4 sm:p-6 rounded" 
-              style={{ fontSize: isMobile ? 'calc(0.875rem + 2px)' : 'calc(1.125rem + 4px)' }}>
+            <div 
+              className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-4 sm:p-6 rounded" 
+              style={{ 
+                fontSize: isMobile ? 'calc(0.875rem + 2px)' : 'calc(1.125rem + 4px)',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 5px #000000e6, 0 0 10px #0006'
+              }}
+            >
               <p>
                 とおるは敗れた！<br />
                 <br />
