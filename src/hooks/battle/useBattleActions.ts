@@ -228,9 +228,11 @@ export const useBattleActions = ({
     // Add collaboration comment
     addComment(opponent1.name, collaborationComment);
     
-    // Heal amount and attack damage calculations
+    // Heal amount calculation
     const healAmount = 20;
-    const damageToPlayer = Math.floor(Math.random() * (opponent1.attackMax - opponent1.attackMin + 1)) + opponent1.attackMin;
+    
+    // New damage calculation: 20-45 range for そーそー's special attack
+    const damageToPlayer = Math.floor(Math.random() * 26) + 20; // 20-45 damage range
     
     // Add system comments for both healing and attacking
     addComment("システム", `そーそーの体力が${healAmount}回復した`, true);
