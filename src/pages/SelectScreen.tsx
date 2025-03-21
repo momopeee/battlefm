@@ -8,6 +8,12 @@ import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+// New audio URLs
+const NORMAL_BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/6-1-select.mp3";
+const ALARM_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/6-a-keihou.mp3";
+const ASSAULT_BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/6-2-ugmode.mp3";
+const BUTTON_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3";
+
 const SelectScreen: React.FC = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
   const navigate = useNavigate();
@@ -18,11 +24,7 @@ const SelectScreen: React.FC = () => {
   const [showBottomMenu, setShowBottomMenu] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([]);
-  
-  // Audio URLs
-  const normalBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/ae0e945c-84c2-4272-b702-4ad2bd0aa8cb/%E3%81%8A%E6%97%A5%E6%A7%98%E3%81%A8%E5%B0%91%E5%A5%B3.mp3?table=block&id=1ba25ac2-cb4e-80b3-a0b4-c8d5ac4f223d&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=6UBs6EospGVZkUQr7HbdaMiQFxf6S1563TJ0R4uGXvc&downloadName=%E3%81%8A%E6%97%A5%E6%A7%98%E3%81%A8%E5%B0%91%E5%A5%B3.mp3";
-  const alarmSoundUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/270027e7-c38f-4c1e-a4c8-63627ad75857/keihou.mp3?table=block&id=1ba25ac2-cb4e-8097-bf5b-fbd90ec67685&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=s2l5GBC1fJ9-IgN891PveaTllhFB1p5fA0ekrqpT-48&downloadName=keihou.mp3";
-  const assaultBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/598bdf59-3268-45c2-bc9c-2f4d8437f4ca/ug1.mp3?table=block&id=1ba25ac2-cb4e-80e0-8e33-f7ca12ee18df&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=v-Ygxk0KW4KWBfBdj-x2XNH1BaF9NCGn7mOpb3im4uo&downloadName=ug1.mp3";
+  const [buttonSound, setButtonSound] = useState<string | null>(null);
   
   useEffect(() => {
     return () => {
@@ -33,6 +35,7 @@ const SelectScreen: React.FC = () => {
   const handleSelectClick = () => {
     setShowAssault(true);
     setAssaultAlarm(true);
+    setButtonSound(BUTTON_SOUND_URL);
     
     const alarmTimeout = setTimeout(() => {
       setAssaultAlarm(false);
@@ -47,6 +50,7 @@ const SelectScreen: React.FC = () => {
   };
 
   const handleSkip = () => {
+    setButtonSound(BUTTON_SOUND_URL);
     timeouts.forEach(timeout => clearTimeout(timeout));
     handleScreenTransition('battle2');
     navigate('/battle2');
@@ -54,6 +58,7 @@ const SelectScreen: React.FC = () => {
 
   const handleMenuButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setButtonSound(BUTTON_SOUND_URL);
     setShowWarning(true);
     
     const warningTimeout = setTimeout(() => {
@@ -66,13 +71,48 @@ const SelectScreen: React.FC = () => {
   return (
     <MobileContainer backgroundClassName={!showAssault ? "bg-white" : "bg-black"}>
       {/* Main BGM for normal mode */}
-      {!showAssault && <AudioPlayer src={normalBgmUrl} loop={true} autoPlay={true} />}
+      {!showAssault && (
+        <AudioPlayer 
+          src={NORMAL_BGM_URL} 
+          loop={true} 
+          autoPlay={true} 
+          volume={0.7}
+          id="select-normal-bgm"
+        />
+      )}
       
       {/* Alarm sound when assault mode activates */}
-      {assaultAlarm && <AudioPlayer src={alarmSoundUrl} loop={false} autoPlay={true} />}
+      {assaultAlarm && (
+        <AudioPlayer 
+          src={ALARM_SOUND_URL} 
+          loop={false} 
+          autoPlay={true} 
+          volume={0.7}
+          id="select-alarm-sound"
+        />
+      )}
       
       {/* BGM for assault mode */}
-      {assaultText && <AudioPlayer src={assaultBgmUrl} loop={true} autoPlay={true} />}
+      {assaultText && (
+        <AudioPlayer 
+          src={ASSAULT_BGM_URL} 
+          loop={true} 
+          autoPlay={true} 
+          volume={0.7}
+          id="select-assault-bgm"
+        />
+      )}
+      
+      {/* Button sound effect player */}
+      {buttonSound && (
+        <AudioPlayer 
+          src={buttonSound} 
+          loop={false} 
+          autoPlay={true} 
+          volume={0.7}
+          id="button-sound" 
+        />
+      )}
       
       {!showAssault ? (
         <div className="flex flex-col h-full bg-white">

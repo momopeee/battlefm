@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -7,6 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
 import AudioTester from '@/components/AudioTester';
+
+// New audio URLs
+const VICTORY_BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/4-1-victory.mp3";
+const BUTTON_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3";
 
 const Victory1Screen: React.FC = () => {
   const { 
@@ -19,8 +24,7 @@ const Victory1Screen: React.FC = () => {
   
   const navigate = useNavigate();
   const [isFollowed, setIsFollowed] = useState(false);
-  
-  const victoryBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/9982b577-fb1e-4011-9436-3e13286c44f3/%E9%81%94%E6%88%90%EF%BC%81_M299.mp3?table=block&id=1ba25ac2-cb4e-807d-9743-e96dc72d32a7&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=cMCLQEHa79ZJd8i0yGAsN_dvwXvOXTZ_UDkRRMz_Sxk&downloadName=%E9%81%94%E6%88%90%EF%BC%81_M299.mp3";
+  const [buttonSound, setButtonSound] = useState<string | null>(null);
   
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -35,16 +39,18 @@ const Victory1Screen: React.FC = () => {
     });
     
     console.log('Rendered Victory1Screen');
-    console.log('Attempting to play victory BGM:', victoryBgmUrl);
+    console.log('Attempting to play victory BGM:', VICTORY_BGM_URL);
   }, []);
 
   const handleContinue = () => {
+    setButtonSound(BUTTON_SOUND_URL);
     console.log('Navigating to select screen from Victory1Screen');
     handleScreenTransition('select');
     navigate('/select');
   };
   
   const handleReturnToStart = () => {
+    setButtonSound(BUTTON_SOUND_URL);
     console.log('Returning to start from Victory1Screen');
     resetBattleState();
     handleScreenTransition('index');
@@ -52,6 +58,7 @@ const Victory1Screen: React.FC = () => {
   };
   
   const handleFightAgain = () => {
+    setButtonSound(BUTTON_SOUND_URL);
     console.log('Fighting again from Victory1Screen');
     resetBattleState();
     handleScreenTransition('battle1');
@@ -59,6 +66,7 @@ const Victory1Screen: React.FC = () => {
   };
   
   const handleFollow = () => {
+    setButtonSound(BUTTON_SOUND_URL);
     setIsFollowed(!isFollowed);
     
     if (!isFollowed) {
@@ -69,12 +77,23 @@ const Victory1Screen: React.FC = () => {
   return (
     <MobileContainer backgroundClassName="bg-white">
       <AudioPlayer 
-        src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/9982b577-fb1e-4011-9436-3e13286c44f3/%E9%81%94%E6%88%90%EF%BC%81_M299.mp3?table=block&id=1ba25ac2-cb4e-807d-9743-e96dc72d32a7&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=cMCLQEHa79ZJd8i0yGAsN_dvwXvOXTZ_UDkRRMz_Sxk&downloadName=%E9%81%94%E6%88%90%EF%BC%81_M299.mp3" 
+        src={VICTORY_BGM_URL} 
         loop={true} 
         autoPlay={true} 
         volume={0.7}
-        key="victory-bgm" 
+        id="victory1-bgm" 
       />
+      
+      {/* Button sound effect player */}
+      {buttonSound && (
+        <AudioPlayer 
+          src={buttonSound} 
+          loop={false} 
+          autoPlay={true} 
+          volume={0.7}
+          id="button-sound" 
+        />
+      )}
       
       <AudioTester />
       

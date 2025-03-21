@@ -17,6 +17,12 @@ import BattleActions from '@/components/battle/BattleActions';
 import CommentInput from '@/components/battle/CommentInput';
 import { useBattleLogic } from '@/hooks/useBattleLogic';
 
+// New audio URLs
+const NORMAL_BATTLE_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-1-torusong.mp3";
+const SPECIAL_BATTLE_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-2-sosokpop.mp3";
+const VICTORY_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-3-a-syouri.mp3";
+const DEFEAT_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-3-b-haiboku.mp3";
+
 const Battle1Screen: React.FC = () => {
   const { bgmEnabled, toggleBgm } = useApp();
   const isMobile = useIsMobile();
@@ -44,22 +50,16 @@ const Battle1Screen: React.FC = () => {
     battleResult
   } = useBattleLogic();
 
-  // BGM URLs
-  const normalBattleBgm = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/25dcdcc6-7a5a-47a2-9406-e65a76e382ba/toru.mp3?table=block&id=1ba25ac2-cb4e-8044-92be-e2545318adf3&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=qbP3MvumpI5fvZIquS2m7Fyij1YM_M2rIatYrVf2W38&downloadName=toru.mp3";
-  const specialBattleBgm = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/1c45cbeb-2096-44c9-bb81-88def03f8f3c/%E3%81%98%E3%81%8D%E3%81%9D%E3%81%86%E3%81%9D%E3%81%86.mp3?table=block&id=1bb25ac2-cb4e-80bc-a1b1-f329bfa138f5&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=KvO61I37OPX8AGUYU2NJngHe3kiaw0pSqoogYDF2rR8&downloadName=%E3%81%98%E3%81%8D%E3%81%9D%E3%81%86%E3%81%9D%E3%81%86.mp3";
-  const victoryBgm = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/a44a510a-0da9-46d6-9d70-ddeb68b9f3c0/syouri.mp3?table=block&id=1ba25ac2-cb4e-8053-b5be-d99d848c557b&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=GZSI_5GbJsaCShnEwPHKReOtuqD4oltoVoXdOHXdcR0&downloadName=syouri.mp3";
-  const defeatBgm = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/f024ae7b-c18a-4906-8137-a1d878bd9033/orehamou.mp3?table=block&id=1ba25ac2-cb4e-802f-a41f-fc844e7d404f&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=2YC2MtV0c1QYSOk6yV1TKwnIrqdH-br8D8iKfqDjez4&downloadName=orehamou.mp3";
-
   // Get the current BGM based on battle state
   const getCurrentBgm = () => {
     if (battleResult === 'victory') {
-      return victoryBgm;
+      return VICTORY_BGM;
     } else if (battleResult === 'defeat') {
-      return defeatBgm;
+      return DEFEAT_BGM;
     } else if (sosoHealMode) {
-      return specialBattleBgm;
+      return SPECIAL_BATTLE_BGM;
     } else {
-      return normalBattleBgm;
+      return NORMAL_BATTLE_BGM;
     }
   };
 
@@ -83,6 +83,8 @@ const Battle1Screen: React.FC = () => {
           src={currentBgm} 
           loop={battleResult === null} 
           autoPlay={true} 
+          volume={0.7}
+          id="battle1-bgm"
         />
         
         {/* Top section with title and timer */}

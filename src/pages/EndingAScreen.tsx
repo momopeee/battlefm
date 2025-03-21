@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Volume2, VolumeX, RefreshCw, Home, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import AudioPlayer from '@/components/AudioPlayer';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileContainer from '@/components/MobileContainer';
+
+// New audio URLs
+const BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/8-1-kyomancome.mp3";
+const BUTTON_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3";
 
 const EndingAScreen: React.FC = () => {
   const navigate = useNavigate();
@@ -17,8 +21,10 @@ const EndingAScreen: React.FC = () => {
     handleScreenTransition,
     resetBattleState
   } = useApp();
+  const [buttonSound, setButtonSound] = useState<string | null>(null);
 
   const handleRetry = () => {
+    setButtonSound(BUTTON_SOUND_URL);
     // Reset battle state and redirect to battle2
     resetBattleState();
     handleScreenTransition('battle2');
@@ -26,6 +32,7 @@ const EndingAScreen: React.FC = () => {
   };
 
   const handleBackToStart = () => {
+    setButtonSound(BUTTON_SOUND_URL);
     // Reset battle state when returning to start
     resetBattleState();
     handleScreenTransition('index');
@@ -33,6 +40,7 @@ const EndingAScreen: React.FC = () => {
   };
 
   const handleFollowTooru = () => {
+    setButtonSound(BUTTON_SOUND_URL);
     window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
   };
 
@@ -45,7 +53,24 @@ const EndingAScreen: React.FC = () => {
           fontFamily: '"Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif',
         }}
       >
-        <AudioPlayer src="/audios/victory.mp3" loop={false} autoPlay />
+        <AudioPlayer 
+          src={BGM_URL} 
+          loop={true} 
+          autoPlay={true}
+          volume={0.7}
+          id="ending-a-bgm"
+        />
+        
+        {/* Button sound effect player */}
+        {buttonSound && (
+          <AudioPlayer 
+            src={buttonSound} 
+            loop={false} 
+            autoPlay={true} 
+            volume={0.7}
+            id="button-sound" 
+          />
+        )}
         
         {/* 完全勝利 Header */}
         <div className="w-full text-center mb-4 sm:mb-6 z-10">

@@ -16,6 +16,13 @@ import BattleActions from '@/components/battle/BattleActions';
 import CommentInput from '@/components/battle/CommentInput';
 import PlayerInfo from '@/components/battle/PlayerInfo';
 
+// New audio URLs
+const NORMAL_BATTLE_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-1-torusong.mp3";
+const SPECIAL_BATTLE_BGM = "https://tangerine-valkyrie-189847.netlify.app/7-a-kurafan.mp3";
+const VICTORY_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-3-a-syouri.mp3";
+const DEFEAT_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-3-b-haiboku.mp3";
+const BUTTON_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3";
+
 // Player attack comments for Yuji battle
 const playerAttackComments = [
   "ゆうじは人の相談にのってはいけない人間だと確信している",
@@ -53,7 +60,7 @@ const yujiSpecialComments = [
 const yujiAttackComments = [
   "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
   "経営の何がわからないのかわからないってのが経営なんですよぉ〜",
-  "経営を上手くやるには、波長の合う人とやるのがいちばんですね〜",
+  "経営を上手くやるには、波長の合う人とや���のがいちばんですね〜",
   "売上を上げるには、まずは表に出て顔と名前を売るのが大事ですよ",
   "ビジネスを成長させるには友達の数を増やすことですね",
   "やまにーの言うことは難しすぎて、僕には理解できないんですよぉ〜",
@@ -250,6 +257,9 @@ const Battle2Screen: React.FC = () => {
     }
     
     pauseBattleTimer();
+    
+    // Play button sound
+    setSoundEffect(BUTTON_SOUND_URL);
     
     if (battleResult === 'victory') {
       handleScreenTransition('victory2');
@@ -604,9 +614,13 @@ const Battle2Screen: React.FC = () => {
         }}
       >
         <AudioPlayer 
-          src="/audios/battle.mp3"
+          src={battleResult === 'victory' ? VICTORY_BGM : 
+             battleResult === 'defeat' ? DEFEAT_BGM : 
+             specialModeActive ? SPECIAL_BATTLE_BGM : NORMAL_BATTLE_BGM}
           loop={battleResult === null}
           autoPlay={true}
+          volume={0.7}
+          id="battle2-bgm"
         />
 
         {soundEffect && (
@@ -615,6 +629,7 @@ const Battle2Screen: React.FC = () => {
             loop={false} 
             autoPlay={true} 
             volume={0.7}
+            id="battle2-effect"
           />
         )}
         

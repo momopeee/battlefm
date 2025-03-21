@@ -9,8 +9,13 @@ import { useApp } from '@/context/AppContext';
 // アプリケーションのバージョン
 const APP_VERSION = "Ver.3.167.0";
 
+// New audio URLs
+const BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/1-1-kyoman01.mp3";
+const BUTTON_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3";
+
 const Index = () => {
-  const { bgmEnabled } = useApp();
+  const { bgmEnabled, toggleBgm } = useApp();
+  const [buttonSound, setButtonSound] = React.useState<string | null>(null);
   
   // Add user interaction logging
   useEffect(() => {
@@ -42,6 +47,12 @@ const Index = () => {
       document.removeEventListener('touchstart', handleUserInteraction);
     };
   }, [bgmEnabled]);
+
+  const handleStartClick = () => {
+    setButtonSound(BUTTON_SOUND_URL);
+    // Reset the sound after a short delay
+    setTimeout(() => setButtonSound(null), 1000);
+  };
   
   return (
     <MobileContainer
@@ -51,12 +62,23 @@ const Index = () => {
     >
       {/* Index page BGM */}
       <AudioPlayer 
-        src="https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/df4d3cfd-d360-49ea-90b4-2446850bab38/kyoman.mp3?table=block&id=1ba25ac2-cb4e-800d-8735-d8d4f50eada9&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=fiCeZebhy4g4pgfsYTURb9NYxKWhQmK4yoTSOQ6BSR8&downloadName=kyoman.mp3" 
+        src={BGM_URL} 
         loop={true} 
         autoPlay={true} 
         volume={0.7}
-        key="index-bgm"
+        id="index-bgm"
       />
+      
+      {/* Button sound effect player */}
+      {buttonSound && (
+        <AudioPlayer 
+          src={buttonSound} 
+          loop={false} 
+          autoPlay={true} 
+          volume={0.7}
+          id="button-sound" 
+        />
+      )}
 
       <div className="flex flex-col items-center justify-between h-full px-4 py-8">
         <div className="flex-1 flex items-center justify-center">
@@ -71,6 +93,7 @@ const Index = () => {
             <Button 
               asChild
               className="w-48 sm:w-64 text-base sm:text-lg py-4 sm:py-6 bg-pink-500 hover:bg-pink-600 rounded-full font-bold"
+              onClick={handleStartClick}
             >
               <Link to="/start">スタート</Link>
             </Button>
