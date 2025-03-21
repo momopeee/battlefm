@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -25,7 +24,6 @@ const Result1Screen: React.FC = () => {
   const [buttonSound, setButtonSound] = useState<string | null>(null);
   const [actionInProgress, setActionInProgress] = useState(false);
   
-  // Format battle time as minutes:seconds
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -33,40 +31,30 @@ const Result1Screen: React.FC = () => {
   };
 
   useEffect(() => {
-    // Ensure timer is stopped
     pauseBattleTimer();
-    
-    // Save the final battle time
     setFinalBattleTime(formatTime(battleTimer));
-    
-    // Show defeat toast - display from top only once
     toast.error('そーそーに敗北しました', {
       description: '次回は頑張りましょう！',
       duration: 3000,
       position: 'top-center',
     });
-    
     console.log('Rendered Result1Screen');
     console.log('Attempting to play defeat BGM:', RESULT_SCREEN_BGM);
 
-    // Cleanup function to handle navigation issues
     return () => {
       console.log('Unmounting Result1Screen');
       setButtonSound(null);
     };
   }, [battleTimer, pauseBattleTimer]);
 
-  // Helper function to handle button clicks with sound and prevent double-clicks
   const playButtonSoundAndDoAction = (action: () => void) => {
     if (actionInProgress) return;
     
     setActionInProgress(true);
     setButtonSound(BUTTON_SOUND);
     
-    // Wait for sound to start playing before action
     setTimeout(() => {
       action();
-      // Reset button sound and action in progress
       setTimeout(() => {
         setButtonSound(null);
         setActionInProgress(false);
@@ -77,11 +65,8 @@ const Result1Screen: React.FC = () => {
   const handleContinue = () => {
     playButtonSoundAndDoAction(() => {
       console.log('Navigating to endingB from Result1Screen');
-      // Reset state before navigation to prevent state issues
       resetBattleState();
-      // Set transition first, then navigate
       handleScreenTransition('endingB');
-      // Add a small delay before navigation to ensure state is updated
       setTimeout(() => {
         navigate('/endingB');
       }, 50);
@@ -115,14 +100,12 @@ const Result1Screen: React.FC = () => {
     });
   };
 
-  // Handle sound effect completion
   const handleSoundEnded = () => {
     console.log(`Button sound effect completed`);
   };
 
   return (
     <MobileContainer backgroundClassName="bg-white">
-      {/* Use the constant for the defeat BGM */}
       <AudioPlayer 
         src={RESULT_SCREEN_BGM} 
         loop={true} 
@@ -131,7 +114,6 @@ const Result1Screen: React.FC = () => {
         id="result1-bgm" 
       />
       
-      {/* Button sound effect player */}
       {buttonSound && (
         <AudioPlayer 
           src={buttonSound} 
@@ -150,25 +132,20 @@ const Result1Screen: React.FC = () => {
           boxSizing: 'border-box'
         }}
       >
-        {/* Main content - centered vertically */}
         <div className="w-full flex flex-col items-center justify-center flex-1">
-          {/* Live ended text */}
           <div className="text-center mb-6">
             <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
             
-            {/* Time display - uses final battle timer from state */}
             <div className="text-[12px] text-gray-500 mb-2">
               {finalBattleTime}
             </div>
             
-            {/* Comment count - shows total comments including system */}
             <div className="flex items-center justify-center gap-1 text-[12px] text-gray-500">
               <MessageCircle size={16} strokeWidth={1.5} />
               <span>{comments.length}</span>
             </div>
           </div>
           
-          {/* Player profile with follow button */}
           <div className="flex items-center justify-center gap-2 mb-6">
             <img 
               src={player.icon} 
@@ -195,12 +172,11 @@ const Result1Screen: React.FC = () => {
           </div>
         </div>
         
-        {/* Action buttons at the bottom */}
-        <div className="w-full space-y-3 pb-4">
+        <div className="w-full flex flex-col items-center space-y-3 pb-4">
           <Button
             onClick={handleContinue}
             disabled={actionInProgress}
-            className={`w-full py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-48 sm:w-64 py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             次へ進む
@@ -209,7 +185,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleFightAgain}
             disabled={actionInProgress}
-            className={`w-full py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-48 sm:w-64 py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             もう一度戦う
@@ -218,7 +194,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleReturnToStart}
             disabled={actionInProgress}
-            className={`w-full py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-48 sm:w-64 py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             スタートへ戻る

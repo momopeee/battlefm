@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -22,13 +21,10 @@ const Result2Screen: React.FC = () => {
   const [isFollowed, setIsFollowed] = useState(false);
   const [finalBattleTime, setFinalBattleTime] = useState("00:00");
   
-  // Defeat BGM URL
   const defeatBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/e30ccbfa-dce6-4565-846f-299249020356/%E8%A6%87%E8%80%85%E3%81%A8%E5%91%BC%E3%81%B0%E3%82%8C%E3%81%9F%E6%95%97%E5%8C%97%E8%80%85%E3%81%AE%E6%97%A5%E5%B8%B8.mp3?table=block&id=1ba25ac2-cb4e-80ee-8559-fdcf6a1de25a&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=Z6J2lRT9AL_7HyFiCAYGvUWFC4JNaio4ounIuRFN7y0&downloadName=%E8%A6%87%E8%80%85%E3%81%A8%E5%91%BC%E3%81%B0%E3%82%8C%E3%81%9F%E6%95%97%E5%8C%97%E8%80%85%E3%81%AE%E6%97%A5%E5%B8%B8.mp3";
-  
-  // Format battle time as minutes:seconds
+
   const formatTime = (seconds: number): string => {
-    // Ensure timer resets at 99:99
-    if (seconds > 6000) { // 60 sec * 100 min
+    if (seconds > 6000) {
       return "99:99";
     }
     const minutes = Math.floor(seconds / 60);
@@ -37,21 +33,17 @@ const Result2Screen: React.FC = () => {
   };
 
   useEffect(() => {
-    // Ensure timer is stopped
     pauseBattleTimer();
     
-    // 保存されたタイマー値があれば使用する
     const savedTime = sessionStorage.getItem('finalBattleTime');
     if (savedTime) {
       setFinalBattleTime(savedTime);
     } else {
-      // Save the final battle time
       const formattedTime = formatTime(battleTimer);
       setFinalBattleTime(formattedTime);
       sessionStorage.setItem('finalBattleTime', formattedTime);
     }
     
-    // Show defeat toast - display from top only once
     toast.error('ゆうじに敗北しました', {
       description: '次回は頑張りましょう！',
       duration: 3000,
@@ -65,24 +57,19 @@ const Result2Screen: React.FC = () => {
   };
   
   const handleReturnToStart = () => {
-    // Reset battle state and redirect to index page
     resetBattleState();
     handleScreenTransition('index');
     navigate('/');
   };
   
   const handleFightAgain = () => {
-    // Reset battle state and redirect to battle2
     resetBattleState();
     handleScreenTransition('battle2');
     navigate('/battle2');
   };
   
   const handleFollow = () => {
-    // Update followed state
     setIsFollowed(!isFollowed);
-    
-    // Open link in new tab when following
     if (!isFollowed) {
       window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
     }
@@ -90,7 +77,6 @@ const Result2Screen: React.FC = () => {
 
   return (
     <MobileContainer backgroundClassName="bg-white">
-      {/* Defeat BGM */}
       <AudioPlayer src={defeatBgmUrl} loop={true} autoPlay={true} />
       
       <div 
@@ -100,36 +86,26 @@ const Result2Screen: React.FC = () => {
           boxSizing: 'border-box'
         }}
       >
-        {/* Main content - centered vertically */}
         <div className="w-full flex flex-col items-center justify-center flex-1">
-          {/* Live ended text */}
           <div className="text-center mb-6">
             <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
-            
-            {/* Time display - shows final battle timer */}
             <div className="text-[12px] text-gray-500 mb-2">
               {finalBattleTime}
             </div>
-            
-            {/* Comment count - shows total comments including system */}
             <div className="flex items-center justify-center gap-1 text-[12px] text-gray-500">
               <MessageCircle size={16} strokeWidth={1.5} />
               <span>{comments.length}</span>
             </div>
           </div>
-          
-          {/* Player profile with follow button */}
           <div className="flex items-center justify-center gap-2 mb-6">
             <img 
               src="/lovable-uploads/59046b14-26ff-441e-a70b-ceed5a5fcb16.png" 
               alt={player.name} 
               className="w-[35px] h-[35px] rounded-full object-cover"
             />
-            
             <div className="text-[12px] font-bold text-black">
               {player.name}
             </div>
-            
             <Button
               onClick={handleFollow}
               className={`rounded-full px-3 py-1 text-[10px] h-[22px] ${
@@ -143,12 +119,10 @@ const Result2Screen: React.FC = () => {
             </Button>
           </div>
         </div>
-        
-        {/* Action buttons at the bottom */}
-        <div className="w-full space-y-3 pb-4">
+        <div className="w-full flex flex-col items-center space-y-3 pb-4">
           <Button
             onClick={handleContinue}
-            className="w-full py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm"
+            className="w-48 sm:w-64 py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm"
             style={{ height: '40px' }}
           >
             次へ進む
@@ -156,7 +130,7 @@ const Result2Screen: React.FC = () => {
           
           <Button
             onClick={handleFightAgain}
-            className="w-full py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm"
+            className="w-48 sm:w-64 py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm"
             style={{ height: '40px' }}
           >
             もう一度戦う
@@ -164,7 +138,7 @@ const Result2Screen: React.FC = () => {
           
           <Button
             onClick={handleReturnToStart}
-            className="w-full py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm"
+            className="w-48 sm:w-64 py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm"
             style={{ height: '40px' }}
           >
             スタートへ戻る
