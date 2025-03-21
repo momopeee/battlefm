@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -6,6 +7,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
+import { VICTORY_SCREEN_BGM } from '@/constants/audioUrls';
 
 const Victory2Screen: React.FC = () => {
   const { 
@@ -21,8 +23,6 @@ const Victory2Screen: React.FC = () => {
   const [isFollowed, setIsFollowed] = useState(false);
   const [isFromDefeat, setIsFromDefeat] = useState(false);
   const [finalBattleTime, setFinalBattleTime] = useState("00:00");
-  
-  const victoryBgmUrl = "https://file.notion.so/f/f/e08947dd-7133-4df9-a5bf-81ce352dd896/9982b577-fb1e-4011-9436-3e13286c44f3/%E9%81%94%E6%88%90%EF%BC%81_M299.mp3?table=block&id=1ba25ac2-cb4e-807d-9743-e96dc72d32a7&spaceId=e08947dd-7133-4df9-a5bf-81ce352dd896&expirationTimestamp=1742508000000&signature=cMCLQEHa79ZJd8i0yGAsN_dvwXvOXTZ_UDkRRMz_Sxk&downloadName=%E9%81%94%E6%88%90%EF%BC%81_M299.mp3";
   
   const formatTime = (seconds: number): string => {
     if (seconds > 6000) {
@@ -100,7 +100,7 @@ const Victory2Screen: React.FC = () => {
 
   return (
     <MobileContainer backgroundClassName="bg-white">
-      <AudioPlayer src={victoryBgmUrl} loop={true} autoPlay={true} />
+      <AudioPlayer src={VICTORY_SCREEN_BGM} loop={true} autoPlay={true} id="victory2-bgm" />
       
       <div 
         className="bg-white text-black flex flex-col items-center justify-between h-full"

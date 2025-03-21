@@ -1,4 +1,6 @@
+
 import { useNavigate } from 'react-router-dom';
+import { VICTORY_BGM, DEFEAT_BGM } from '@/constants/audioUrls';
 
 type BattleResultsProps = {
   addComment: (author: string, text: string, isSystem?: boolean) => void;
@@ -61,6 +63,7 @@ export const useBattleResults = ({
     // Final message and screen transition with clear console logs for debugging
     createTimer(() => {
       addComment("システム", "ライブが終了しました", true);
+      console.log("Victory sound set to:", VICTORY_BGM);
       console.log("Scheduling victory transition in 20 seconds...");
       
       // Show skip button after 10 seconds
@@ -110,6 +113,7 @@ export const useBattleResults = ({
       
       createTimer(() => {
         addComment("システム", "ライブが終了しました", true);
+        console.log("Defeat sound set to:", DEFEAT_BGM);
         console.log("Scheduling defeat transition to result1 in 20 seconds...");
         
         // Show skip button after 15 seconds
