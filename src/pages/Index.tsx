@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
@@ -12,17 +12,20 @@ const APP_VERSION = "Ver.3.167.0";
 
 const Index = () => {
   const { bgmEnabled, toggleBgm } = useApp();
-  const [buttonSound, setButtonSound] = React.useState<string | null>(null);
+  const [buttonSound, setButtonSound] = useState<string | null>(null);
+  const [userInteracted, setUserInteracted] = useState(false);
   
-  // Add user interaction logging
+  // Add user interaction logging and audio unblocking
   useEffect(() => {
     console.log("Index page loaded. BGM enabled:", bgmEnabled);
     
     // Attempt to unblock audio context with a silent audio element
     const unblockAudio = () => {
+      console.log("Attempting to unblock audio context");
       const silentAudio = new Audio();
       silentAudio.play().then(() => {
         console.log("Audio context unblocked by user interaction");
+        setUserInteracted(true);
         silentAudio.pause();
       }).catch(err => {
         console.log("Could not unblock audio context:", err);
@@ -39,15 +42,24 @@ const Index = () => {
     document.addEventListener('click', handleUserInteraction);
     document.addEventListener('touchstart', handleUserInteraction);
     
+    // Preload important audio files
+    const preloadAudios = [INDEX_BGM, BUTTON_SOUND];
+    preloadAudios.forEach(url => {
+      const audio = new Audio();
+      audio.src = url;
+      console.log(`Preloading audio: ${url}`);
+    });
+    
     return () => {
       document.removeEventListener('click', handleUserInteraction);
       document.removeEventListener('touchstart', handleUserInteraction);
     };
   }, [bgmEnabled]);
 
+  // Handle button click with sound
   const handleStartClick = () => {
     setButtonSound(BUTTON_SOUND);
-    // 効果音の再生に十分な時間を確保するために、タイムアウト時間を延長
+    // Provide enough time for sound to play before potential navigation
     setTimeout(() => setButtonSound(null), 2000);
   };
   

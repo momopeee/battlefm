@@ -22,6 +22,7 @@ const Victory1Screen: React.FC = () => {
   const navigate = useNavigate();
   const [isFollowed, setIsFollowed] = useState(false);
   const [buttonSound, setButtonSound] = useState<string | null>(null);
+  const [actionInProgress, setActionInProgress] = useState(false);
   
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -37,17 +38,29 @@ const Victory1Screen: React.FC = () => {
     
     console.log('Rendered Victory1Screen');
     console.log('Attempting to play victory BGM:', VICTORY_SCREEN_BGM);
+    
+    // Preload button sound
+    const audio = new Audio();
+    audio.src = BUTTON_SOUND;
+    console.log(`Preloading button sound: ${BUTTON_SOUND}`);
   }, []);
 
-  // ボタンクリック時の効果音を再生し、十分な再生時間を確保するヘルパー関数
+  // Helper function to handle button clicks with sound and prevent double-clicks
   const playButtonSoundAndDoAction = (action: () => void) => {
+    if (actionInProgress) return;
+    
+    setActionInProgress(true);
     setButtonSound(BUTTON_SOUND);
-    // 効果音の再生に十分な時間を確保
+    
+    // Wait for sound to start playing before action
     setTimeout(() => {
       action();
-      // 音声が終了する前に新しい画面に遷移するため、タイマーでリセット
-      setTimeout(() => setButtonSound(null), 500);
-    }, 200);
+      // Reset button sound and action in progress
+      setTimeout(() => {
+        setButtonSound(null);
+        setActionInProgress(false);
+      }, 500);
+    }, 300);
   };
 
   const handleContinue = () => {
@@ -85,6 +98,11 @@ const Victory1Screen: React.FC = () => {
     });
   };
 
+  // Handle sound effect completion
+  const handleSoundEnded = () => {
+    console.log(`Button sound effect completed`);
+  };
+
   return (
     <MobileContainer backgroundClassName="bg-white">
       <AudioPlayer 
@@ -103,6 +121,7 @@ const Victory1Screen: React.FC = () => {
           autoPlay={true} 
           volume={0.7}
           id="button-sound" 
+          onEnded={handleSoundEnded}
         />
       )}
       
@@ -142,11 +161,12 @@ const Victory1Screen: React.FC = () => {
             
             <Button
               onClick={handleFollow}
+              disabled={actionInProgress}
               className={`rounded-full px-3 py-1 text-[10px] h-[22px] ${
                 isFollowed 
                   ? "bg-gray-200 text-gray-700" 
                   : "bg-pink-500 text-white hover:bg-pink-600"
-              }`}
+              } ${actionInProgress ? 'opacity-70' : ''}`}
               style={{ minWidth: '80px' }}
             >
               {isFollowed ? "フォロー中" : "フォローする"}
@@ -157,7 +177,8 @@ const Victory1Screen: React.FC = () => {
         <div className="w-full space-y-3 pb-4">
           <Button
             onClick={handleContinue}
-            className="w-full py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm"
+            disabled={actionInProgress}
+            className={`w-full py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             次へ進む
@@ -165,7 +186,8 @@ const Victory1Screen: React.FC = () => {
           
           <Button
             onClick={handleFightAgain}
-            className="w-full py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm"
+            disabled={actionInProgress}
+            className={`w-full py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             もう一度戦う
@@ -173,7 +195,8 @@ const Victory1Screen: React.FC = () => {
           
           <Button
             onClick={handleReturnToStart}
-            className="w-full py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm"
+            disabled={actionInProgress}
+            className={`w-full py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             スタートへ戻る

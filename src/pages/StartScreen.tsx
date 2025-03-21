@@ -14,6 +14,7 @@ const StartScreen = () => {
   const [showText, setShowText] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [buttonSound, setButtonSound] = useState<string | null>(null);
+  const [actionInProgress, setActionInProgress] = useState(false);
   const navigate = useNavigate();
   
   // Define the background image URL
@@ -29,11 +30,10 @@ const StartScreen = () => {
     // Animation duration is approximately 60 seconds based on the CSS
     const navigateTimer = setTimeout(() => {
       // Play button sound before transition
-      setButtonSound(BUTTON_SOUND);
-      setTimeout(() => {
+      playButtonSoundAndDoAction(() => {
         handleScreenTransition('battle1');
         navigate('/battle1');
-      }, 1000); // Wait for sound to start before navigating
+      });
     }, 60000); // 60s for animation
     
     // Preload the background image
@@ -47,19 +47,43 @@ const StartScreen = () => {
       console.error('Error loading background image:', e);
     };
     
+    // Preload audio
+    const preloadAudios = [START_SCREEN_BGM, BUTTON_SOUND];
+    preloadAudios.forEach(url => {
+      const audio = new Audio();
+      audio.src = url;
+      console.log(`Preloading audio: ${url}`);
+    });
+    
     return () => {
       clearTimeout(timer);
       clearTimeout(navigateTimer);
     };
   }, [navigate, handleScreenTransition, backgroundImageUrl]);
   
-  const handleSkip = () => {
+  // Helper function to handle button clicks with sound
+  const playButtonSoundAndDoAction = (action: () => void) => {
+    if (actionInProgress) return;
+    
+    setActionInProgress(true);
     setButtonSound(BUTTON_SOUND);
-    // Allow sound to play before navigation
+    
+    // Wait for sound to start playing before action
     setTimeout(() => {
+      action();
+      // Reset after action
+      setTimeout(() => {
+        setButtonSound(null);
+        setActionInProgress(false);
+      }, 500);
+    }, 300);
+  };
+  
+  const handleSkip = () => {
+    playButtonSoundAndDoAction(() => {
       handleScreenTransition('battle1');
       navigate('/battle1');
-    }, 1000);
+    });
   };
   
   return (
@@ -176,7 +200,8 @@ const StartScreen = () => {
         {/* Skip Button */}
         <Button
           onClick={handleSkip}
-          className="absolute bottom-8 right-6 z-30 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white flex items-center gap-2"
+          disabled={actionInProgress}
+          className={`absolute bottom-8 right-6 z-30 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white flex items-center gap-2 ${actionInProgress ? 'opacity-70' : ''}`}
           variant="ghost"
         >
           <span>スキップ</span>
