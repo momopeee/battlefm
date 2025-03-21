@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -176,7 +177,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleContinue}
             disabled={actionInProgress}
-            className={`w-48 sm:w-64 py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-1/3 py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             次へ進む
@@ -185,7 +186,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleFightAgain}
             disabled={actionInProgress}
-            className={`w-48 sm:w-64 py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-1/3 py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             もう一度戦う
@@ -194,7 +195,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleReturnToStart}
             disabled={actionInProgress}
-            className={`w-48 sm:w-64 py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-1/3 py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             スタートへ戻る
