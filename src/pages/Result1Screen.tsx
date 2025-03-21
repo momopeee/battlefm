@@ -48,6 +48,12 @@ const Result1Screen: React.FC = () => {
     
     console.log('Rendered Result1Screen');
     console.log('Attempting to play defeat BGM:', RESULT_SCREEN_BGM);
+
+    // Cleanup function to handle navigation issues
+    return () => {
+      console.log('Unmounting Result1Screen');
+      setButtonSound(null);
+    };
   }, [battleTimer, pauseBattleTimer]);
 
   // Helper function to handle button clicks with sound and prevent double-clicks
@@ -71,8 +77,14 @@ const Result1Screen: React.FC = () => {
   const handleContinue = () => {
     playButtonSoundAndDoAction(() => {
       console.log('Navigating to endingB from Result1Screen');
+      // Reset state before navigation to prevent state issues
+      resetBattleState();
+      // Set transition first, then navigate
       handleScreenTransition('endingB');
-      navigate('/endingB');
+      // Add a small delay before navigation to ensure state is updated
+      setTimeout(() => {
+        navigate('/endingB');
+      }, 50);
     });
   };
   
