@@ -5,13 +5,10 @@ import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
 import { useApp } from '@/context/AppContext';
+import { INDEX_BGM, BUTTON_SOUND } from '@/constants/audioUrls';
 
 // アプリケーションのバージョン
 const APP_VERSION = "Ver.3.167.0";
-
-// New audio URLs
-const BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/1-1-kyoman01.mp3";
-const BUTTON_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3";
 
 const Index = () => {
   const { bgmEnabled, toggleBgm } = useApp();
@@ -49,9 +46,9 @@ const Index = () => {
   }, [bgmEnabled]);
 
   const handleStartClick = () => {
-    setButtonSound(BUTTON_SOUND_URL);
-    // Reset the sound after a short delay
-    setTimeout(() => setButtonSound(null), 1000);
+    setButtonSound(BUTTON_SOUND);
+    // 効果音の再生に十分な時間を確保するために、タイムアウト時間を延長
+    setTimeout(() => setButtonSound(null), 2000);
   };
   
   return (
@@ -62,7 +59,7 @@ const Index = () => {
     >
       {/* Index page BGM */}
       <AudioPlayer 
-        src={BGM_URL} 
+        src={INDEX_BGM} 
         loop={true} 
         autoPlay={true} 
         volume={0.7}

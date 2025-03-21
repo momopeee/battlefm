@@ -16,12 +16,7 @@ import GaugesDisplay from '@/components/battle/GaugesDisplay';
 import BattleActions from '@/components/battle/BattleActions';
 import CommentInput from '@/components/battle/CommentInput';
 import { useBattleLogic } from '@/hooks/useBattleLogic';
-
-// New audio URLs
-const NORMAL_BATTLE_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-1-torusong.mp3";
-const SPECIAL_BATTLE_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-2-sosokpop.mp3";
-const VICTORY_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-3-a-syouri.mp3";
-const DEFEAT_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-3-b-haiboku.mp3";
+import { BATTLE_BGM, SOSO_SPECIAL_BGM, VICTORY_BGM, DEFEAT_BGM } from '@/constants/audioUrls';
 
 const Battle1Screen: React.FC = () => {
   const { bgmEnabled, toggleBgm } = useApp();
@@ -57,9 +52,9 @@ const Battle1Screen: React.FC = () => {
     } else if (battleResult === 'defeat') {
       return DEFEAT_BGM;
     } else if (sosoHealMode) {
-      return SPECIAL_BATTLE_BGM;
+      return SOSO_SPECIAL_BGM;
     } else {
-      return NORMAL_BATTLE_BGM;
+      return BATTLE_BGM;
     }
   };
 

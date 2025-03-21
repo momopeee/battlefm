@@ -7,10 +7,7 @@ import { Button } from '@/components/ui/button';
 import AudioPlayer from '@/components/AudioPlayer';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileContainer from '@/components/MobileContainer';
-
-// New audio URLs
-const BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/2-1-asanama.mp3";
-const BUTTON_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3";
+import { START_SCREEN_BGM, BUTTON_SOUND } from '@/constants/audioUrls';
 
 const StartScreen = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
@@ -31,9 +28,13 @@ const StartScreen = () => {
     // Automatically navigate to battle screen after animation completes
     // Animation duration is approximately 60 seconds based on the CSS
     const navigateTimer = setTimeout(() => {
-      handleScreenTransition('battle1');
-      navigate('/battle1');
-    }, 61000); // 60s for animation + 1s initial delay
+      // Play button sound before transition
+      setButtonSound(BUTTON_SOUND);
+      setTimeout(() => {
+        handleScreenTransition('battle1');
+        navigate('/battle1');
+      }, 1000); // Wait for sound to start before navigating
+    }, 60000); // 60s for animation
     
     // Preload the background image
     const img = new Image();
@@ -53,9 +54,12 @@ const StartScreen = () => {
   }, [navigate, handleScreenTransition, backgroundImageUrl]);
   
   const handleSkip = () => {
-    setButtonSound(BUTTON_SOUND_URL);
-    handleScreenTransition('battle1');
-    navigate('/battle1');
+    setButtonSound(BUTTON_SOUND);
+    // Allow sound to play before navigation
+    setTimeout(() => {
+      handleScreenTransition('battle1');
+      navigate('/battle1');
+    }, 1000);
   };
   
   return (
@@ -63,7 +67,7 @@ const StartScreen = () => {
       <div className="relative w-full h-full bg-black overflow-hidden">
         {/* BGM Audio Player */}
         <AudioPlayer 
-          src={BGM_URL} 
+          src={START_SCREEN_BGM} 
           loop={true} 
           autoPlay={true} 
           volume={0.7}

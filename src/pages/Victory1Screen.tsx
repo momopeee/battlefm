@@ -8,10 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
 import AudioTester from '@/components/AudioTester';
-
-// New audio URLs
-const VICTORY_BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/4-1-victory.mp3";
-const BUTTON_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3";
+import { VICTORY_SCREEN_BGM, BUTTON_SOUND } from '@/constants/audioUrls';
 
 const Victory1Screen: React.FC = () => {
   const { 
@@ -39,45 +36,59 @@ const Victory1Screen: React.FC = () => {
     });
     
     console.log('Rendered Victory1Screen');
-    console.log('Attempting to play victory BGM:', VICTORY_BGM_URL);
+    console.log('Attempting to play victory BGM:', VICTORY_SCREEN_BGM);
   }, []);
 
+  // ボタンクリック時の効果音を再生し、十分な再生時間を確保するヘルパー関数
+  const playButtonSoundAndDoAction = (action: () => void) => {
+    setButtonSound(BUTTON_SOUND);
+    // 効果音の再生に十分な時間を確保
+    setTimeout(() => {
+      action();
+      // 音声が終了する前に新しい画面に遷移するため、タイマーでリセット
+      setTimeout(() => setButtonSound(null), 500);
+    }, 200);
+  };
+
   const handleContinue = () => {
-    setButtonSound(BUTTON_SOUND_URL);
-    console.log('Navigating to select screen from Victory1Screen');
-    handleScreenTransition('select');
-    navigate('/select');
+    playButtonSoundAndDoAction(() => {
+      console.log('Navigating to select screen from Victory1Screen');
+      handleScreenTransition('select');
+      navigate('/select');
+    });
   };
   
   const handleReturnToStart = () => {
-    setButtonSound(BUTTON_SOUND_URL);
-    console.log('Returning to start from Victory1Screen');
-    resetBattleState();
-    handleScreenTransition('index');
-    navigate('/');
+    playButtonSoundAndDoAction(() => {
+      console.log('Returning to start from Victory1Screen');
+      resetBattleState();
+      handleScreenTransition('index');
+      navigate('/');
+    });
   };
   
   const handleFightAgain = () => {
-    setButtonSound(BUTTON_SOUND_URL);
-    console.log('Fighting again from Victory1Screen');
-    resetBattleState();
-    handleScreenTransition('battle1');
-    navigate('/battle1');
+    playButtonSoundAndDoAction(() => {
+      console.log('Fighting again from Victory1Screen');
+      resetBattleState();
+      handleScreenTransition('battle1');
+      navigate('/battle1');
+    });
   };
   
   const handleFollow = () => {
-    setButtonSound(BUTTON_SOUND_URL);
-    setIsFollowed(!isFollowed);
-    
-    if (!isFollowed) {
-      window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
-    }
+    playButtonSoundAndDoAction(() => {
+      setIsFollowed(!isFollowed);
+      if (!isFollowed) {
+        window.open('https://stand.fm/channels/5e85f9834afcd35104858d5a', '_blank');
+      }
+    });
   };
 
   return (
     <MobileContainer backgroundClassName="bg-white">
       <AudioPlayer 
-        src={VICTORY_BGM_URL} 
+        src={VICTORY_SCREEN_BGM} 
         loop={true} 
         autoPlay={true} 
         volume={0.7}

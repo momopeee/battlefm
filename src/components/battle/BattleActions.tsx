@@ -1,12 +1,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import AudioPlayer from '@/components/AudioPlayer';
-
-// New audio URLs for button clicks
-const ATTACK_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/3-a-kougeki.mp3";
-const SPECIAL_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/3-b-tokugi.mp3";
-const RUN_AWAY_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/3-c-nigeru.mp3";
-const HIGHBALL_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/3-d-highball.mp3";
+import { ATTACK_SOUND, SPECIAL_SOUND, RUN_AWAY_SOUND, HIGHBALL_SOUND } from '@/constants/audioUrls';
 
 interface BattleActionsProps {
   isPlayerTurn: boolean;
@@ -45,28 +40,28 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   // Combined click handler for animation, sound, and action
   const handleAttackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     handleButtonAnimation(e);
-    setSoundToPlay({ src: ATTACK_SOUND_URL, key: Date.now() });
+    setSoundToPlay({ src: ATTACK_SOUND, key: Date.now() });
     console.log("Playing attack sound");
     onAttack();
   };
 
   const handleSpecialClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     handleButtonAnimation(e);
-    setSoundToPlay({ src: SPECIAL_SOUND_URL, key: Date.now() });
+    setSoundToPlay({ src: SPECIAL_SOUND, key: Date.now() });
     console.log("Playing special sound");
     onSpecial();
   };
 
   const handleRunAwayClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     handleButtonAnimation(e);
-    setSoundToPlay({ src: RUN_AWAY_SOUND_URL, key: Date.now() });
+    setSoundToPlay({ src: RUN_AWAY_SOUND, key: Date.now() });
     console.log("Playing run away sound");
     onRunAway();
   };
 
   const handleHighballClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     handleButtonAnimation(e);
-    setSoundToPlay({ src: HIGHBALL_SOUND_URL, key: Date.now() });
+    setSoundToPlay({ src: HIGHBALL_SOUND, key: Date.now() });
     console.log("Playing highball sound");
     onHighball();
   };
