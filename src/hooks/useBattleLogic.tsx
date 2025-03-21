@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
@@ -32,11 +31,9 @@ export const useBattleLogic = () => {
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
   
-  // Flag to track if the special skill message has been displayed
   const [specialSkillMessageDisplayed, setSpecialSkillMessageDisplayed] = useState(false);
 
-  // Import battle results handlers
-  const { handleVictory, handleDefeat, handleSkip: handleSkipResult } = useBattleResults({
+  const { handleVictory, handleDefeat, handleSkip: handleSkipResult, clearAllTimers } = useBattleResults({
     addComment,
     handleScreenTransition,
     setIsBattleOver,
@@ -46,8 +43,7 @@ export const useBattleLogic = () => {
     setRedirectTimer,
     setBattleResult
   });
-  
-  // Import battle action handlers
+
   const { 
     handlePlayerAttack,
     handlePlayerSpecial,
@@ -74,9 +70,8 @@ export const useBattleLogic = () => {
     handleDefeat
   });
 
-  // Initialize battle when component mounts
   useEffect(() => {
-    // Reset all battle-related state at the beginning of each battle
+    clearAllTimers();
     clearComments();
     resetBattleTimer();
     startBattleTimer();
@@ -85,31 +80,29 @@ export const useBattleLogic = () => {
     setIsPlayerVictory(null);
     setBattleResult(null);
     
-    // Ensure player and opponent stats are fully reset
     setPlayer({
       ...player,
       currentHp: player.maxHp,
-      attackMin: 15,  // Set attack min to 15
-      attackMax: 30,  // Set attack max to 30
-      specialPower: 50 // Special attack power to 50
+      attackMin: 15,
+      attackMax: 30,
+      specialPower: 50
     });
     
     setOpponent1({
       ...opponent1,
       currentHp: opponent1.maxHp,
-      attackMin: 5,   // Reset to initial value
-      attackMax: 15,  // Reset to initial value
-      specialPower: 0 // Reset special power
+      attackMin: 5,
+      attackMax: 15,
+      specialPower: 0
     });
     
-    // Reset all battle flags
     setAttackCount(0);
     setSpecialAttackAvailable(false);
     setHighballMode(false);
     setSosoHealMode(false);
     setTransitionScheduled(false);
     setShowSkipButton(false);
-    setSpecialSkillMessageDisplayed(false); // Reset special skill message flag
+    setSpecialSkillMessageDisplayed(false);
     
     console.log("Battle1 initialized with fresh state: Player HP=" + player.maxHp + ", Opponent HP=" + opponent1.maxHp);
     
@@ -118,7 +111,6 @@ export const useBattleLogic = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Handle opponent's turn
   useEffect(() => {
     if (!isPlayerTurn && isBattleStarted && !isBattleOver) {
       const opponentTimer = setTimeout(() => {
@@ -134,17 +126,14 @@ export const useBattleLogic = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlayerTurn, isBattleStarted, isBattleOver, sosoHealMode]);
 
-  // Check for battle over conditions
   useEffect(() => {
     if ((player.currentHp <= 0 || opponent1.currentHp <= 0) && !isBattleOver && !transitionScheduled) {
       setIsBattleOver(true);
       
       if (player.currentHp <= 0) {
-        // Player lost
         setIsPlayerVictory(false);
         handleDefeat();
       } else if (opponent1.currentHp <= 0) {
-        // Player won
         setIsPlayerVictory(true);
         handleVictory();
       }
@@ -152,16 +141,13 @@ export const useBattleLogic = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.currentHp, opponent1.currentHp]);
 
-  // Activate soso heal mode when HP falls below 30 and display special skill message once
   useEffect(() => {
     if (opponent1.currentHp <= 30 && !sosoHealMode && !isBattleOver && !specialSkillMessageDisplayed) {
       setSosoHealMode(true);
-      setSpecialSkillMessageDisplayed(true); // Mark that we've displayed the special skill message
+      setSpecialSkillMessageDisplayed(true);
       
-      // Display the skill activation message sequence
       addComment("システム", "そーそーがとくぎ「強制コラボ召喚」を発動した", true);
       
-      // To ensure messages display in order with some delay
       setTimeout(() => {
         addComment(opponent1.name, "あー、生きるのってむずかしいんだよなー、株クラのみんなも上がろうよ", false);
       }, 1000);
@@ -172,18 +158,17 @@ export const useBattleLogic = () => {
     }
   }, [opponent1.currentHp, sosoHealMode, isBattleOver, specialSkillMessageDisplayed, addComment, opponent1.name]);
 
-  // Show skip button after some delay based on battle result
   useEffect(() => {
     let skipButtonTimer: NodeJS.Timeout | null = null;
     
     if (isBattleOver && isPlayerVictory === true) {
       skipButtonTimer = setTimeout(() => {
         setShowSkipButton(true);
-      }, 10000); // 10 seconds delay for victory
+      }, 10000);
     } else if (isBattleOver && isPlayerVictory === false) {
       skipButtonTimer = setTimeout(() => {
         setShowSkipButton(true);
-      }, 15000); // 15 seconds delay for defeat
+      }, 15000);
     }
     
     return () => {
@@ -191,23 +176,22 @@ export const useBattleLogic = () => {
     };
   }, [isBattleOver, isPlayerVictory]);
 
-  // Cleanup timers on unmount
   useEffect(() => {
     return () => {
+      clearAllTimers();
       if (redirectTimer) clearTimeout(redirectTimer);
     };
   }, [redirectTimer]);
 
-  // Wrapper function to handle skipping to results
   const handleSkip = () => {
     if (!isBattleOver) return;
     
-    // Cancel any pending timers/transitions
+    clearAllTimers();
+    
     setTransitionScheduled(true);
     handleSkipResult(isPlayerVictory, redirectTimer);
   };
 
-  // Handle character sheet display
   const handleCharacterClick = (character: 'player' | 'opponent1' | 'opponent2') => {
     setCurrentCharacterSheet(character);
     setShowCharacterSheet(true);

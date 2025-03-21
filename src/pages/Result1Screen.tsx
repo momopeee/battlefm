@@ -24,6 +24,15 @@ const Result1Screen: React.FC = () => {
   const [buttonSound, setButtonSound] = useState<string | null>(null);
   const [actionInProgress, setActionInProgress] = useState(false);
   
+  // Clear any existing timers on mount
+  useEffect(() => {
+    // Clear any automatic timers that might exist
+    const existingTimers = window.setTimeout(() => {}, 0);
+    for (let i = 0; i < existingTimers; i++) {
+      window.clearTimeout(i);
+    }
+  }, []);
+  
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -65,11 +74,16 @@ const Result1Screen: React.FC = () => {
   const handleContinue = () => {
     playButtonSoundAndDoAction(() => {
       console.log('Navigating to endingB from Result1Screen');
+      
+      // Before navigating, make sure we have no lingering timers
+      const existingTimers = window.setTimeout(() => {}, 0);
+      for (let i = 0; i < existingTimers; i++) {
+        window.clearTimeout(i);
+      }
+      
       resetBattleState();
       handleScreenTransition('endingB');
-      setTimeout(() => {
-        navigate('/endingB');
-      }, 50);
+      navigate('/endingB');
     });
   };
   
@@ -134,7 +148,7 @@ const Result1Screen: React.FC = () => {
       >
         <div className="w-full flex flex-col items-center justify-center flex-1">
           <div className="text-center mb-6">
-            <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
+            <h2 className="text-[17px] font-bold mb-4 text-black jp-text">ライブが終了しました</h2>
             
             <div className="text-[12px] text-gray-500 mb-2">
               {finalBattleTime}
@@ -153,7 +167,7 @@ const Result1Screen: React.FC = () => {
               className="w-[35px] h-[35px] rounded-full object-cover"
             />
             
-            <div className="text-[12px] font-bold text-black">
+            <div className="text-[12px] font-bold text-black jp-text">
               {player.name}
             </div>
             
@@ -176,7 +190,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleContinue}
             disabled={actionInProgress}
-            className={`w-48 sm:w-64 py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-48 sm:w-64 py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm jp-text ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             次へ進む
@@ -185,7 +199,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleFightAgain}
             disabled={actionInProgress}
-            className={`w-48 sm:w-64 py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-48 sm:w-64 py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm jp-text ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             もう一度戦う
@@ -194,7 +208,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleReturnToStart}
             disabled={actionInProgress}
-            className={`w-48 sm:w-64 py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-48 sm:w-64 py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm jp-text ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             スタートへ戻る
