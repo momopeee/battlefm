@@ -76,33 +76,42 @@ export const useBattleLogic = () => {
 
   // Initialize battle when component mounts
   useEffect(() => {
+    // Reset all battle-related state at the beginning of each battle
     clearComments();
     resetBattleTimer();
     startBattleTimer();
     setIsBattleStarted(true);
+    setIsBattleOver(false);
+    setIsPlayerVictory(null);
+    setBattleResult(null);
     
-    // Reset player and opponent stats
+    // Ensure player and opponent stats are fully reset
     setPlayer({
       ...player,
       currentHp: player.maxHp,
       attackMin: 15,  // Set attack min to 15
       attackMax: 30,  // Set attack max to 30
-      specialPower: 50 // Special attack power to 30-50
+      specialPower: 50 // Special attack power to 50
     });
     
     setOpponent1({
       ...opponent1,
-      currentHp: opponent1.maxHp
+      currentHp: opponent1.maxHp,
+      attackMin: 5,   // Reset to initial value
+      attackMax: 15,  // Reset to initial value
+      specialPower: 0 // Reset special power
     });
     
+    // Reset all battle flags
     setAttackCount(0);
     setSpecialAttackAvailable(false);
     setHighballMode(false);
     setSosoHealMode(false);
     setTransitionScheduled(false);
-    setIsPlayerVictory(null);
     setShowSkipButton(false);
     setSpecialSkillMessageDisplayed(false); // Reset special skill message flag
+    
+    console.log("Battle1 initialized with fresh state: Player HP=" + player.maxHp + ", Opponent HP=" + opponent1.maxHp);
     
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
     

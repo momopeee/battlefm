@@ -173,20 +173,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   
   // New function to reset battle state
   const resetBattleState = () => {
-    // Reset player and opponents stats
+    // Reset player and opponents stats with FULL reset of all battle properties
     setPlayer({
       ...player,
-      currentHp: player.maxHp
+      currentHp: player.maxHp,
+      attackMin: 15,  // Ensure attack min is reset to 15
+      attackMax: 30,  // Ensure attack max is reset to 30
+      specialPower: 50 // Reset special attack power to 50
     });
     
     setOpponent1({
       ...opponent1,
-      currentHp: opponent1.maxHp
+      currentHp: opponent1.maxHp,
+      attackMin: 5,   // Reset to initial value
+      attackMax: 15,  // Reset to initial value
+      specialPower: 0 // Reset special power
     });
     
     setOpponent2({
       ...opponent2,
-      currentHp: opponent2.maxHp
+      currentHp: opponent2.maxHp,
+      attackMin: 10,  // Reset to initial value
+      attackMax: 20,  // Reset to initial value
+      specialPower: 0 // Reset special power
     });
     
     // Reset battle mechanics
@@ -203,6 +212,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // Reset character sheet
     setShowCharacterSheet(false);
     setCurrentCharacterSheet(null);
+    
+    console.log('Battle state fully reset - all character stats and battle flags reset to initial values');
   };
   
   // Cleanup on unmount
