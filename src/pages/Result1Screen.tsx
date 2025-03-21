@@ -8,6 +8,13 @@ import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
 import { RESULT_SCREEN_BGM, BUTTON_SOUND } from '@/constants/audioUrls';
 
+const calculateBattleGrade = (totalComments: number, playerHp: number) => {
+  if (totalComments >= 15 && playerHp >= 50) return 'B';
+  if (totalComments >= 10 && playerHp >= 30) return 'C';
+  if (totalComments >= 5 && playerHp >= 10) return 'D';
+  return 'E';
+};
+
 const Result1Screen: React.FC = () => {
   const { 
     player,
@@ -23,6 +30,7 @@ const Result1Screen: React.FC = () => {
   const [finalBattleTime, setFinalBattleTime] = useState("");
   const [buttonSound, setButtonSound] = useState<string | null>(null);
   const [actionInProgress, setActionInProgress] = useState(false);
+  const [battleGrade, setBattleGrade] = useState('C');
   
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -33,11 +41,16 @@ const Result1Screen: React.FC = () => {
   useEffect(() => {
     pauseBattleTimer();
     setFinalBattleTime(formatTime(battleTimer));
+    
+    const grade = calculateBattleGrade(comments.length, player.currentHp);
+    setBattleGrade(grade);
+    
     toast.error('そーそーに敗北しました', {
       description: '次回は頑張りましょう！',
       duration: 3000,
       position: 'top-center',
     });
+    
     console.log('Rendered Result1Screen');
     console.log('Attempting to play defeat BGM:', RESULT_SCREEN_BGM);
 
@@ -45,7 +58,7 @@ const Result1Screen: React.FC = () => {
       console.log('Unmounting Result1Screen');
       setButtonSound(null);
     };
-  }, [battleTimer, pauseBattleTimer]);
+  }, [battleTimer, pauseBattleTimer, comments.length, player.currentHp]);
 
   const playButtonSoundAndDoAction = (action: () => void) => {
     if (actionInProgress) return;
@@ -132,7 +145,32 @@ const Result1Screen: React.FC = () => {
           boxSizing: 'border-box'
         }}
       >
-        <div className="w-full flex flex-col items-center justify-center flex-1">
+        <div className="w-full flex flex-col items-center justify-start flex-1">
+          <div className="flex flex-col items-center justify-center w-[335px] h-[160px]">
+            <div className="text-center mb-2">
+              <p className="text-sm text-gray-500">バトル評価</p>
+            </div>
+            <div 
+              className="flex items-center justify-center w-40 h-40"
+              style={{
+                background: 'linear-gradient(145deg, #f0f0f0, #e6e6e6)',
+                borderRadius: '50%',
+                boxShadow: '10px 10px 20px #d1d1d1, -10px -10px 20px #ffffff'
+              }}
+            >
+              <span 
+                className={`text-6xl font-bold ${
+                  battleGrade === 'B' ? 'text-yellow-600' : 
+                  battleGrade === 'C' ? 'text-orange-600' : 
+                  battleGrade === 'D' ? 'text-red-600' : 
+                  'text-red-800'
+                }`}
+              >
+                {battleGrade}
+              </span>
+            </div>
+          </div>
+          
           <div className="text-center mb-6">
             <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
             
@@ -146,7 +184,7 @@ const Result1Screen: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-4">
             <img 
               src={player.icon} 
               alt={player.name} 
@@ -170,13 +208,49 @@ const Result1Screen: React.FC = () => {
               {isFollowed ? "フォロー中" : "フォローする"}
             </Button>
           </div>
+          
+          <div 
+            className="w-[335px] h-[160px] rounded-2xl p-4 mb-6"
+            style={{
+              background: '#f0f0f0',
+              boxShadow: '5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff'
+            }}
+          >
+            <h3 className="text-[14px] font-bold text-center mb-3">バトルデータ</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="text-[12px]">
+                <span className="text-gray-500">残りHP: </span>
+                <span className="font-bold text-red-600">{player.currentHp}</span>
+              </div>
+              <div className="text-[12px]">
+                <span className="text-gray-500">コメント数: </span>
+                <span className="font-bold text-blue-600">{comments.length}</span>
+              </div>
+              <div className="text-[12px]">
+                <span className="text-gray-500">バトル時間: </span>
+                <span className="font-bold">{finalBattleTime}</span>
+              </div>
+              <div className="text-[12px]">
+                <span className="text-gray-500">攻撃回数: </span>
+                <span className="font-bold text-red-600">{Math.floor(comments.length * 0.6)}</span>
+              </div>
+              <div className="text-[12px]">
+                <span className="text-gray-500">特殊技: </span>
+                <span className="font-bold text-purple-600">{Math.floor(comments.length * 0.1)}</span>
+              </div>
+              <div className="text-[12px]">
+                <span className="text-gray-500">リスナー: </span>
+                <span className="font-bold text-orange-600">{Math.floor(comments.length * 0.7)}</span>
+              </div>
+            </div>
+          </div>
         </div>
         
         <div className="w-full flex flex-col items-center space-y-3 pb-4">
           <Button
             onClick={handleContinue}
             disabled={actionInProgress}
-            className={`w-48 sm:w-64 py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-1/3 py-2 bg-white text-pink-500 border-2 border-pink-500 hover:bg-pink-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             次へ進む
@@ -185,7 +259,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleFightAgain}
             disabled={actionInProgress}
-            className={`w-48 sm:w-64 py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-1/3 py-2 bg-white text-purple-500 border-2 border-purple-500 hover:bg-purple-50 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             もう一度戦う
@@ -194,7 +268,7 @@ const Result1Screen: React.FC = () => {
           <Button
             onClick={handleReturnToStart}
             disabled={actionInProgress}
-            className={`w-48 sm:w-64 py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
+            className={`w-1/3 py-2 bg-pink-500 text-white hover:bg-pink-600 font-bold rounded-full text-sm ${actionInProgress ? 'opacity-70' : ''}`}
             style={{ height: '40px' }}
           >
             スタートへ戻る
