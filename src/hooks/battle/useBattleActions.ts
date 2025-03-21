@@ -1,4 +1,3 @@
-
 import { Character } from '@/context/AppContext';
 import { playerAttackComments, playerSpecialComments, opponent1AttackComments, sosoCollaborationComments } from '@/constants/battleComments';
 
@@ -228,17 +227,17 @@ export const useBattleActions = ({
     // Add collaboration comment
     addComment(opponent1.name, collaborationComment);
     
-    // Heal amount calculation
-    const healAmount = 20;
+    // Heal amount calculation - now fixed at 15
+    const healAmount = 15;
     
-    // New damage calculation: 20-45 range for そーそー's special attack
-    const damageToPlayer = Math.floor(Math.random() * 26) + 20; // 20-45 damage range
+    // New damage calculation: 10-40 range for そーそー's special attack
+    const damageToPlayer = Math.floor(Math.random() * 31) + 10; // 10-40 damage range
     
     // Add system comments for both healing and attacking
     addComment("システム", `そーそーの体力が${healAmount}回復した`, true);
     addComment("システム", `同時に、とおるは${damageToPlayer}のダメージを受けた`, true);
     
-    // Heal opponent by 20 points
+    // Heal opponent by 15 points
     setOpponent1({
       ...opponent1,
       currentHp: Math.min(opponent1.maxHp, opponent1.currentHp + healAmount),
