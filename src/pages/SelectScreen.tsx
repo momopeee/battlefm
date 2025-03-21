@@ -258,16 +258,43 @@ const SelectScreen: React.FC = () => {
               
               <div className="absolute inset-0 z-10 flex items-center justify-center overflow-hidden">
                 <div className="w-full text-center star-wars-crawl">
-                  <div className="text-red-500 font-bold text-xl text-center animate-star-wars">
-                    <p>うぇーい！ゆうじの陽気なおじさんです！！</p>
+                  <div className="text-red-500 font-bold text-xl text-center animate-star-wars" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)' }}>
+                    <p>うぇーい！みんな～</p>
                     <br />
-                    <p>って、それはただの俺のおじさんやないかい！！</p>
+                    <p>「ゆうじの陽気なおじさん」</p>
+                    <br />
+                    <p>でお馴染み、大久保です！！</p>
+                    <br />
+                    <br />
+                    <p>って、おいおい！</p>
+                    <br />
+                    <p>それは俺のおじさんやないかい！！</p>
+                    <br />
                     <br />
                     <p>陽気なおじさん＠ゆうじです！</p>
                     <br />
-                    <p>今日はやまにいに、経営について指南してやりますから、</p>
                     <br />
-                    <p>皆さん、どうぞよろしくウェイで～す！！</p>
+                    <p>今日はやってやりますよ</p>
+                    <br />
+                    <p>実は、フリーになって</p>
+                    <br />
+                    <p>やまにぃを超えちゃったかなって</p>
+                    <br />
+                    <p>思ってます</p>
+                    <br />
+                    <br />
+                    <br />
+                    <p>今日はやまにいに、</p>
+                    <br />
+                    <p>経営について指南しまくります</p>
+                    <br />
+                    <p>ちぇけら！</p>
+                    <br />
+                    <br />
+                    <br />
+                    <p>皆さん、</p>
+                    <br />
+                    <p>どうぞよろしくウェイで～す！！</p>
                   </div>
                 </div>
               </div>
