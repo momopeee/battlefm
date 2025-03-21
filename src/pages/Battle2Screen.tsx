@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -27,10 +28,10 @@ import {
   SPECIAL_SOUND
 } from '@/constants/audioUrls';
 
-// Player attack comments for Yuji battle
+// Player attack comments for Yuji battle - 文字化け修正
 const playerAttackComments = [
   "ゆうじは人の相談にのってはいけない人間だと確信している",
-  "正論を言われた時に、拗ねて逃げていては成長に繋がらな��だろ",
+  "正論を言われた時に、拗ねて逃げていては成長に繋がらないだろ",
   "もっと漢として、大地に根を張って、自信をもって堂々としろ！",
   "自分に反抗しない人を探して、適当にアドバイスをするのは相手の方に失礼だ！",
   "タムタムやリコさんに逃げるな！！",
@@ -48,7 +49,7 @@ const playerSpecialComments = [
   "自らアドバイスを求めたなら、その相手には進捗の報告を怠るな！！俺達はいい、友達だから報告が無くても\"ゆうじは最低だ！！\"で済ませて、その後も仲良く出来る。だが、他の人は違う、一度不義理をしたら一生相手にされないし、下手したら敵になって戻ってくる。良く考えて行動し、軽はずみで他人を使い捨てにするな！！"
 ];
 
-// UPDATED: Yuji's special attack comments
+// UPDATED: Yuji's special attack comments - 文字化け修正
 const yujiSpecialComments = [
   "やまにいは僕の事いじめたいだけですよね、ひどいです",
   "じゅんさんも本当にひどいです",
@@ -56,14 +57,14 @@ const yujiSpecialComments = [
   "みんな僕をいじめたいだけだよね、別にいいけど",
   "もういいですよ、何を言われても今まで通りやるだけ",
   "やまにいの言葉よりしいたけ占いのが深いんだよね",
-  "式場の利益よりもプランナーの地位向上のが大事なんです��それが分からない式場は全部だめですよ"
+  "式場の利益よりもプランナーの地位向上のが大事なんです。それが分からない式場は全部だめですよ"
 ];
 
-// Define the missing arrays
+// Define the missing arrays - 文字化け修正
 const yujiAttackComments = [
   "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
   "経営の何がわからないのかわからないってのが経営なんですよぉ〜",
-  "経営を上手くやるには、波長の合う人とや���のがいちばんですね〜",
+  "経営を上手くやるには、波長の合う人とやるのがいちばんですね〜",
   "売上を上げるには、まずは表に出て顔と名前を売るのが大事ですよ",
   "ビジネスを成長させるには友達の数を増やすことですね",
   "やまにーの言うことは難しすぎて、僕には理解できないんですよぉ〜",
