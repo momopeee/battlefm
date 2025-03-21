@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { MessageCircle } from 'lucide-react';
@@ -7,13 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import AudioPlayer from '@/components/AudioPlayer';
 import { VICTORY_SCREEN_BGM, BUTTON_SOUND } from '@/constants/audioUrls';
-
-const calculateBattleGrade = (totalComments: number, playerHp: number) => {
-  if (totalComments >= 20 && playerHp >= 90) return 'SSS';
-  if (totalComments >= 15 && playerHp >= 80) return 'SS';
-  if (totalComments >= 10 && playerHp >= 70) return 'S';
-  return 'A';
-};
 
 const Victory1Screen: React.FC = () => {
   const { 
@@ -28,7 +22,6 @@ const Victory1Screen: React.FC = () => {
   const [isFollowed, setIsFollowed] = useState(false);
   const [buttonSound, setButtonSound] = useState<string | null>(null);
   const [actionInProgress, setActionInProgress] = useState(false);
-  const [battleGrade, setBattleGrade] = useState('A');
   
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -37,9 +30,6 @@ const Victory1Screen: React.FC = () => {
   };
 
   useEffect(() => {
-    const grade = calculateBattleGrade(comments.length, player.currentHp);
-    setBattleGrade(grade);
-    
     toast.success('そーそーに勝利しました！', {
       description: 'おめでとうございます！',
       duration: 3000,
@@ -48,10 +38,11 @@ const Victory1Screen: React.FC = () => {
     console.log('Rendered Victory1Screen');
     console.log('Attempting to play victory BGM:', VICTORY_SCREEN_BGM);
     
+    // Preload button sound
     const audio = new Audio();
     audio.src = BUTTON_SOUND;
     console.log(`Preloading button sound: ${BUTTON_SOUND}`);
-  }, [comments.length, player.currentHp]);
+  }, []);
 
   const playButtonSoundAndDoAction = (action: () => void) => {
     if (actionInProgress) return;
@@ -135,32 +126,7 @@ const Victory1Screen: React.FC = () => {
           boxSizing: 'border-box'
         }}
       >
-        <div className="w-full flex flex-col items-center justify-start flex-1">
-          <div className="flex flex-col items-center justify-center w-[335px] h-[160px]">
-            <div className="text-center mb-2">
-              <p className="text-sm text-gray-500">バトル評価</p>
-            </div>
-            <div 
-              className="flex items-center justify-center w-40 h-40"
-              style={{
-                background: 'linear-gradient(145deg, #f0f0f0, #e6e6e6)',
-                borderRadius: '50%',
-                boxShadow: '10px 10px 20px #d1d1d1, -10px -10px 20px #ffffff'
-              }}
-            >
-              <span 
-                className={`text-6xl font-bold ${
-                  battleGrade === 'SSS' ? 'text-purple-600' : 
-                  battleGrade === 'SS' ? 'text-blue-600' : 
-                  battleGrade === 'S' ? 'text-green-600' : 
-                  'text-yellow-600'
-                }`}
-              >
-                {battleGrade}
-              </span>
-            </div>
-          </div>
-          
+        <div className="w-full flex flex-col items-center justify-center flex-1">
           <div className="text-center mb-6">
             <h2 className="text-[17px] font-bold mb-4 text-black">ライブが終了しました</h2>
             
@@ -174,7 +140,7 @@ const Victory1Screen: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex items-center justify-center gap-2 mb-4">
+          <div className="flex items-center justify-center gap-2 mb-6">
             <img 
               src={player.icon} 
               alt={player.name} 
@@ -197,42 +163,6 @@ const Victory1Screen: React.FC = () => {
             >
               {isFollowed ? "フォロー中" : "フォローする"}
             </Button>
-          </div>
-          
-          <div 
-            className="w-[335px] h-[160px] rounded-2xl p-4 mb-6"
-            style={{
-              background: '#f0f0f0',
-              boxShadow: '5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff'
-            }}
-          >
-            <h3 className="text-[14px] font-bold text-center mb-3">バトルデータ</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="text-[12px]">
-                <span className="text-gray-500">残りHP: </span>
-                <span className="font-bold text-green-600">{player.currentHp}</span>
-              </div>
-              <div className="text-[12px]">
-                <span className="text-gray-500">コメント数: </span>
-                <span className="font-bold text-blue-600">{comments.length}</span>
-              </div>
-              <div className="text-[12px]">
-                <span className="text-gray-500">バトル時間: </span>
-                <span className="font-bold">{formatTime(battleTimer)}</span>
-              </div>
-              <div className="text-[12px]">
-                <span className="text-gray-500">攻撃回数: </span>
-                <span className="font-bold text-red-600">{Math.floor(comments.length * 0.7)}</span>
-              </div>
-              <div className="text-[12px]">
-                <span className="text-gray-500">特殊技: </span>
-                <span className="font-bold text-purple-600">{Math.floor(comments.length * 0.2)}</span>
-              </div>
-              <div className="text-[12px]">
-                <span className="text-gray-500">リスナー: </span>
-                <span className="font-bold text-orange-600">{Math.floor(comments.length * 0.8)}</span>
-              </div>
-            </div>
           </div>
         </div>
         
