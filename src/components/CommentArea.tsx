@@ -36,15 +36,15 @@ const CommentArea: React.FC<CommentAreaProps> = ({ comments }) => {
                   className="w-8 h-8 rounded-full mt-1"
                 />
                 <div className="flex-1">
-                  <span className="text-[11px] font-bold">{comment.author}</span>
+                  <span className="text-[11px] font-bold jp-text">{comment.author}</span>
                   <div className="bg-black/30 p-2 rounded-md mt-1 mb-1">
-                    <p className="text-[12px] font-normal">{comment.text}</p>
+                    <p className="text-[12px] font-normal jp-text">{comment.text}</p>
                   </div>
                 </div>
               </>
             )}
             {comment.isSystem && (
-              <span className="bg-black/30 w-full p-2 rounded text-[12px] font-normal">{comment.text}</span>
+              <span className="bg-black/30 w-full p-2 rounded text-[12px] font-normal jp-text">{comment.text}</span>
             )}
           </div>
         ))}

@@ -118,9 +118,10 @@ export default {
 				'blink': 'blink 1s ease-in-out infinite'
 			},
 			fontFamily: {
-				'game': ['"Noto Sans JP"', 'sans-serif'],
+				'game': ['"Noto Sans JP"', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'sans-serif'],
 				'pixel': ['"Press Start 2P"', 'cursive'],
-				'hiragino': ['"Hiragino Kaku Gothic ProN"', '"Hiragino Sans"', 'sans-serif']
+				'hiragino': ['"Hiragino Kaku Gothic ProN"', '"Hiragino Sans"', 'Meiryo', 'sans-serif'],
+				'sans': ['"Noto Sans JP"', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'sans-serif']
 			}
 		}
 	},

@@ -18,7 +18,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ character, onClose }) =
   switch (character) {
     case 'player':
       content = (
-        <div className="text-white">
+        <div className="text-white jp-text">
           <h2 className="text-xl font-bold mb-4">山根透（やまね とおる） - 「マネジメントマスター」</h2>
           
           <div className="mb-4">
@@ -56,7 +56,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ character, onClose }) =
       
     case 'opponent1':
       content = (
-        <div className="text-white">
+        <div className="text-white jp-text">
           <h2 className="text-xl font-bold mb-4">そーそー（そうそう）-「狂犬的ツイートマスター」</h2>
           
           <div className="mb-4">
@@ -100,7 +100,7 @@ const CharacterSheet: React.FC<CharacterSheetProps> = ({ character, onClose }) =
       
     case 'opponent2':
       content = (
-        <div className="text-white">
+        <div className="text-white jp-text">
           <h2 className="text-xl font-bold mb-4">ゆうじ＠陽気なおじさん</h2>
           
           <div className="mb-4">
