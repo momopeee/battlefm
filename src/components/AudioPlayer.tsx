@@ -123,6 +123,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       if (audioRef.current) {
         console.log(`[${id}] Cleaning up audio: ${src}`);
         audioRef.current.pause();
+        audioRef.current.src = ""; // Clear source to fully stop audio
+        setIsPlaying(false);
       }
     };
   }, [src, id, loadAttempts, loop, startTime, onEnded]);

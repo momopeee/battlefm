@@ -16,7 +16,7 @@ export const START_SCREEN_BGM = "https://tangerine-valkyrie-189847.netlify.app/2
 // Battle screens
 export const BATTLE_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-1-torusong.mp3";
 export const SOSO_SPECIAL_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-2-sosokpop.mp3";
-export const YUJI_SPECIAL_BGM = "https://tangerine-valkyrie-189847.netlify.app/7-a-kurafan.mp3";
+export const YUJI_SPECIAL_BGM = "https://tangerine-valkyrie-189847.netlify.app/7-2-ugmode2.mp3";
 export const VICTORY_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-3-a-syouri.mp3";
 export const DEFEAT_BGM = "https://tangerine-valkyrie-189847.netlify.app/3-3-b-haiboku.mp3";
 

@@ -27,6 +27,7 @@ const Index = () => {
         console.log("Audio context unblocked by user interaction");
         setUserInteracted(true);
         silentAudio.pause();
+        silentAudio.src = ""; // Clear source
       }).catch(err => {
         console.log("Could not unblock audio context:", err);
       });
@@ -60,7 +61,7 @@ const Index = () => {
   const handleStartClick = () => {
     setButtonSound(BUTTON_SOUND);
     // Provide enough time for sound to play before potential navigation
-    setTimeout(() => setButtonSound(null), 2000);
+    setTimeout(() => setButtonSound(null), 300);
   };
   
   return (
@@ -86,6 +87,7 @@ const Index = () => {
           autoPlay={true} 
           volume={0.7}
           id="button-sound" 
+          key={`button-sound-${Date.now()}`} // Force remount when sound changes
         />
       )}
 

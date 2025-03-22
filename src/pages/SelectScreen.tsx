@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
@@ -7,12 +6,12 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-// New audio URLs
-const NORMAL_BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/6-1-select.mp3";
-const ALARM_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/6-a-keihou.mp3";
-const ASSAULT_BGM_URL = "https://tangerine-valkyrie-189847.netlify.app/6-2-ugmode.mp3";
-const BUTTON_SOUND_URL = "https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3";
+import { 
+  SELECT_NORMAL_BGM, 
+  SELECT_ALARM_SOUND, 
+  SELECT_ASSAULT_BGM, 
+  BUTTON_SOUND 
+} from '@/constants/audioUrls';
 
 const SelectScreen: React.FC = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
@@ -35,7 +34,7 @@ const SelectScreen: React.FC = () => {
   const handleSelectClick = () => {
     setShowAssault(true);
     setAssaultAlarm(true);
-    setButtonSound(BUTTON_SOUND_URL);
+    setButtonSound(BUTTON_SOUND);
     
     const alarmTimeout = setTimeout(() => {
       setAssaultAlarm(false);
@@ -50,7 +49,7 @@ const SelectScreen: React.FC = () => {
   };
 
   const handleSkip = () => {
-    setButtonSound(BUTTON_SOUND_URL);
+    setButtonSound(BUTTON_SOUND);
     timeouts.forEach(timeout => clearTimeout(timeout));
     handleScreenTransition('battle2');
     navigate('/battle2');
@@ -58,7 +57,7 @@ const SelectScreen: React.FC = () => {
 
   const handleMenuButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setButtonSound(BUTTON_SOUND_URL);
+    setButtonSound(BUTTON_SOUND);
     setShowWarning(true);
     
     const warningTimeout = setTimeout(() => {
@@ -73,7 +72,7 @@ const SelectScreen: React.FC = () => {
       {/* Main BGM for normal mode */}
       {!showAssault && (
         <AudioPlayer 
-          src={NORMAL_BGM_URL} 
+          src={SELECT_NORMAL_BGM} 
           loop={true} 
           autoPlay={true} 
           volume={0.7}
@@ -84,22 +83,24 @@ const SelectScreen: React.FC = () => {
       {/* Alarm sound when assault mode activates */}
       {assaultAlarm && (
         <AudioPlayer 
-          src={ALARM_SOUND_URL} 
+          src={SELECT_ALARM_SOUND} 
           loop={false} 
           autoPlay={true} 
           volume={0.7}
           id="select-alarm-sound"
+          key={`alarm-sound-${Date.now()}`} // Force remount
         />
       )}
       
       {/* BGM for assault mode */}
       {assaultText && (
         <AudioPlayer 
-          src={ASSAULT_BGM_URL} 
+          src={SELECT_ASSAULT_BGM} 
           loop={true} 
           autoPlay={true} 
           volume={0.7}
           id="select-assault-bgm"
+          key={`assault-bgm-${Date.now()}`} // Force remount
         />
       )}
       
@@ -111,6 +112,7 @@ const SelectScreen: React.FC = () => {
           autoPlay={true} 
           volume={0.7}
           id="button-sound" 
+          key={`button-sound-${Date.now()}`} // Force remount
         />
       )}
       

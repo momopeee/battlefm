@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -16,7 +17,7 @@ import BattleActions from '@/components/battle/BattleActions';
 import CommentInput from '@/components/battle/CommentInput';
 import PlayerInfo from '@/components/battle/PlayerInfo';
 
-// Import audio constants instead of hardcoding them
+// Import audio constants
 import { 
   BATTLE_BGM, 
   YUJI_SPECIAL_BGM, 
@@ -135,6 +136,7 @@ const Battle2Screen: React.FC = () => {
   const [isHighballConfused, setIsHighballConfused] = useState(false);
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
+  const [currentBgm, setCurrentBgm] = useState<string>(BATTLE_BGM);
   
   // Reset battle state on component mount and start timer with fresh timer value
   useEffect(() => {
@@ -155,6 +157,7 @@ const Battle2Screen: React.FC = () => {
     setSpecialModeTimer(0);
     setSpecialModeActive(false);
     setIsHighballConfused(false);
+    setCurrentBgm(BATTLE_BGM);
     
     startBattleTimer();
     
@@ -165,6 +168,9 @@ const Battle2Screen: React.FC = () => {
     
     return () => {
       pauseBattleTimer();
+      if (redirectTimer) {
+        clearTimeout(redirectTimer);
+      }
     };
   }, []);
   
@@ -181,17 +187,22 @@ const Battle2Screen: React.FC = () => {
     }
   }, [opponentHp, yujiInSpecialMode, isBattleOver, specialModeActive]);
   
-  // Manage Yuji's special mode timer
+  // Manage Yuji's special mode timer and BGM
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
     if (specialModeActive && !isBattleOver) {
+      // Set special mode BGM
+      setCurrentBgm(YUJI_SPECIAL_BGM);
+      
       interval = setInterval(() => {
         setSpecialModeTimer(prev => {
           const newTime = prev + 1;
           if (newTime >= 40) {
             setSpecialModeActive(false);
             addComment('システム', 'ゆうじ確変モードが終了した', true);
+            // Return to normal BGM after special mode ends
+            setCurrentBgm(BATTLE_BGM);
             return 0;
           }
           return newTime;
@@ -203,6 +214,15 @@ const Battle2Screen: React.FC = () => {
       if (interval) clearInterval(interval);
     };
   }, [specialModeActive, isBattleOver]);
+  
+  // Update BGM when battle result changes
+  useEffect(() => {
+    if (battleResult === 'victory') {
+      setCurrentBgm(VICTORY_BGM);
+    } else if (battleResult === 'defeat') {
+      setCurrentBgm(DEFEAT_BGM);
+    }
+  }, [battleResult]);
   
   // Display skip button after battle is over with some delay
   useEffect(() => {
@@ -552,7 +572,8 @@ const Battle2Screen: React.FC = () => {
   const handleVictory = () => {
     setIsBattleOver(true);
     setBattleResult('victory');
-    setSoundEffect(VICTORY_BGM);
+    setCurrentBgm(VICTORY_BGM);
+    setSoundEffect(BUTTON_SOUND);
     showVictoryComments();
     
     // Log information for debugging
@@ -573,7 +594,8 @@ const Battle2Screen: React.FC = () => {
   const handleDefeat = () => {
     setIsBattleOver(true);
     setBattleResult('defeat');
-    setSoundEffect(DEFEAT_BGM);
+    setCurrentBgm(DEFEAT_BGM);
+    setSoundEffect(BUTTON_SOUND);
     showDefeatComments();
     
     // Log information for debugging
@@ -622,16 +644,17 @@ const Battle2Screen: React.FC = () => {
           height: '100%',
         }}
       >
+        {/* Main BGM - Using currentBgm state to handle all BGM state changes */}
         <AudioPlayer 
-          src={battleResult === 'victory' ? VICTORY_BGM : 
-             battleResult === 'defeat' ? DEFEAT_BGM : 
-             specialModeActive ? YUJI_SPECIAL_BGM : BATTLE_BGM}
+          src={currentBgm}
           loop={battleResult === null}
           autoPlay={true}
           volume={0.7}
           id="battle2-bgm"
+          key={`battle-bgm-${currentBgm}`} // Force remount when BGM changes
         />
 
+        {/* Sound Effects - Using unique keys to ensure they always play */}
         {soundEffect && (
           <AudioPlayer 
             src={soundEffect} 
@@ -639,6 +662,7 @@ const Battle2Screen: React.FC = () => {
             autoPlay={true} 
             volume={0.7}
             id="battle2-effect"
+            key={`battle-effect-${Date.now()}`} // Use unique key for each sound effect
             onEnded={() => setSoundEffect(null)}
           />
         )}
