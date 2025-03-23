@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback, memo } from 'react';
 import { useApp } from '@/context/AppContext';
 
 interface AudioPlayerProps {
@@ -31,11 +31,31 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   
   // 前回のソースを追跡して不要な再ロードを防ぐ
   const prevSrcRef = useRef<string | null>(null);
+  
+  // Handle audio load error - memoized for performance
+  const handleLoadError = useCallback((error: Error) => {
+    setAudioError(`Error: ${error.message || 'Unknown error'}`);
+    
+    // Retry loading if under max attempts
+    if (loadAttempts < maxRetries) {
+      setLoadAttempts(prev => prev + 1);
+      
+      // Small delay before retry
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.load();
+        }
+      }, 1000);
+    }
+  }, [loadAttempts, maxRetries]);
 
   // Initialize or update audio element - 最適化版
   useEffect(() => {
     if (!src) {
-      console.error(`[${id}] Invalid audio source provided`);
+      // Reduce logging in production
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(`[${id}] Invalid audio source provided`);
+      }
       return;
     }
     
@@ -54,19 +74,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       
       audioRef.current.addEventListener('error', (e) => {
         const error = e as ErrorEvent;
-        setAudioError(`Error: ${audioRef.current?.error?.message || 'Unknown error'}`);
-        
-        // Retry loading if under max attempts
-        if (loadAttempts < maxRetries) {
-          setLoadAttempts(prev => prev + 1);
-          
-          // Small delay before retry
-          setTimeout(() => {
-            if (audioRef.current) {
-              audioRef.current.load();
-            }
-          }, 1000);
-        }
+        handleLoadError(new Error(audioRef.current?.error?.message || 'Unknown error'));
       });
       
       audioRef.current.addEventListener('play', () => {
@@ -97,18 +105,23 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     }
 
     // Update properties
-    audioRef.current.loop = loop;
+    if (audioRef.current) {
+      audioRef.current.loop = loop;
+    }
     
     // ソースが実際に変更された場合のみ再ロードする
-    if (audioRef.current.src !== src && prevSrcRef.current !== src) {
+    if (audioRef.current && (audioRef.current.src !== src && prevSrcRef.current !== src)) {
       try {
         audioRef.current.src = src;
         prevSrcRef.current = src;
         audioRef.current.load(); // Explicitly load the new source
         setIsLoaded(false);
         setAudioError(null);
+        setLoadAttempts(0); // Reset load attempts for new source
       } catch (err) {
-        console.error(`[${id}] Error setting audio source:`, err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(`[${id}] Error setting audio source:`, err);
+        }
         setAudioError(`Error setting source: ${err}`);
       }
     }
@@ -116,8 +129,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     // Cleanup function - 完全にクリーンアップして次のページに影響しないようにする
     return () => {
       if (audioRef.current) {
+        // Properly stop and clean up audio
         audioRef.current.pause();
         audioRef.current.src = ""; // Clear source to fully stop audio
+        
         // バッファをクリアすることで完全に音声を停止
         try {
           if (audioRef.current.buffered.length) {
@@ -126,12 +141,18 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         } catch (e) {
           // エラーをサイレントに処理 - 必要なのは停止のみ
         }
+        
+        // クリーンアップログも開発環境のみに制限
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[${id}] Cleaned up audio for: ${src}`);
+        }
+        
         setIsPlaying(false);
       }
     };
-  }, [src, id, loadAttempts, loop, startTime, onEnded]);
+  }, [src, id, loadAttempts, loop, startTime, onEnded, handleLoadError]);
 
-  // bgmEnabled changes, autoplay - パフォーマンス最適化
+  // Handle play state changes based on bgmEnabled - optimized with dependencies
   useEffect(() => {
     if (!audioRef.current || !isLoaded) return;
     
@@ -163,7 +184,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
                   audioRef.current.volume = volume;
                   
                   audioRef.current.play()
-                    .catch(e => console.error(`[${id}] Playback still failed after user interaction:`, e));
+                    .catch(e => {
+                      if (process.env.NODE_ENV !== 'production') {
+                        console.error(`[${id}] Playback still failed after user interaction:`, e);
+                      }
+                    });
                 }
                 
                 // Only handle once
@@ -175,25 +200,36 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
               document.addEventListener('touchstart', handleUserInteraction, { once: true });
             }
             
+            if (process.env.NODE_ENV !== 'production') {
+              console.warn(`[${id}] Playback prevented: ${error.message || 'Autoplay policy'}`);
+            }
             setAudioError(`Playback prevented: ${error.message || 'Autoplay policy'}`);
           });
       }
     } else if (!shouldPlay && isPlaying) {
       audioRef.current.pause();
     } else if (shouldPlay && isPlaying) {
-      // Only update volume if needed
-      if (audioRef.current.volume !== volume) {
+      // Only update volume if needed - reduce unnecessary operations
+      if (Math.abs(audioRef.current.volume - volume) > 0.01) {
         audioRef.current.volume = volume;
       }
     }
-  }, [bgmEnabled, autoPlay, isLoaded, isPlaying, volume]);
+  }, [bgmEnabled, autoPlay, isLoaded, isPlaying, volume, id]);
 
   // 見えないコンポーネントとして最小限のレンダリングでパフォーマンスを最適化
-  return (
-    <div style={{ display: 'none' }} data-audio-id={id} data-audio-src={src} data-playing={isPlaying}>
-      {audioError && <span data-error={audioError}></span>}
-    </div>
-  );
+  // Return an empty div - the audio player is invisible
+  return null;
 };
 
-export default React.memo(AudioPlayer); // メモ化してレンダリングを最適化
+// Use React.memo with a custom comparison function for performance
+function arePropsEqual(prevProps: AudioPlayerProps, nextProps: AudioPlayerProps) {
+  return (
+    prevProps.src === nextProps.src &&
+    prevProps.loop === nextProps.loop &&
+    prevProps.autoPlay === nextProps.autoPlay &&
+    prevProps.volume === nextProps.volume &&
+    prevProps.startTime === nextProps.startTime
+  );
+}
+
+export default memo(AudioPlayer, arePropsEqual);

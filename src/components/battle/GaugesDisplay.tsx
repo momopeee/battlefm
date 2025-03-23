@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import HPBar from '@/components/HPBar';
 import SpecialGauge from '@/components/SpecialGauge';
 import { Character } from '@/context/AppContext';
@@ -35,10 +35,25 @@ const GaugesDisplay: React.FC<GaugesDisplayProps> = ({
 }) => {
   const isMobile = useIsMobile();
   
+  // Memoize classes to prevent recalculation
+  const containerClasses = useMemo(() => 
+    `flex gap-2 sm:gap-4 mb-1 sm:mb-2 w-full ${isMobile ? 'px-1' : ''}`
+  , [isMobile]);
+  
+  // Memoize opponent's special gauge condition
+  const opponentSpecialValue = useMemo(() => 
+    sosoHealMode ? 0 : opponent.currentHp <= 30 ? 1 : 0
+  , [sosoHealMode, opponent.currentHp]);
+  
+  // Memoize special gauge label
+  const specialGaugeLabel = useMemo(() => 
+    sosoHealMode ? "強制コラボ召喚中" : "とくぎはつどう：1"
+  , [sosoHealMode]);
+  
   return (
     <>
       {/* Health bars */}
-      <div className={`flex gap-2 sm:gap-4 mb-1 sm:mb-2 w-full ${isMobile ? 'px-1' : ''}`}>
+      <div className={containerClasses}>
         <div className="flex-1">
           <HPBar currentHP={player.currentHp} maxHP={player.maxHp} />
         </div>
@@ -48,16 +63,16 @@ const GaugesDisplay: React.FC<GaugesDisplayProps> = ({
       </div>
       
       {/* Special attack gauges */}
-      <div className={`flex gap-2 sm:gap-4 mb-1 sm:mb-2 w-full ${isMobile ? 'px-1' : ''}`}>
+      <div className={containerClasses}>
         <div className="flex-1">
           <SpecialGauge currentValue={attackCount} maxValue={3} />
         </div>
         <div className="flex-1">
           {/* Opponent's special gauge (heal mode gauge) - Updated condition to HP <= 30 */}
           <SpecialGauge 
-            currentValue={sosoHealMode ? 0 : opponent.currentHp <= 30 ? 1 : 0} 
+            currentValue={opponentSpecialValue}
             maxValue={1} 
-            label={sosoHealMode ? "強制コラボ召喚中" : "とくぎはつどう：1"}
+            label={specialGaugeLabel}
           />
         </div>
       </div>

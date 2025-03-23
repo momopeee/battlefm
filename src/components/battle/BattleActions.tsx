@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, memo } from 'react';
 import AudioPlayer from '@/components/AudioPlayer';
 import { ATTACK_SOUND, SPECIAL_SOUND, RUN_AWAY_SOUND, HIGHBALL_SOUND } from '@/constants/audioUrls';
 
@@ -33,6 +33,15 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   
   // タイマー参照を保持してクリーンアップを確実に
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
 
   // ボタンアニメーション関数をメモ化
   const handleButtonAnimation = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -101,7 +110,10 @@ const BattleActions: React.FC<BattleActionsProps> = ({
 
   // サウンド終了ハンドラをメモ化
   const handleSoundEnded = useCallback(() => {
-    console.log(`Sound effect completed`);
+    // No console log in production
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Sound effect completed`);
+    }
   }, []);
 
   // メモ化したボタン無効状態
@@ -161,5 +173,15 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   );
 };
 
-// メモ化してレンダリングパフォーマンスを最適化
-export default React.memo(BattleActions);
+// Use a custom comparison function for React.memo to prevent unnecessary re-renders
+function arePropsEqual(prevProps: BattleActionsProps, nextProps: BattleActionsProps) {
+  return (
+    prevProps.isPlayerTurn === nextProps.isPlayerTurn &&
+    prevProps.isBattleOver === nextProps.isBattleOver &&
+    prevProps.specialAttackAvailable === nextProps.specialAttackAvailable &&
+    // We assume action handlers are stable (created with useCallback)
+    true
+  );
+}
+
+export default memo(BattleActions, arePropsEqual);
