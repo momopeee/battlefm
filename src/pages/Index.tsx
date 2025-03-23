@@ -7,6 +7,13 @@ import AudioPlayer from '@/components/AudioPlayer';
 import { useApp } from '@/context/AppContext';
 import { INDEX_BGM, BUTTON_SOUND } from '@/constants/audioUrls';
 
+// Declare audioCache on window
+declare global {
+  interface Window {
+    audioCache?: Record<string, HTMLAudioElement>;
+  }
+}
+
 // アプリケーションのバージョン
 const APP_VERSION = "Ver.3.167.0";
 
@@ -15,25 +22,25 @@ const Index = () => {
   const [buttonSound, setButtonSound] = useState<string | null>(null);
   const [userInteracted, setUserInteracted] = useState(false);
   
+  // オーディオコンテキストをアンブロックする関数 - useCallbackを使用して関数を定義
+  const unblockAudio = useCallback(() => {
+    if (userInteracted) return; // 既にアンブロック済みならスキップ
+    
+    console.log("Attempting to unblock audio context");
+    const silentAudio = new Audio();
+    silentAudio.play().then(() => {
+      console.log("Audio context unblocked by user interaction");
+      setUserInteracted(true);
+      silentAudio.pause();
+      silentAudio.src = ""; // Clear source
+    }).catch(err => {
+      console.log("Could not unblock audio context:", err);
+    });
+  }, [userInteracted]);
+  
   // ユーザー操作とオーディオアンブロック処理を最適化
   useEffect(() => {
     console.log("Index page loaded. BGM enabled:", bgmEnabled);
-    
-    // オーディオコンテキストをアンブロックする関数 - 最適化
-    const unblockAudio = useCallback(() => {
-      if (userInteracted) return; // 既にアンブロック済みならスキップ
-      
-      console.log("Attempting to unblock audio context");
-      const silentAudio = new Audio();
-      silentAudio.play().then(() => {
-        console.log("Audio context unblocked by user interaction");
-        setUserInteracted(true);
-        silentAudio.pause();
-        silentAudio.src = ""; // Clear source
-      }).catch(err => {
-        console.log("Could not unblock audio context:", err);
-      });
-    }, [userInteracted]);
     
     // イベントリスナーを最適化 - { once: true } オプションを使用
     document.addEventListener('click', unblockAudio, { once: true });
@@ -43,14 +50,14 @@ const Index = () => {
     const preloadAudio = (url: string) => {
       // オーディオをキャッシュして再利用するようにする
       if (!window.audioCache) {
-        (window as any).audioCache = {};
+        window.audioCache = {};
       }
       
-      if (!(window as any).audioCache[url]) {
+      if (!window.audioCache[url]) {
         const audio = new Audio();
         audio.src = url;
         audio.preload = "auto"; // 明示的にプリロードを指示
-        (window as any).audioCache[url] = audio;
+        window.audioCache[url] = audio;
         console.log(`Preloading audio: ${url}`);
       }
     };
@@ -63,7 +70,7 @@ const Index = () => {
       document.removeEventListener('click', unblockAudio);
       document.removeEventListener('touchstart', unblockAudio);
     };
-  }, [bgmEnabled, userInteracted]);
+  }, [bgmEnabled, unblockAudio]); // Add unblockAudio to dependency array
 
   // クリックハンドラをメモ化して不要な再生成を防ぐ
   const handleStartClick = useCallback(() => {
