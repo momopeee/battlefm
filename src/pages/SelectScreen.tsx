@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
@@ -34,7 +35,7 @@ const SelectScreen: React.FC = () => {
   const handleSelectClick = () => {
     setShowAssault(true);
     setAssaultAlarm(true);
-    setButtonSound(BUTTON_SOUND);
+    // タップ時の効果音を削除 (BUTTON_SOUND の行を削除)
     
     const alarmTimeout = setTimeout(() => {
       setAssaultAlarm(false);
@@ -42,6 +43,8 @@ const SelectScreen: React.FC = () => {
     }, 3000);
     
     const battleTimeout = setTimeout(() => {
+      // BGMを即座に停止するために setAssaultText(false) を追加
+      setAssaultText(false);
       handleScreenTransition('battle2');
     }, 15000);
     
@@ -51,6 +54,8 @@ const SelectScreen: React.FC = () => {
   const handleSkip = () => {
     setButtonSound(BUTTON_SOUND);
     timeouts.forEach(timeout => clearTimeout(timeout));
+    // BGMを即座に停止するために setAssaultText(false) を追加
+    setAssaultText(false);
     handleScreenTransition('battle2');
     navigate('/battle2');
   };
