@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
@@ -15,12 +15,14 @@ const Index = () => {
   const [buttonSound, setButtonSound] = useState<string | null>(null);
   const [userInteracted, setUserInteracted] = useState(false);
   
-  // Add user interaction logging and audio unblocking
+  // ユーザー操作とオーディオアンブロック処理を最適化
   useEffect(() => {
     console.log("Index page loaded. BGM enabled:", bgmEnabled);
     
-    // Attempt to unblock audio context with a silent audio element
-    const unblockAudio = () => {
+    // オーディオコンテキストをアンブロックする関数 - 最適化
+    const unblockAudio = useCallback(() => {
+      if (userInteracted) return; // 既にアンブロック済みならスキップ
+      
       console.log("Attempting to unblock audio context");
       const silentAudio = new Audio();
       silentAudio.play().then(() => {
@@ -31,38 +33,44 @@ const Index = () => {
       }).catch(err => {
         console.log("Could not unblock audio context:", err);
       });
+    }, [userInteracted]);
+    
+    // イベントリスナーを最適化 - { once: true } オプションを使用
+    document.addEventListener('click', unblockAudio, { once: true });
+    document.addEventListener('touchstart', unblockAudio, { once: true });
+    
+    // プリロードを最適化 - 必要なファイルだけをプリロード
+    const preloadAudio = (url: string) => {
+      // オーディオをキャッシュして再利用するようにする
+      if (!window.audioCache) {
+        (window as any).audioCache = {};
+      }
+      
+      if (!(window as any).audioCache[url]) {
+        const audio = new Audio();
+        audio.src = url;
+        audio.preload = "auto"; // 明示的にプリロードを指示
+        (window as any).audioCache[url] = audio;
+        console.log(`Preloading audio: ${url}`);
+      }
     };
     
-    // Add event listener to unblock audio on first user interaction
-    const handleUserInteraction = () => {
-      unblockAudio();
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-    };
-    
-    document.addEventListener('click', handleUserInteraction);
-    document.addEventListener('touchstart', handleUserInteraction);
-    
-    // Preload important audio files
-    const preloadAudios = [INDEX_BGM, BUTTON_SOUND];
-    preloadAudios.forEach(url => {
-      const audio = new Audio();
-      audio.src = url;
-      console.log(`Preloading audio: ${url}`);
-    });
+    // 重要なオーディオファイルのみをプリロード
+    preloadAudio(INDEX_BGM);
+    preloadAudio(BUTTON_SOUND);
     
     return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
+      document.removeEventListener('click', unblockAudio);
+      document.removeEventListener('touchstart', unblockAudio);
     };
-  }, [bgmEnabled]);
+  }, [bgmEnabled, userInteracted]);
 
-  // Handle button click with sound
-  const handleStartClick = () => {
+  // クリックハンドラをメモ化して不要な再生成を防ぐ
+  const handleStartClick = useCallback(() => {
     setButtonSound(BUTTON_SOUND);
     // Provide enough time for sound to play before potential navigation
     setTimeout(() => setButtonSound(null), 300);
-  };
+  }, []);
   
   return (
     <MobileContainer
@@ -70,7 +78,7 @@ const Index = () => {
       backgroundImage="/lovable-uploads/c8b9a8dd-129e-4ba6-ba66-c03a253d63f7.png"
       pcBackgroundColor="#0B0B0B"
     >
-      {/* Index page BGM */}
+      {/* AudioPlayerをメモ化コンポーネントにしたことで再レンダリングを最適化 */}
       <AudioPlayer 
         src={INDEX_BGM} 
         loop={true} 
@@ -79,7 +87,7 @@ const Index = () => {
         id="index-bgm"
       />
       
-      {/* Button sound effect player */}
+      {/* ボタン効果音プレーヤー - 必要な時だけレンダリング */}
       {buttonSound && (
         <AudioPlayer 
           src={buttonSound} 
@@ -91,6 +99,7 @@ const Index = () => {
         />
       )}
 
+      {/* 以下は既存コードを維持 */}
       <div className="flex flex-col items-center justify-between h-full px-4 py-8">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center flex flex-col items-center justify-center gap-6 sm:gap-10">
@@ -120,4 +129,5 @@ const Index = () => {
   );
 };
 
-export default Index;
+// メモ化してパフォーマンスを向上
+export default React.memo(Index);

@@ -28,11 +28,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [loadAttempts, setLoadAttempts] = useState(0);
   const maxRetries = 3;
+  
+  // 前回のソースを追跡して不要な再ロードを防ぐ
+  const prevSrcRef = useRef<string | null>(null);
 
-  // Initialize or update audio element
+  // Initialize or update audio element - 最適化版
   useEffect(() => {
-    console.log(`[${id}] AudioPlayer: Initializing with src=${src}, bgmEnabled=${bgmEnabled}`);
-    
     if (!src) {
       console.error(`[${id}] Invalid audio source provided`);
       return;
@@ -42,9 +43,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     if (!audioRef.current) {
       audioRef.current = new Audio();
       
-      // Set up event listeners
+      // Set up event listeners - イベントリスナーを一度だけ設定
       audioRef.current.addEventListener('canplaythrough', () => {
-        console.log(`[${id}] Audio loaded and ready: ${src}`);
         setIsLoaded(true);
         
         if (startTime > 0) {
@@ -54,12 +54,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       
       audioRef.current.addEventListener('error', (e) => {
         const error = e as ErrorEvent;
-        console.error(`[${id}] Audio error:`, error, audioRef.current?.error);
         setAudioError(`Error: ${audioRef.current?.error?.message || 'Unknown error'}`);
         
         // Retry loading if under max attempts
         if (loadAttempts < maxRetries) {
-          console.log(`[${id}] Retrying audio load (attempt ${loadAttempts + 1}/${maxRetries})`);
           setLoadAttempts(prev => prev + 1);
           
           // Small delay before retry
@@ -72,17 +70,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       });
       
       audioRef.current.addEventListener('play', () => {
-        console.log(`[${id}] Audio started playing: ${src}`);
         setIsPlaying(true);
       });
       
       audioRef.current.addEventListener('pause', () => {
-        console.log(`[${id}] Audio paused: ${src}`);
         setIsPlaying(false);
       });
       
       audioRef.current.addEventListener('ended', () => {
-        console.log(`[${id}] Audio ended: ${src}`);
         setIsPlaying(false);
         
         if (onEnded) {
@@ -104,11 +99,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     // Update properties
     audioRef.current.loop = loop;
     
-    // Update source if it changes
-    if (audioRef.current.src !== src) {
-      console.log(`[${id}] Setting audio source: ${src}`);
+    // ソースが実際に変更された場合のみ再ロードする
+    if (audioRef.current.src !== src && prevSrcRef.current !== src) {
       try {
         audioRef.current.src = src;
+        prevSrcRef.current = src;
         audioRef.current.load(); // Explicitly load the new source
         setIsLoaded(false);
         setAudioError(null);
@@ -118,26 +113,32 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       }
     }
 
-    // Cleanup function
+    // Cleanup function - 完全にクリーンアップして次のページに影響しないようにする
     return () => {
       if (audioRef.current) {
-        console.log(`[${id}] Cleaning up audio: ${src}`);
         audioRef.current.pause();
         audioRef.current.src = ""; // Clear source to fully stop audio
+        // バッファをクリアすることで完全に音声を停止
+        try {
+          if (audioRef.current.buffered.length) {
+            audioRef.current.currentTime = 0;
+          }
+        } catch (e) {
+          // エラーをサイレントに処理 - 必要なのは停止のみ
+        }
         setIsPlaying(false);
       }
     };
   }, [src, id, loadAttempts, loop, startTime, onEnded]);
 
-  // Handle bgmEnabled changes and autoplay
+  // bgmEnabled changes, autoplay - パフォーマンス最適化
   useEffect(() => {
     if (!audioRef.current || !isLoaded) return;
     
     const shouldPlay = bgmEnabled && autoPlay;
     
+    // 状態変更時のみ処理を実行
     if (shouldPlay && !isPlaying) {
-      console.log(`[${id}] Attempting to play audio: ${src}`);
-      
       // Using a promise to handle autoplay restrictions
       // First try with muted to bypass autoplay restrictions
       audioRef.current.muted = true;
@@ -146,31 +147,22 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            console.log(`[${id}] Successfully playing audio muted: ${src}`);
             // Now unmute and set proper volume
             if (audioRef.current) {
               audioRef.current.muted = false;
               audioRef.current.volume = volume;
-              console.log(`[${id}] Audio unmuted and volume set to ${volume}`);
             }
           })
           .catch(error => {
-            console.warn(`[${id}] Audio playback prevented:`, error);
-            
             // Auto-play was prevented by the browser
             if (error.name === "NotAllowedError") {
-              console.info(`[${id}] Autoplay blocked by browser policy. User interaction required.`);
-              
               // We'll set up a one-time click handler on document to try again
               const handleUserInteraction = () => {
-                console.log(`[${id}] User interaction detected, attempting playback again`);
-                
                 if (audioRef.current) {
                   audioRef.current.muted = false;
                   audioRef.current.volume = volume;
                   
                   audioRef.current.play()
-                    .then(() => console.log(`[${id}] Playback successful after user interaction`))
                     .catch(e => console.error(`[${id}] Playback still failed after user interaction:`, e));
                 }
                 
@@ -187,15 +179,16 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
           });
       }
     } else if (!shouldPlay && isPlaying) {
-      console.log(`[${id}] Pausing audio due to bgmEnabled=${bgmEnabled}: ${src}`);
       audioRef.current.pause();
     } else if (shouldPlay && isPlaying) {
-      // Already playing but update volume
-      audioRef.current.volume = volume;
+      // Only update volume if needed
+      if (audioRef.current.volume !== volume) {
+        audioRef.current.volume = volume;
+      }
     }
-  }, [bgmEnabled, autoPlay, isLoaded, src, id, isPlaying, volume]);
+  }, [bgmEnabled, autoPlay, isLoaded, isPlaying, volume]);
 
-  // Add a small invisible element for debugging purposes
+  // 見えないコンポーネントとして最小限のレンダリングでパフォーマンスを最適化
   return (
     <div style={{ display: 'none' }} data-audio-id={id} data-audio-src={src} data-playing={isPlaying}>
       {audioError && <span data-error={audioError}></span>}
@@ -203,4 +196,4 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   );
 };
 
-export default AudioPlayer;
+export default React.memo(AudioPlayer); // メモ化してレンダリングを最適化

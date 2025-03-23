@@ -12,6 +12,21 @@ interface GaugesDisplayProps {
   sosoHealMode: boolean;
 }
 
+// パフォーマンス最適化のためのpropsを比較する関数
+const propsAreEqual = (
+  prevProps: GaugesDisplayProps,
+  nextProps: GaugesDisplayProps
+): boolean => {
+  return (
+    prevProps.player.currentHp === nextProps.player.currentHp &&
+    prevProps.player.maxHp === nextProps.player.maxHp &&
+    prevProps.opponent.currentHp === nextProps.opponent.currentHp &&
+    prevProps.opponent.maxHp === nextProps.opponent.maxHp &&
+    prevProps.attackCount === nextProps.attackCount &&
+    prevProps.sosoHealMode === nextProps.sosoHealMode
+  );
+};
+
 const GaugesDisplay: React.FC<GaugesDisplayProps> = ({
   player,
   opponent,
@@ -50,4 +65,5 @@ const GaugesDisplay: React.FC<GaugesDisplayProps> = ({
   );
 };
 
-export default GaugesDisplay;
+// React.memo で囲み、カスタム比較関数を提供してレンダリングを最適化
+export default React.memo(GaugesDisplay, propsAreEqual);
