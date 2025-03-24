@@ -18,37 +18,36 @@ declare global {
 const APP_VERSION = "Ver.3.167.0";
 
 const Index = () => {
-  const { bgmEnabled, toggleBgm, userInteracted, setUserInteracted } = useApp();
+  const { bgmEnabled, toggleBgm } = useApp();
   const [buttonSound, setButtonSound] = useState<string | null>(null);
+  const [userInteracted, setUserInteracted] = useState(false);
   
-  // オーディオコンテキストをアンブロックする関数
+  // オーディオコンテキストをアンブロックする関数 - useCallbackを使用して関数を定義
   const unblockAudio = useCallback(() => {
-    setUserInteracted(); // Use the global context method
+    if (userInteracted) return; // 既にアンブロック済みならスキップ
     
     console.log("Attempting to unblock audio context");
     const silentAudio = new Audio();
     silentAudio.play().then(() => {
       console.log("Audio context unblocked by user interaction");
+      setUserInteracted(true);
       silentAudio.pause();
       silentAudio.src = ""; // Clear source
     }).catch(err => {
       console.log("Could not unblock audio context:", err);
     });
-  }, [setUserInteracted]);
+  }, [userInteracted]);
   
   // ユーザー操作とオーディオアンブロック処理を最適化
   useEffect(() => {
-    console.log("Index page loaded. BGM enabled:", bgmEnabled, "User interacted:", userInteracted);
+    console.log("Index page loaded. BGM enabled:", bgmEnabled);
     
-    // Use the global interaction flag
-    if (!userInteracted) {
-      // イベントリスナーを最適化 - { once: true } オプションを使用
-      document.addEventListener('click', unblockAudio, { once: true });
-      document.addEventListener('touchstart', unblockAudio, { once: true });
-    }
+    // イベントリスナーを最適化 - { once: true } オプションを使用
+    document.addEventListener('click', unblockAudio, { once: true });
+    document.addEventListener('touchstart', unblockAudio, { once: true });
     
-    // プリロードを非同期化
-    const preloadAudio = async (url: string) => {
+    // プリロードを最適化 - 必要なファイルだけをプリロード
+    const preloadAudio = (url: string) => {
       // オーディオをキャッシュして再利用するようにする
       if (!window.audioCache) {
         window.audioCache = {};
@@ -59,47 +58,19 @@ const Index = () => {
         audio.src = url;
         audio.preload = "auto"; // 明示的にプリロードを指示
         window.audioCache[url] = audio;
-        
-        try {
-          // Audio.load() はプロミスを返さないので、一時的なリスナーでラップ
-          await new Promise((resolve, reject) => {
-            const loadHandler = () => {
-              resolve(true);
-              audio.removeEventListener('canplaythrough', loadHandler);
-            };
-            
-            const errorHandler = (e: Event) => {
-              reject(new Error('Failed to load audio'));
-              audio.removeEventListener('error', errorHandler);
-            };
-            
-            audio.addEventListener('canplaythrough', loadHandler, { once: true });
-            audio.addEventListener('error', errorHandler, { once: true });
-            
-            // 明示的にロードを開始
-            audio.load();
-          });
-          console.log(`Preloaded audio: ${url}`);
-        } catch (err) {
-          console.error(`Error preloading audio ${url}:`, err);
-        }
+        console.log(`Preloading audio: ${url}`);
       }
     };
     
-    // 非同期でプリロード処理を実行
-    (async () => {
-      // 重要なオーディオファイルのみをプリロード
-      await Promise.all([
-        preloadAudio(INDEX_BGM),
-        preloadAudio(BUTTON_SOUND)
-      ]);
-    })();
+    // 重要なオーディオファイルのみをプリロード
+    preloadAudio(INDEX_BGM);
+    preloadAudio(BUTTON_SOUND);
     
     return () => {
       document.removeEventListener('click', unblockAudio);
       document.removeEventListener('touchstart', unblockAudio);
     };
-  }, [bgmEnabled, unblockAudio, userInteracted]);
+  }, [bgmEnabled, unblockAudio]); // Add unblockAudio to dependency array
 
   // クリックハンドラをメモ化して不要な再生成を防ぐ
   const handleStartClick = useCallback(() => {
@@ -118,7 +89,7 @@ const Index = () => {
       <AudioPlayer 
         src={INDEX_BGM} 
         loop={true} 
-        autoPlay={userInteracted} // Use the userInteracted flag for autoPlay
+        autoPlay={true} 
         volume={0.7}
         id="index-bgm"
       />
@@ -128,7 +99,7 @@ const Index = () => {
         <AudioPlayer 
           src={buttonSound} 
           loop={false} 
-          autoPlay={userInteracted} // Use the userInteracted flag
+          autoPlay={true} 
           volume={0.7}
           id="button-sound" 
           key={`button-sound-${Date.now()}`} // Force remount when sound changes
@@ -149,10 +120,7 @@ const Index = () => {
             <Button 
               asChild
               className="w-48 sm:w-64 text-base sm:text-lg py-4 sm:py-6 bg-pink-500 hover:bg-pink-600 rounded-full font-bold"
-              onClick={() => {
-                setUserInteracted(); // Set user interaction when button is clicked
-                handleStartClick();
-              }}
+              onClick={handleStartClick}
             >
               <Link to="/start">スタート</Link>
             </Button>

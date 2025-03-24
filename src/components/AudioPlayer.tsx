@@ -22,14 +22,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   onEnded
 }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { bgmEnabled, userInteracted } = useApp();
+  const { bgmEnabled } = useApp();
   const [isLoaded, setIsLoaded] = useState(false);
   const [audioError, setAudioError] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [loadAttempts, setLoadAttempts] = useState(0);
   const maxRetries = 3;
   
-  // Track previous source to prevent unnecessary reloads
+  // 前回のソースを追跡して不要な再ロードを防ぐ
   const prevSrcRef = useRef<string | null>(null);
   
   // Handle audio load error - memoized for performance
@@ -49,38 +49,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     }
   }, [loadAttempts, maxRetries]);
 
-  // Asynchronous preload function
-  const preloadAudio = useCallback(async (audioElement: HTMLAudioElement, audioSrc: string) => {
-    try {
-      // First mute the audio to help with autoplay policies
-      audioElement.muted = true;
-      audioElement.src = audioSrc;
-      
-      // Use a promise to wait for loading
-      await new Promise((resolve, reject) => {
-        audioElement.addEventListener('canplaythrough', resolve, { once: true });
-        audioElement.addEventListener('error', reject, { once: true });
-        // Start loading
-        audioElement.load();
-      });
-      
-      if (process.env.NODE_ENV !== 'production') {
-        console.log(`[${id}] Audio preloaded successfully: ${audioSrc}`);
-      }
-      
-      setIsLoaded(true);
-      if (startTime > 0) {
-        audioElement.currentTime = startTime;
-      }
-    } catch (err) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.error(`[${id}] Error preloading audio:`, err);
-      }
-      handleLoadError(err instanceof Error ? err : new Error('Unknown error during preload'));
-    }
-  }, [id, startTime, handleLoadError]);
-
-  // Initialize or update audio element
+  // Initialize or update audio element - 最適化版
   useEffect(() => {
     if (!src) {
       // Reduce logging in production
@@ -94,7 +63,20 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     if (!audioRef.current) {
       audioRef.current = new Audio();
       
-      // Set up event listeners once
+      // Set up event listeners - イベントリスナーを一度だけ設定
+      audioRef.current.addEventListener('canplaythrough', () => {
+        setIsLoaded(true);
+        
+        if (startTime > 0) {
+          audioRef.current!.currentTime = startTime;
+        }
+      });
+      
+      audioRef.current.addEventListener('error', (e) => {
+        const error = e as ErrorEvent;
+        handleLoadError(new Error(audioRef.current?.error?.message || 'Unknown error'));
+      });
+      
       audioRef.current.addEventListener('play', () => {
         setIsPlaying(true);
       });
@@ -117,17 +99,23 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       });
     }
 
+    // First mute the audio to help with autoplay policies
+    if (audioRef.current) {
+      audioRef.current.muted = true;
+    }
+
     // Update properties
     if (audioRef.current) {
       audioRef.current.loop = loop;
     }
     
-    // Only reload if source actually changed
+    // ソースが実際に変更された場合のみ再ロードする
     if (audioRef.current && (audioRef.current.src !== src && prevSrcRef.current !== src)) {
       try {
+        audioRef.current.src = src;
         prevSrcRef.current = src;
-        // Use the asynchronous preload function
-        preloadAudio(audioRef.current, src);
+        audioRef.current.load(); // Explicitly load the new source
+        setIsLoaded(false);
         setAudioError(null);
         setLoadAttempts(0); // Reset load attempts for new source
       } catch (err) {
@@ -138,23 +126,23 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
       }
     }
 
-    // Cleanup function
+    // Cleanup function - 完全にクリーンアップして次のページに影響しないようにする
     return () => {
       if (audioRef.current) {
         // Properly stop and clean up audio
         audioRef.current.pause();
         audioRef.current.src = ""; // Clear source to fully stop audio
         
-        // Clear buffered audio
+        // バッファをクリアすることで完全に音声を停止
         try {
           if (audioRef.current.buffered.length) {
             audioRef.current.currentTime = 0;
           }
         } catch (e) {
-          // Silent error handling - just stopping
+          // エラーをサイレントに処理 - 必要なのは停止のみ
         }
         
-        // Only log in development
+        // クリーンアップログも開発環境のみに制限
         if (process.env.NODE_ENV !== 'production') {
           console.log(`[${id}] Cleaned up audio for: ${src}`);
         }
@@ -162,26 +150,56 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         setIsPlaying(false);
       }
     };
-  }, [src, id, loop, preloadAudio, onEnded]);
+  }, [src, id, loadAttempts, loop, startTime, onEnded, handleLoadError]);
 
-  // Handle play state changes based on bgmEnabled - considering user interaction
+  // Handle play state changes based on bgmEnabled - optimized with dependencies
   useEffect(() => {
     if (!audioRef.current || !isLoaded) return;
     
-    // Only autoplay if enabled, user has interacted, and autoPlay is true
-    const shouldPlay = bgmEnabled && autoPlay && userInteracted;
+    const shouldPlay = bgmEnabled && autoPlay;
     
-    // Only process when state changes
+    // 状態変更時のみ処理を実行
     if (shouldPlay && !isPlaying) {
       // Using a promise to handle autoplay restrictions
-      audioRef.current.muted = false;
-      audioRef.current.volume = volume;
+      // First try with muted to bypass autoplay restrictions
+      audioRef.current.muted = true;
       const playPromise = audioRef.current.play();
       
       if (playPromise !== undefined) {
         playPromise
+          .then(() => {
+            // Now unmute and set proper volume
+            if (audioRef.current) {
+              audioRef.current.muted = false;
+              audioRef.current.volume = volume;
+            }
+          })
           .catch(error => {
-            // Handle autoplay restrictions
+            // Auto-play was prevented by the browser
+            if (error.name === "NotAllowedError") {
+              // We'll set up a one-time click handler on document to try again
+              const handleUserInteraction = () => {
+                if (audioRef.current) {
+                  audioRef.current.muted = false;
+                  audioRef.current.volume = volume;
+                  
+                  audioRef.current.play()
+                    .catch(e => {
+                      if (process.env.NODE_ENV !== 'production') {
+                        console.error(`[${id}] Playback still failed after user interaction:`, e);
+                      }
+                    });
+                }
+                
+                // Only handle once
+                document.removeEventListener('click', handleUserInteraction);
+                document.removeEventListener('touchstart', handleUserInteraction);
+              };
+              
+              document.addEventListener('click', handleUserInteraction, { once: true });
+              document.addEventListener('touchstart', handleUserInteraction, { once: true });
+            }
+            
             if (process.env.NODE_ENV !== 'production') {
               console.warn(`[${id}] Playback prevented: ${error.message || 'Autoplay policy'}`);
             }
@@ -191,14 +209,15 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
     } else if (!shouldPlay && isPlaying) {
       audioRef.current.pause();
     } else if (shouldPlay && isPlaying) {
-      // Only update volume if needed
+      // Only update volume if needed - reduce unnecessary operations
       if (Math.abs(audioRef.current.volume - volume) > 0.01) {
         audioRef.current.volume = volume;
       }
     }
-  }, [bgmEnabled, autoPlay, isLoaded, isPlaying, volume, id, userInteracted]);
+  }, [bgmEnabled, autoPlay, isLoaded, isPlaying, volume, id]);
 
-  // Return null - the audio player is invisible
+  // 見えないコンポーネントとして最小限のレンダリングでパフォーマンスを最適化
+  // Return an empty div - the audio player is invisible
   return null;
 };
 

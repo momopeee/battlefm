@@ -14,7 +14,7 @@ import {
 } from '@/constants/audioUrls';
 
 const SelectScreen: React.FC = () => {
-  const { bgmEnabled, toggleBgm, handleScreenTransition, userInteracted, setUserInteracted } = useApp();
+  const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [showAssault, setShowAssault] = useState(false);
@@ -26,66 +26,15 @@ const SelectScreen: React.FC = () => {
   const [buttonSound, setButtonSound] = useState<string | null>(null);
   
   useEffect(() => {
-    const handleInteraction = () => {
-      setUserInteracted();
-    };
-    
-    if (!userInteracted) {
-      document.addEventListener('click', handleInteraction, { once: true });
-      document.addEventListener('touchstart', handleInteraction, { once: true });
-    }
-    
-    const preloadAudio = async (url: string) => {
-      if (!window.audioCache) {
-        window.audioCache = {};
-      }
-      
-      if (!window.audioCache[url]) {
-        try {
-          const audio = new Audio();
-          audio.src = url;
-          audio.preload = "auto";
-          
-          await new Promise((resolve, reject) => {
-            audio.addEventListener('canplaythrough', resolve, { once: true });
-            audio.addEventListener('error', reject, { once: true });
-            audio.load();
-          });
-          
-          window.audioCache[url] = audio;
-          console.log(`Preloaded audio for SelectScreen: ${url}`);
-        } catch (err) {
-          console.error(`Error preloading audio ${url}:`, err);
-        }
-      }
-    };
-    
-    (async () => {
-      await Promise.all([
-        preloadAudio(SELECT_NORMAL_BGM),
-        preloadAudio(SELECT_ALARM_SOUND),
-        preloadAudio(SELECT_ASSAULT_BGM),
-        preloadAudio(BUTTON_SOUND)
-      ]);
-    })();
-    
     return () => {
       timeouts.forEach(timeout => clearTimeout(timeout));
-      
-      if (!userInteracted) {
-        document.removeEventListener('click', handleInteraction);
-        document.removeEventListener('touchstart', handleInteraction);
-      }
     };
-  }, [timeouts, userInteracted, setUserInteracted]);
+  }, [timeouts]);
   
   const handleSelectClick = () => {
-    if (showAssault) return;
-    
     setShowAssault(true);
     setAssaultAlarm(true);
     setButtonSound(BUTTON_SOUND);
-    setUserInteracted();
     
     const alarmTimeout = setTimeout(() => {
       setAssaultAlarm(false);
@@ -101,15 +50,14 @@ const SelectScreen: React.FC = () => {
 
   const handleSkip = () => {
     setButtonSound(BUTTON_SOUND);
-    setUserInteracted();
     timeouts.forEach(timeout => clearTimeout(timeout));
     handleScreenTransition('battle2');
+    navigate('/battle2');
   };
 
   const handleMenuButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setButtonSound(BUTTON_SOUND);
-    setUserInteracted();
     setShowWarning(true);
     
     const warningTimeout = setTimeout(() => {
@@ -121,46 +69,50 @@ const SelectScreen: React.FC = () => {
 
   return (
     <MobileContainer backgroundClassName={!showAssault ? "bg-white" : "bg-black"}>
+      {/* Main BGM for normal mode */}
       {!showAssault && (
         <AudioPlayer 
           src={SELECT_NORMAL_BGM} 
           loop={true} 
-          autoPlay={userInteracted}
+          autoPlay={true} 
           volume={0.7}
           id="select-normal-bgm"
         />
       )}
       
+      {/* Alarm sound when assault mode activates */}
       {assaultAlarm && (
         <AudioPlayer 
           src={SELECT_ALARM_SOUND} 
           loop={false} 
-          autoPlay={userInteracted}
+          autoPlay={true} 
           volume={0.7}
           id="select-alarm-sound"
-          key={`alarm-sound-${Date.now()}`}
+          key={`alarm-sound-${Date.now()}`} // Force remount
         />
       )}
       
+      {/* BGM for assault mode */}
       {assaultText && (
         <AudioPlayer 
           src={SELECT_ASSAULT_BGM} 
           loop={true} 
-          autoPlay={userInteracted}
+          autoPlay={true} 
           volume={0.7}
           id="select-assault-bgm"
-          key={`assault-bgm-${Date.now()}`}
+          key={`assault-bgm-${Date.now()}`} // Force remount
         />
       )}
       
+      {/* Button sound effect player */}
       {buttonSound && (
         <AudioPlayer 
           src={buttonSound} 
           loop={false} 
-          autoPlay={userInteracted}
+          autoPlay={true} 
           volume={0.7}
           id="button-sound" 
-          key={`button-sound-${Date.now()}`}
+          key={`button-sound-${Date.now()}`} // Force remount
         />
       )}
       
@@ -219,6 +171,7 @@ const SelectScreen: React.FC = () => {
             </div>
           </div>
           
+          {/* Replace the bottom menu with the image */}
           <div className="border-t p-4">
             <div className="flex justify-center">
               <img 
@@ -238,7 +191,6 @@ const SelectScreen: React.FC = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setUserInteracted();
               toggleBgm();
             }}
             className="absolute top-6 right-6 z-20 bg-white/10 backdrop-blur-sm p-3 rounded-full hover:bg-white/20 transition-colors"
