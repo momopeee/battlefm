@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 
 // Character interface
 export interface Character {
@@ -31,6 +31,8 @@ interface AppContextProps {
   setOpponent2: React.Dispatch<React.SetStateAction<Character>>;
   bgmEnabled: boolean;
   toggleBgm: () => void;
+  userInteracted: boolean;
+  setUserInteracted: () => void;
   battleTimer: number;
   startBattleTimer: () => void;
   pauseBattleTimer: () => void;
@@ -97,7 +99,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   });
   
   // BGM state
-  const [bgmEnabled, setBgmEnabled] = useState(true);
+  const [bgmEnabled, setBgmEnabled] = useState<boolean>(true);
+  const [userInteracted, setUserInteractedState] = useState<boolean>(false);
   
   // Toggle BGM
   const toggleBgm = () => {
@@ -216,6 +219,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     console.log('Battle state fully reset - all character stats and battle flags reset to initial values');
   };
   
+  // Add a function to set user interaction flag
+  const setUserInteracted = useCallback(() => {
+    if (!userInteractedState) {
+      setUserInteractedState(true);
+    }
+  }, [userInteractedState]);
+
   // Cleanup on unmount
   React.useEffect(() => {
     return () => {
@@ -223,24 +233,46 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
   }, [timerInterval]);
   
+  // Add event listeners for user interaction at the App level
+  useEffect(() => {
+    if (!userInteracted) {
+      const handleUserInteraction = () => {
+        setUserInteracted();
+      };
+
+      document.addEventListener('click', handleUserInteraction, { once: true });
+      document.addEventListener('touchstart', handleUserInteraction, { once: true });
+      
+      return () => {
+        document.removeEventListener('click', handleUserInteraction);
+        document.removeEventListener('touchstart', handleUserInteraction);
+      };
+    }
+  }, [userInteracted, setUserInteracted]);
+
+  // Update the context value to include new properties
+  const contextValue: AppContextType = {
+    player, setPlayer,
+    opponent1, setOpponent1,
+    opponent2, setOpponent2,
+    bgmEnabled, toggleBgm,
+    userInteracted,
+    setUserInteracted,
+    battleTimer, startBattleTimer, pauseBattleTimer, resetBattleTimer,
+    currentScreen, handleScreenTransition,
+    comments, addComment, clearComments, totalComments,
+    attackCount, setAttackCount,
+    specialAttackAvailable, setSpecialAttackAvailable,
+    highballMode, setHighballMode,
+    sosoHealMode, setSosoHealMode,
+    yujiSpecialMode, setYujiSpecialMode,
+    showCharacterSheet, setShowCharacterSheet,
+    currentCharacterSheet, setCurrentCharacterSheet,
+    resetBattleState
+  };
+
   return (
-    <AppContext.Provider value={{
-      player, setPlayer,
-      opponent1, setOpponent1,
-      opponent2, setOpponent2,
-      bgmEnabled, toggleBgm,
-      battleTimer, startBattleTimer, pauseBattleTimer, resetBattleTimer,
-      currentScreen, handleScreenTransition,
-      comments, addComment, clearComments, totalComments,
-      attackCount, setAttackCount,
-      specialAttackAvailable, setSpecialAttackAvailable,
-      highballMode, setHighballMode,
-      sosoHealMode, setSosoHealMode,
-      yujiSpecialMode, setYujiSpecialMode,
-      showCharacterSheet, setShowCharacterSheet,
-      currentCharacterSheet, setCurrentCharacterSheet,
-      resetBattleState
-    }}>
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );
