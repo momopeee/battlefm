@@ -100,7 +100,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   
   // BGM state
   const [bgmEnabled, setBgmEnabled] = useState<boolean>(true);
-  const [userInteracted, setUserInteractedState] = useState<boolean>(false);
+  const [userInteracted, setUserInteracted] = useState<boolean>(false);
   
   // Toggle BGM
   const toggleBgm = () => {
@@ -220,12 +220,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
   
   // Add a function to set user interaction flag
-  const setUserInteracted = useCallback(() => {
-    if (!userInteractedState) {
-      setUserInteractedState(true);
-    }
-  }, [userInteractedState]);
-
+  const handleUserInteraction = useCallback(() => {
+    setUserInteracted(true);
+  }, []);
+  
   // Cleanup on unmount
   React.useEffect(() => {
     return () => {
@@ -237,7 +235,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     if (!userInteracted) {
       const handleUserInteraction = () => {
-        setUserInteracted();
+        setUserInteracted(true);
       };
 
       document.addEventListener('click', handleUserInteraction, { once: true });
@@ -248,8 +246,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         document.removeEventListener('touchstart', handleUserInteraction);
       };
     }
-  }, [userInteracted, setUserInteracted]);
-
+  }, [userInteracted]);
+  
   // Update the context value to include new properties
   const contextValue: AppContextType = {
     player, setPlayer,
@@ -257,7 +255,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     opponent2, setOpponent2,
     bgmEnabled, toggleBgm,
     userInteracted,
-    setUserInteracted,
+    setUserInteracted: handleUserInteraction,
     battleTimer, startBattleTimer, pauseBattleTimer, resetBattleTimer,
     currentScreen, handleScreenTransition,
     comments, addComment, clearComments, totalComments,
@@ -285,4 +283,42 @@ export const useApp = () => {
     throw new Error('useApp must be used within an AppProvider');
   }
   return context;
+};
+
+export type AppContextType = {
+  player: Character;
+  setPlayer: React.Dispatch<React.SetStateAction<Character>>;
+  opponent1: Character;
+  setOpponent1: React.Dispatch<React.SetStateAction<Character>>;
+  opponent2: Character;
+  setOpponent2: React.Dispatch<React.SetStateAction<Character>>;
+  bgmEnabled: boolean;
+  toggleBgm: () => void;
+  userInteracted: boolean;
+  setUserInteracted: () => void;
+  battleTimer: number;
+  startBattleTimer: () => void;
+  pauseBattleTimer: () => void;
+  resetBattleTimer: () => void;
+  currentScreen: Screen;
+  handleScreenTransition: (screen: Screen) => void;
+  comments: Comment[];
+  addComment: (author: string, text: string, isSystem?: boolean) => void;
+  clearComments: () => void;
+  totalComments: number;
+  attackCount: number;
+  setAttackCount: React.Dispatch<React.SetStateAction<number>>;
+  specialAttackAvailable: boolean;
+  setSpecialAttackAvailable: React.Dispatch<React.SetStateAction<boolean>>;
+  highballMode: boolean;
+  setHighballMode: React.Dispatch<React.SetStateAction<boolean>>;
+  sosoHealMode: boolean;
+  setSosoHealMode: React.Dispatch<React.SetStateAction<boolean>>;
+  yujiSpecialMode: boolean;
+  setYujiSpecialMode: React.Dispatch<React.SetStateAction<boolean>>;
+  showCharacterSheet: boolean;
+  setShowCharacterSheet: React.Dispatch<React.SetStateAction<boolean>>;
+  currentCharacterSheet: 'player' | 'opponent1' | 'opponent2' | null;
+  setCurrentCharacterSheet: React.Dispatch<React.SetStateAction<'player' | 'opponent1' | 'opponent2' | null>>;
+  resetBattleState: () => void;
 };
