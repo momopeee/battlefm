@@ -47,7 +47,7 @@ const Index = () => {
     document.addEventListener('touchstart', unblockAudio, { once: true });
     
     // プリロードを最適化 - 必要なファイルだけをプリロード
-    const preloadAudio = async (url: string) => {
+    const preloadAudio = (url: string) => {
       // オーディオをキャッシュして再利用するようにする
       if (!window.audioCache) {
         window.audioCache = {};
@@ -58,22 +58,13 @@ const Index = () => {
         audio.src = url;
         audio.preload = "auto"; // 明示的にプリロードを指示
         window.audioCache[url] = audio;
-        
-        try {
-          await audio.load(); // ロードの非同期完了を待つ
-          console.log(`Preloaded audio: ${url}`);
-        } catch (error) {
-          console.error(`Error preloading audio: ${url}`, error);
-        }
+        console.log(`Preloading audio: ${url}`);
       }
     };
     
-    // 非同期処理でプリロード
-    (async () => {
-      // 重要なオーディオファイルのみをプリロード
-      await preloadAudio(INDEX_BGM);
-      await preloadAudio(BUTTON_SOUND);
-    })();
+    // 重要なオーディオファイルのみをプリロード
+    preloadAudio(INDEX_BGM);
+    preloadAudio(BUTTON_SOUND);
     
     return () => {
       document.removeEventListener('click', unblockAudio);
@@ -98,7 +89,7 @@ const Index = () => {
       <AudioPlayer 
         src={INDEX_BGM} 
         loop={true} 
-        autoPlay={userInteracted} // ユーザー操作後にtrueになるよう変更
+        autoPlay={true} 
         volume={0.7}
         id="index-bgm"
       />
