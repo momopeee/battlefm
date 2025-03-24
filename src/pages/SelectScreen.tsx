@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
@@ -23,24 +22,19 @@ const SelectScreen: React.FC = () => {
   const [assaultAlarm, setAssaultAlarm] = useState(false);
   const [showBottomMenu, setShowBottomMenu] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([]);
   const [buttonSound, setButtonSound] = useState<string | null>(null);
-  
-  // タイマー管理の最適化：useRefを使用
-  const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
   
   useEffect(() => {
     return () => {
-      timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+      timeouts.forEach(timeout => clearTimeout(timeout));
     };
-  }, []);
+  }, [timeouts]);
   
   const handleSelectClick = () => {
-    // 複数クリック対策：既にアサルトモードの場合は何もしない
-    if (showAssault) return;
-    
     setShowAssault(true);
     setAssaultAlarm(true);
-    // タップ時の効果音を削除 (BUTTON_SOUND の行を削除)
+    setButtonSound(BUTTON_SOUND);
     
     const alarmTimeout = setTimeout(() => {
       setAssaultAlarm(false);
@@ -48,21 +42,17 @@ const SelectScreen: React.FC = () => {
     }, 3000);
     
     const battleTimeout = setTimeout(() => {
-      // BGMを即座に停止するために setAssaultText(false) を追加
-      setAssaultText(false);
       handleScreenTransition('battle2');
     }, 15000);
     
-    timeoutsRef.current.push(alarmTimeout, battleTimeout);
+    setTimeouts(prev => [...prev, alarmTimeout, battleTimeout]);
   };
 
   const handleSkip = () => {
     setButtonSound(BUTTON_SOUND);
-    timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
-    // BGMを即座に停止するために setAssaultText(false) を追加
-    setAssaultText(false);
+    timeouts.forEach(timeout => clearTimeout(timeout));
     handleScreenTransition('battle2');
-    // ナビゲーション処理の統一: navigate('/battle2')を削除
+    navigate('/battle2');
   };
 
   const handleMenuButtonClick = (e: React.MouseEvent) => {
@@ -74,7 +64,7 @@ const SelectScreen: React.FC = () => {
       setShowWarning(false);
     }, 3000);
     
-    timeoutsRef.current.push(warningTimeout);
+    setTimeouts(prev => [...prev, warningTimeout]);
   };
 
   return (

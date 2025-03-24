@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -93,18 +94,6 @@ const defeatComments = [
   "もう一度挑戦するか？"
 ];
 
-// Interface for battle state to enforce type checking
-interface BattleState {
-  isPlayerTurn: boolean;
-  isBattleOver: boolean;
-  attackInProgress: boolean;
-  yujiInSpecialMode: boolean;
-  specialModeActive: boolean;
-  isHighballConfused: boolean;
-  specialModeTimer: number;
-  showSkipButton: boolean;
-}
-
 const Battle2Screen: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -134,8 +123,8 @@ const Battle2Screen: React.FC = () => {
     setPlayer
   } = useApp();
   
-  // Battle state - grouped related state together with proper typing
-  const [battleState, setBattleState] = useState<BattleState>({
+  // Battle state - grouped related state together
+  const [battleState, setBattleState] = useState({
     isPlayerTurn: true,
     isBattleOver: false,
     attackInProgress: false,
@@ -170,8 +159,8 @@ const Battle2Screen: React.FC = () => {
     'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))'
   , []);
 
-  // Helper function to update battle state partially - FIXED TYPE ERROR HERE
-  const updateBattleState = useCallback((newState: Partial<BattleState>) => {
+  // Helper function to update battle state partially
+  const updateBattleState = useCallback((newState: Partial<typeof battleState>) => {
     setBattleState(prev => ({ ...prev, ...newState }));
   }, []);
   
@@ -264,7 +253,7 @@ const Battle2Screen: React.FC = () => {
       setCurrentBgm(YUJI_SPECIAL_BGM);
       
       interval = setInterval(() => {
-        setBattleState(prev => {
+        updateBattleState(prev => {
           const newTime = prev.specialModeTimer + 1;
           if (newTime >= 40) {
             setCurrentBgm(BATTLE_BGM);
@@ -286,7 +275,7 @@ const Battle2Screen: React.FC = () => {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [specialModeActive, isBattleOver]);
+  }, [specialModeActive, isBattleOver, addComment]);
   
   // Update BGM when battle result changes - optimized with dependencies
   useEffect(() => {
@@ -867,4 +856,3 @@ const Battle2Screen: React.FC = () => {
 };
 
 export default React.memo(Battle2Screen);
-
