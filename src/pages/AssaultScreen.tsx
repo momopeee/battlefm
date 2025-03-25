@@ -12,23 +12,24 @@ const AssaultScreen: React.FC = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  
+
   const [actionInProgress, setActionInProgress] = useState(false);
   const [alarmFinished, setAlarmFinished] = useState(false);
-  
+
   // スキップボタン押下時（およびキーボード操作）に battle2Screen へ遷移
   const handleSkip = useCallback(() => {
     if (actionInProgress) return;
     setActionInProgress(true);
+    // ※ここで handleScreenTransition による自動リダイレクトが発生していないか、内部実装を確認してください。
     handleScreenTransition('battle2');
     navigate('/battle2');
   }, [actionInProgress, handleScreenTransition, navigate]);
-  
+
   // アラートBGM再生終了時のコールバック
   const handleAlarmFinished = () => {
     setAlarmFinished(true);
   };
-  
+
   // キーボード（Space/Enter）でスキップを実行
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -41,10 +42,10 @@ const AssaultScreen: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleSkip]);
-  
+
   return (
-    <MobileContainer>
-      {/* 最下層レイヤー：指定URLの背景画像 */}
+    <MobileContainer style={{ minHeight: '100vh' }}>
+      {/* 最下層レイヤー：背景画像（指定URL） */}
       <div
         style={{
           position: 'absolute',
@@ -60,7 +61,7 @@ const AssaultScreen: React.FC = () => {
         }}
       />
 
-      {/* オーディオ再生 */}
+      {/* オーディオ */}
       {!alarmFinished && (
         <AudioPlayer
           src={SELECT_ALARM_SOUND}
@@ -80,17 +81,18 @@ const AssaultScreen: React.FC = () => {
           id="assault-bgm"
         />
       )}
-      
-      {/* 上位レイヤー：スクロールテキストおよびその他のUI（zIndex を上げる） */}
+
+      {/* 上位レイヤー：スクロールテキスト */}
       <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden" style={{ zIndex: 1 }}>
         <div className="absolute w-full max-w-3xl text-center" style={{ transform: 'perspective(400px) rotateX(25deg)' }}>
-          <div 
-            className="star-wars-text-content p-4 sm:p-6 rounded" 
-            style={{ 
+          <div
+            className="star-wars-text-content p-4 sm:p-6 rounded"
+            style={{
               color: 'white',
               fontSize: isMobile ? 'calc(0.875rem + 2px)' : 'calc(1.125rem + 4px)',
               WebkitTextStroke: '1px black',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.6)',
+              textShadow:
+                '2px 2px 4px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.6)',
               animation: 'textScroll 30s linear infinite'
             }}
           >
@@ -124,8 +126,8 @@ const AssaultScreen: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* スキップボタン（上位レイヤー） */}
+
+      {/* スキップボタン */}
       <Button
         onClick={handleSkip}
         disabled={actionInProgress}
@@ -135,8 +137,8 @@ const AssaultScreen: React.FC = () => {
         <span>スキップ</span>
         <SkipForward size={18} />
       </Button>
-      
-      {/* サウンドトグルボタン（上位レイヤー） */}
+
+      {/* サウンドトグルボタン */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -146,7 +148,7 @@ const AssaultScreen: React.FC = () => {
       >
         {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
-      
+
       {/* スクロールテキスト用のキーアニメーション定義 */}
       <style>{`
         @keyframes textScroll {
