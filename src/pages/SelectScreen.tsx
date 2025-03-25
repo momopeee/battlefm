@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
@@ -22,19 +23,24 @@ const SelectScreen: React.FC = () => {
   const [assaultAlarm, setAssaultAlarm] = useState(false);
   const [showBottomMenu, setShowBottomMenu] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
-  const [timeouts, setTimeouts] = useState<NodeJS.Timeout[]>([]);
   const [buttonSound, setButtonSound] = useState<string | null>(null);
+  
+  // タイマー管理の最適化：useRefを使用
+  const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
   
   useEffect(() => {
     return () => {
-      timeouts.forEach(timeout => clearTimeout(timeout));
+      timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
     };
-  }, [timeouts]);
+  }, []);
   
   const handleSelectClick = () => {
+    // 複数クリック対策：既にアサルトモードの場合は何もしない
+    if (showAssault) return;
+    
     setShowAssault(true);
     setAssaultAlarm(true);
-    setButtonSound(BUTTON_SOUND);
+    // タップ時の効果音を削除 (BUTTON_SOUND の行を削除)
     
     const alarmTimeout = setTimeout(() => {
       setAssaultAlarm(false);
@@ -42,17 +48,21 @@ const SelectScreen: React.FC = () => {
     }, 3000);
     
     const battleTimeout = setTimeout(() => {
+      // BGMを即座に停止するために setAssaultText(false) を追加
+      setAssaultText(false);
       handleScreenTransition('battle2');
     }, 15000);
     
-    setTimeouts(prev => [...prev, alarmTimeout, battleTimeout]);
+    timeoutsRef.current.push(alarmTimeout, battleTimeout);
   };
 
   const handleSkip = () => {
     setButtonSound(BUTTON_SOUND);
-    timeouts.forEach(timeout => clearTimeout(timeout));
+    timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    // BGMを即座に停止するために setAssaultText(false) を追加
+    setAssaultText(false);
     handleScreenTransition('battle2');
-    navigate('/battle2');
+    // ナビゲーション処理の統一: navigate('/battle2')を削除
   };
 
   const handleMenuButtonClick = (e: React.MouseEvent) => {
@@ -64,7 +74,7 @@ const SelectScreen: React.FC = () => {
       setShowWarning(false);
     }, 3000);
     
-    setTimeouts(prev => [...prev, warningTimeout]);
+    timeoutsRef.current.push(warningTimeout);
   };
 
   return (
@@ -171,14 +181,54 @@ const SelectScreen: React.FC = () => {
             </div>
           </div>
           
-          {/* Replace the bottom menu with the image */}
           <div className="border-t p-4">
-            <div className="flex justify-center">
-              <img 
-                src="/lovable-uploads/7923c675-8695-4ada-90df-715716c43c6b.png" 
-                alt="Bottom navigation" 
-                className="w-full h-auto"
-              />
+            <div className="flex justify-around">
+              <button className="flex flex-col items-center" onClick={handleMenuButtonClick}>
+                <div className="w-6 h-6 mb-1">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  </svg>
+                </div>
+                <span className="text-xs">ホーム</span>
+              </button>
+              
+              <button className="flex flex-col items-center" onClick={handleMenuButtonClick}>
+                <div className="w-6 h-6 mb-1">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  </svg>
+                </div>
+                <span className="text-xs">フォロー中</span>
+              </button>
+              
+              <button className="flex flex-col items-center" onClick={handleMenuButtonClick}>
+                <div className="w-12 h-12 flex items-center justify-center text-white bg-purple-500 rounded-full border-4 border-white -mt-7">
+                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </div>
+              </button>
+              
+              <button className="flex flex-col items-center" onClick={handleMenuButtonClick}>
+                <div className="w-6 h-6 mb-1">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                </div>
+                <span className="text-xs">お知らせ</span>
+              </button>
+              
+              <button className="flex flex-col items-center" onClick={handleMenuButtonClick}>
+                <div className="w-6 h-6 mb-1">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </div>
+                <span className="text-xs">マイページ</span>
+              </button>
             </div>
           </div>
           
