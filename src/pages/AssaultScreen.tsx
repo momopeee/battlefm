@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
@@ -13,44 +12,42 @@ const AssaultScreen: React.FC = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  
   const [actionInProgress, setActionInProgress] = useState(false);
   const [alarmFinished, setAlarmFinished] = useState(false);
   
-  // Handle skip button click
+  // スキップボタン押下時（およびキーボード操作）に battle2Screen へ遷移
   const handleSkip = useCallback(() => {
     if (actionInProgress) return;
     setActionInProgress(true);
-    
-    // Transition to battle2 screen
     handleScreenTransition('battle2');
     navigate('/battle2');
   }, [actionInProgress, handleScreenTransition, navigate]);
-
-  // Handle alarm sound completion
+  
+  // アラートBGM再生終了時のコールバック
   const handleAlarmFinished = () => {
     setAlarmFinished(true);
   };
   
-  // Set up keyboard event listener for spacebar to skip
+  // キーボード（Space/Enter）でスキップを実行
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space' || e.code === 'Enter') {
         handleSkip();
       }
     };
-    
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleSkip]);
-
+  
   return (
     <MobileContainer 
       backgroundImage="/lovable-uploads/3d6a3bf6-fd51-4422-bd24-e5f6c1b16e02.png"
       backgroundClassName="bg-amber-300"
     >
-      {/* Alarm sound - plays once when screen loads */}
+      {/* アラートBGM（1回だけ自動再生） */}
       <AudioPlayer
         src={SELECT_ALARM_SOUND}
         loop={false}
@@ -60,7 +57,7 @@ const AssaultScreen: React.FC = () => {
         onEnded={handleAlarmFinished}
       />
       
-      {/* Assault BGM - plays after alarm sound finishes */}
+      {/* アラートBGM再生終了後、AssaultBGM をループ再生 */}
       {alarmFinished && (
         <AudioPlayer
           src={SELECT_ASSAULT_BGM}
@@ -71,7 +68,7 @@ const AssaultScreen: React.FC = () => {
         />
       )}
       
-      {/* Star Wars style scrolling text */}
+      {/* Star Wars スタイルのスクロールテキスト */}
       <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden perspective">
         <div className="absolute w-full max-w-3xl text-center transform rotate3d">
           <div 
@@ -112,7 +109,7 @@ const AssaultScreen: React.FC = () => {
         </div>
       </div>
       
-      {/* Skip Button */}
+      {/* スキップボタン */}
       <Button
         onClick={handleSkip}
         disabled={actionInProgress}
@@ -123,7 +120,7 @@ const AssaultScreen: React.FC = () => {
         <SkipForward size={18} />
       </Button>
       
-      {/* Sound toggle button */}
+      {/* サウンドトグルボタン */}
       <button
         onClick={(e) => {
           e.stopPropagation();
