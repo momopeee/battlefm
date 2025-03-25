@@ -43,19 +43,25 @@ const AssaultScreen: React.FC = () => {
   }, [handleSkip]);
   
   return (
-    <MobileContainer 
-      backgroundImage="/lovable-uploads/3d6a3bf6-fd51-4422-bd24-e5f6c1b16e02.png"
-      backgroundClassName="bg-amber-300"
+    <MobileContainer
+      style={{
+        backgroundImage: `url("/lovable-uploads/3d6a3bf6-fd51-4422-bd24-e5f6c1b16e02.png")`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
     >
       {/* アラートBGM（1回だけ自動再生） */}
-      <AudioPlayer
-        src={SELECT_ALARM_SOUND}
-        loop={false}
-        autoPlay={true}
-        volume={0.7}
-        id="alarm-sound"
-        onEnded={handleAlarmFinished}
-      />
+      {!alarmFinished && (
+        <AudioPlayer
+          src={SELECT_ALARM_SOUND}
+          loop={false}
+          autoPlay={true}
+          volume={0.7}
+          id="alarm-sound"
+          onEnded={handleAlarmFinished}
+        />
+      )}
       
       {/* アラートBGM再生終了後、AssaultBGM をループ再生 */}
       {alarmFinished && (
@@ -69,13 +75,16 @@ const AssaultScreen: React.FC = () => {
       )}
       
       {/* Star Wars スタイルのスクロールテキスト */}
-      <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden perspective">
-        <div className="absolute w-full max-w-3xl text-center transform rotate3d">
+      <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden">
+        <div className="absolute w-full max-w-3xl text-center" style={{ transform: 'perspective(400px) rotateX(25deg)' }}>
           <div 
-            className="star-wars-text-content text-white -webkit-text-stroke-[1px] -webkit-text-stroke-black leading-relaxed animate-text-scroll p-4 sm:p-6 rounded" 
+            className="star-wars-text-content p-4 sm:p-6 rounded" 
             style={{ 
+              color: 'white',
               fontSize: isMobile ? 'calc(0.875rem + 2px)' : 'calc(1.125rem + 4px)',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 5px #000000e6, 0 0 10px #0006'
+              WebkitTextStroke: '1px black',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.6)',
+              animation: 'textScroll 30s linear infinite'
             }}
           >
             <p>うぇーい！みんな～</p>
@@ -130,6 +139,18 @@ const AssaultScreen: React.FC = () => {
       >
         {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
+      
+      {/* スクロールテキスト用のキーアニメーション定義 */}
+      <style>{`
+        @keyframes textScroll {
+          0% {
+            transform: translateY(100%);
+          }
+          100% {
+            transform: translateY(-100%);
+          }
+        }
+      `}</style>
     </MobileContainer>
   );
 };
