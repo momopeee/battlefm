@@ -43,15 +43,24 @@ const AssaultScreen: React.FC = () => {
   }, [handleSkip]);
   
   return (
-    <MobileContainer
-      style={{
-        backgroundImage: `url("/lovable-uploads/3d6a3bf6-fd51-4422-bd24-e5f6c1b16e02.png")`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      {/* アラートBGM（1回だけ自動再生） */}
+    <MobileContainer>
+      {/* 最下層レイヤー：指定URLの背景画像 */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundImage: 'url("https://tangerine-valkyrie-189847.netlify.app/ug3.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          zIndex: 0
+        }}
+      />
+
+      {/* オーディオ再生 */}
       {!alarmFinished && (
         <AudioPlayer
           src={SELECT_ALARM_SOUND}
@@ -62,8 +71,6 @@ const AssaultScreen: React.FC = () => {
           onEnded={handleAlarmFinished}
         />
       )}
-      
-      {/* アラートBGM再生終了後、AssaultBGM をループ再生 */}
       {alarmFinished && (
         <AudioPlayer
           src={SELECT_ASSAULT_BGM}
@@ -74,8 +81,8 @@ const AssaultScreen: React.FC = () => {
         />
       )}
       
-      {/* Star Wars スタイルのスクロールテキスト */}
-      <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden">
+      {/* 上位レイヤー：スクロールテキストおよびその他のUI（zIndex を上げる） */}
+      <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden" style={{ zIndex: 1 }}>
         <div className="absolute w-full max-w-3xl text-center" style={{ transform: 'perspective(400px) rotateX(25deg)' }}>
           <div 
             className="star-wars-text-content p-4 sm:p-6 rounded" 
@@ -118,7 +125,7 @@ const AssaultScreen: React.FC = () => {
         </div>
       </div>
       
-      {/* スキップボタン */}
+      {/* スキップボタン（上位レイヤー） */}
       <Button
         onClick={handleSkip}
         disabled={actionInProgress}
@@ -129,7 +136,7 @@ const AssaultScreen: React.FC = () => {
         <SkipForward size={18} />
       </Button>
       
-      {/* サウンドトグルボタン */}
+      {/* サウンドトグルボタン（上位レイヤー） */}
       <button
         onClick={(e) => {
           e.stopPropagation();
