@@ -63,7 +63,53 @@ const AssaultScreen: React.FC = () => {
         id="assault-bgm"
       />
 
-      {/* 上位レイヤー：その他のUI要素（テキストスクロールは削除） */}
+      {/* 上位レイヤー：スターウォーズ風スクロールテキスト */}
+      <div
+        className="relative flex-1 flex items-center justify-center w-full overflow-hidden"
+        style={{ zIndex: 1 }}
+      >
+        <div
+          className="absolute w-full max-w-3xl text-center"
+          style={{ transform: 'perspective(400px) rotateX(25deg)' }}
+        >
+          <div
+            className="star-wars-text-content p-4 sm:p-6 rounded"
+            style={{
+              color: 'white',
+              fontSize: isMobile ? 'calc(0.875rem + 2px)' : 'calc(1.125rem + 4px)',
+              WebkitTextStroke: '1px black',
+              textShadow:
+                '2px 2px 4px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.6)',
+              animation: 'textScroll 30s linear infinite',
+            }}
+          >
+            <p>うぇーい！みんな～</p>
+            <br />
+            <p>「ゆうじの陽気なおじさん」</p>
+            <p>でお馴染み、大久保です！！</p>
+            <br /><br />
+            <p>って、おいおい！</p>
+            <p>それは俺のおじさんやないかい！！</p>
+            <p>陽気なおじさん＠ゆうじです！</p>
+            <br /><br />
+            <p>今日はやってやりますよ</p>
+            <p>実は、フリーになって</p>
+            <p>ついに、やまにぃを超えちゃった</p>
+            <p>って思ってるんですよ</p>
+            <p>やまにぃには内緒ですよ</p>
+            <p>また怒られちゃうから</p>
+            <p>カルシウム足りてないのかな～</p>
+            <br /><br />
+            <p>さて、今日はやまにいに、</p>
+            <p>経営について指南してやりますよ</p>
+            <br />
+            <p>ちぇけら！</p>
+            <br />
+            <p>皆さん、</p>
+            <p>よろしくウェイで～す！！</p>
+          </div>
+        </div>
+      </div>
 
       {/* スキップボタン */}
       <Button
@@ -86,6 +132,18 @@ const AssaultScreen: React.FC = () => {
       >
         {bgmEnabled ? <Volume2 size={24} color="white" /> : <VolumeX size={24} color="white" />}
       </button>
+
+      {/* キーアニメーション定義 */}
+      <style>{`
+        @keyframes textScroll {
+          0% {
+            transform: translateY(100%);
+          }
+          100% {
+            transform: translateY(-100%);
+          }
+        }
+      `}</style>
     </MobileContainer>
   );
 };
