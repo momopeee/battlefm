@@ -16,15 +16,15 @@ const SelectScreen: React.FC = () => {
   const [showWarning, setShowWarning] = useState(false);
   const [buttonSound, setButtonSound] = useState<string | null>(null);
 
-  // 画面上部セクション（ヘッダー）がクリックされたら、battle2Screenへリダイレクトする
+  // 画面上部セクション（ヘッダー）がクリックされたら、AssaultScreenへリダイレクトする
   const handleHeaderClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setButtonSound(BUTTON_SOUND);
-    handleScreenTransition('battle2');
-    navigate('/battle2');
+    handleScreenTransition('assault');
+    navigate('/assault');
   };
 
-  // メニューボタン押下時の警告表示（元のコードのまま）
+  // メニューボタン押下時の警告表示
   const handleMenuButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setButtonSound(BUTTON_SOUND);
@@ -58,7 +58,7 @@ const SelectScreen: React.FC = () => {
       )}
 
       <div className="flex flex-col h-full bg-white">
-        {/* 画面上部セクション：クリックでbattle2Screenへ */}
+        {/* 画面上部セクション：クリックでAssaultScreenへ */}
         <div
           className="p-4 border-b flex items-center cursor-pointer"
           onClick={handleHeaderClick}
@@ -92,7 +92,7 @@ const SelectScreen: React.FC = () => {
           </h1>
         </div>
 
-        {/* 中部セクション（クリック動作は削除） */}
+        {/* 中部セクション */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 border-b">
             <div className="flex items-start space-x-3">
