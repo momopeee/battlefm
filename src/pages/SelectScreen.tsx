@@ -22,16 +22,9 @@ const SelectScreen: React.FC = () => {
     handleScreenTransition('assault' as any);
     navigate('/assault');
   };
-   // 中部セクションのクリックでもAssaultScreenへリダイレクトする
-  const handleMiddleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setButtonSound(BUTTON_SOUND);
-    handleScreenTransition('assault' as any);
-    navigate('/assault');
-  };
 
-  // 下部セクションのクリックで、警告コメントを表示する
-  const handleBottomClick = (e: React.MouseEvent) => {
+  // メニューボタン押下時の警告表示
+  const handleMenuButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setButtonSound(BUTTON_SOUND);
     setShowWarning(true);
@@ -161,15 +154,6 @@ const SelectScreen: React.FC = () => {
           />
         </div>
 
-        {/* 画面下部セクション - 画像表示エリア（クリックで警告コメントを表示） */}
-        <div className="p-4 cursor-pointer" onClick={handleBottomClick}>
-          <img 
-            src="/lovable-uploads/0369bc15-40c5-4d18-9304-28624ac2e69f.png" 
-            alt="Bottom navigation" 
-            className="w-full" 
-          />
-        </div>
-
         {/* セパレーター */}
         <Separator className="h-[1px] bg-[#EEEEEE]" />
 
@@ -178,7 +162,6 @@ const SelectScreen: React.FC = () => {
             余計なボタンを押さずに、ゲームに集中して下さい。まじで
           </div>
         )}
-
 
         <button
           onClick={(e) => {
