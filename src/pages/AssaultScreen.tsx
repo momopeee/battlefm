@@ -107,7 +107,7 @@ const AssaultScreen: React.FC = () => {
             style={{
               color: 'white',
               fontSize: isMobile ? 'calc(0.875rem + 2px)' : 'calc(1.125rem + 4px)',
-              WebkitTextStroke: '1px black',
+              WebkitTextStroke: '0px black',
               textShadow:
                 '2px 2px 4px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.6)',
               animation: 'textScroll 30s linear infinite',
@@ -136,12 +136,12 @@ const AssaultScreen: React.FC = () => {
             <br />
             <br />
             <p>さて、今日はやまにいに、</p>
-            <p>経営について指南してやりますよ</p>
+            <p>経営指南してやりますよ</p>
             <br />
             <p>ちぇけら！</p>
             <br />
-            <p>皆さん、</p>
-            <p>よろしくウェイで～す！！</p>
+            <p>応援してください</p>
+            <p>よろしくで～す！！</p>
           </div>
         </div>
       </div>
