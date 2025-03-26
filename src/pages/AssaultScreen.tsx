@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Volume2, VolumeX, SkipForward } from 'lucide-react';
@@ -5,8 +6,11 @@ import { Button } from '@/components/ui/button';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
 import MobileContainer from '@/components/MobileContainer';
-import { SELECT_ALARM_SOUND, SELECT_ASSAULT_BGM } from '@/constants/audioUrls';
 import { useIsMobile } from '@/hooks/use-mobile';
+
+// Define audio URL constants
+const SELECT_ALARM_SOUND = 'https://tangerine-valkyrie-189847.netlify.app/6-a-keihou.mp3';
+const SELECT_ASSAULT_BGM = 'https://tangerine-valkyrie-189847.netlify.app/6-2-ugmode.mp3';
 
 const AssaultScreen: React.FC = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
@@ -83,8 +87,21 @@ const AssaultScreen: React.FC = () => {
       )}
 
       {/* 上位レイヤー：スクロールテキスト */}
-      <div className="relative flex-1 flex items-center justify-center w-full overflow-hidden" style={{ zIndex: 1 }}>
-        <div className="absolute w-full max-w-3xl text-center" style={{ transform: 'perspective(400px) rotateX(25deg)' }}>
+      <div 
+        className="relative flex-1 flex items-center justify-center w-full h-full overflow-hidden" 
+        style={{ 
+          perspective: '400px',
+          zIndex: 1 
+        }}
+      >
+        <div 
+          className="absolute w-full max-w-3xl text-center"
+          style={{ 
+            transform: 'rotateX(25deg)',
+            transformOrigin: 'center bottom',
+            height: '100%',
+          }}
+        >
           <div
             className="star-wars-text-content p-4 sm:p-6 rounded"
             style={{
@@ -93,7 +110,9 @@ const AssaultScreen: React.FC = () => {
               WebkitTextStroke: '1px black',
               textShadow:
                 '2px 2px 4px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.6)',
-              animation: 'textScroll 30s linear infinite'
+              animation: 'textScroll 30s linear infinite',
+              position: 'absolute',
+              width: '100%'
             }}
           >
             <p>うぇーい！みんな～</p>
@@ -153,7 +172,7 @@ const AssaultScreen: React.FC = () => {
       <style>{`
         @keyframes textScroll {
           0% {
-            transform: translateY(100%);
+            transform: translateY(100vh);
           }
           100% {
             transform: translateY(-100%);
