@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -119,14 +120,14 @@ const Battle2Screen: React.FC = () => {
     showCharacterSheet,
     currentCharacterSheet,
     setShowCharacterSheet,
-    setCurrentBattleState,
     addComment,
     clearComments,
     setAttackCount,
     setSpecialAttackAvailable,
     setYujiSpecialMode,
     handleScreenTransition,
-    setPlayer
+    setPlayer,
+    setCurrentCharacterSheet
   } = useApp();
   
   const [battleState, setBattleState] = useState<BattleState>({
@@ -186,7 +187,7 @@ const Battle2Screen: React.FC = () => {
     setSoundEffect(BUTTON_SOUND);
     handleSkipResult(isPlayerVictory, redirectTimer);
     // 遷移後はロック解除不要
-  }, [redirectTimer, pauseBattleTimer, isPlayerVictory, redirectTimer, handleSkipResult]);
+  }, [redirectTimer, pauseBattleTimer, isPlayerVictory, handleSkipResult]);
   
   // 連続クリック防止付きプレイヤー攻撃ハンドラ
   const handlePlayerAttack = useCallback(() => {
@@ -274,7 +275,7 @@ const Battle2Screen: React.FC = () => {
         addComment('システム', `ゆうじの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
         if (onComplete) onComplete();
       }, 500);
-    } else if (opponentHp < opponent2.maxHp * 0.3 && !yujiInSpecialMode) {
+    } else if (opponentHp < opponent2.maxHp * 0.3 && !battleState.yujiInSpecialMode) {
       setTimeout(() => {
         updateBattleState({ isPlayerTurn: true, attackInProgress: false });
         if (onComplete) onComplete();
@@ -304,7 +305,7 @@ const Battle2Screen: React.FC = () => {
       }, 500);
     }
   }, [
-    isBattleOver, specialModeActive, yujiInSpecialMode, opponentHp,
+    isBattleOver, specialModeActive, opponentHp, battleState.yujiInSpecialMode,
     opponent2.attackMin, opponent2.attackMax, opponent2.maxHp,
     addComment, setPlayer, updateBattleState, handleDefeat
   ]);
@@ -345,7 +346,7 @@ const Battle2Screen: React.FC = () => {
   }, [
     isPlayerTurn, attackInProgress, specialAttackAvailable, isBattleOver,
     opponentHp, specialModeActive, player.specialPower,
-    addComment, setOpponentHp, setSpecialAttackAvailable, setAttackCount,
+    addComment, setSpecialAttackAvailable, setAttackCount,
     handleEnemyAttack, handleVictory, updateBattleState
   ]);
   
@@ -489,10 +490,10 @@ const Battle2Screen: React.FC = () => {
   }, [setCurrentCharacterSheet, setShowCharacterSheet]);
   
   useEffect(() => {
-    if (opponentHp <= 20 && !yujiInSpecialMode && !isBattleOver && !specialModeActive) {
+    if (opponentHp <= 20 && !battleState.yujiInSpecialMode && !isBattleOver && !specialModeActive) {
       activateYujiSpecialMode();
     }
-  }, [opponentHp, yujiInSpecialMode, isBattleOver, specialModeActive, activateYujiSpecialMode]);
+  }, [opponentHp, battleState.yujiInSpecialMode, isBattleOver, specialModeActive, activateYujiSpecialMode]);
   
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
