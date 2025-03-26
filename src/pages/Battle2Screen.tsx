@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -9,7 +8,6 @@ import { Volume2, VolumeX, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useBattleResults } from '@/hooks/battle/useBattleResults';
 
 // Import the battle components
 import CharacterPortraits from '@/components/battle/CharacterPortraits';
@@ -63,7 +61,7 @@ const yujiSpecialComments = [
 const yujiAttackComments = [
   "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
   "経営の何がわからないのかわからないってのが経営なんですよぉ〜",
-  "経営を上手くやるには、波長の合う人とや���のがいちばんですね〜",
+  "経営を上手くやるには、波長の合う人とやるのがいちばんですね〜",
   "売上を上げるには、まずは表に出て顔と名前を売るのが大事ですよ",
   "ビジネスを成長させるには友達の数を増やすことですね",
   "やまにーの言うことは難しすぎて、僕には理解できないんですよぉ〜",
@@ -120,14 +118,14 @@ const Battle2Screen: React.FC = () => {
     showCharacterSheet,
     currentCharacterSheet,
     setShowCharacterSheet,
+    setCurrentBattleState, // 仮の関数名（必要なら）
     addComment,
     clearComments,
     setAttackCount,
     setSpecialAttackAvailable,
     setYujiSpecialMode,
     handleScreenTransition,
-    setPlayer,
-    setCurrentCharacterSheet
+    setPlayer
   } = useApp();
   
   const [battleState, setBattleState] = useState<BattleState>({
@@ -152,8 +150,6 @@ const Battle2Screen: React.FC = () => {
   const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
   const [opponentHp, setOpponentHp] = useState(opponent2.currentHp);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
-  const [isPlayerVictory, setIsPlayerVictory] = useState<boolean | null>(null);
-  const [transitionScheduled, setTransitionScheduled] = useState(false);
   
   const battleBackgroundGradient = useMemo(() => 
     'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))',
@@ -162,18 +158,6 @@ const Battle2Screen: React.FC = () => {
   
   // 連続クリック防止用のロックフラグ
   const actionLockRef = useRef(false);
-
-  // Initialize the battle results hook
-  const { handleVictory, handleDefeat, handleSkip: handleSkipResult, clearAllTimers } = useBattleResults({
-    addComment,
-    handleScreenTransition,
-    setIsBattleOver: (value) => updateBattleState({ isBattleOver: value }),
-    setTransitionScheduled,
-    setIsPlayerVictory,
-    setShowSkipButton: (value) => updateBattleState({ showSkipButton: value }),
-    setRedirectTimer,
-    setBattleResult
-  });
   
   // 連続クリック防止付きスキップハンドラ
   const handleSkipCallback = useCallback(() => {
@@ -185,9 +169,60 @@ const Battle2Screen: React.FC = () => {
     }
     pauseBattleTimer();
     setSoundEffect(BUTTON_SOUND);
-    handleSkipResult(isPlayerVictory, redirectTimer);
+    if (battleResult === 'victory') {
+      handleScreenTransition('victory2');
+      navigate('/victory2');
+    } else if (battleResult === 'defeat') {
+      handleScreenTransition('result2');
+      navigate('/result2');
+    }
     // 遷移後はロック解除不要
-  }, [redirectTimer, pauseBattleTimer, isPlayerVictory, handleSkipResult]);
+  }, [redirectTimer, pauseBattleTimer, battleResult, handleScreenTransition, navigate]);
+  
+  // handleVictory と handleDefeat の定義を追加
+  const showVictoryComments = useCallback(() => {
+    victoryComments.forEach((comment, index) => {
+      setTimeout(() => {
+        addComment('システム', comment, true);
+      }, index * 3000);
+    });
+  }, [addComment]);
+  
+  const showDefeatComments = useCallback(() => {
+    defeatComments.forEach((comment, index) => {
+      setTimeout(() => {
+        addComment('システム', comment, true);
+      }, index * 3000);
+    });
+  }, [addComment]);
+  
+  const handleVictory = useCallback(() => {
+    updateBattleState({ isBattleOver: true });
+    setBattleResult('victory');
+    setCurrentBgm(VICTORY_BGM);
+    setSoundEffect(BUTTON_SOUND);
+    showVictoryComments();
+    const timer = setTimeout(() => {
+      pauseBattleTimer();
+      handleScreenTransition('victory2');
+      navigate('/victory2');
+    }, 30000);
+    setRedirectTimer(timer);
+  }, [updateBattleState, pauseBattleTimer, handleScreenTransition, navigate, showVictoryComments]);
+  
+  const handleDefeat = useCallback(() => {
+    updateBattleState({ isBattleOver: true });
+    setBattleResult('defeat');
+    setCurrentBgm(DEFEAT_BGM);
+    setSoundEffect(BUTTON_SOUND);
+    showDefeatComments();
+    const timer = setTimeout(() => {
+      pauseBattleTimer();
+      handleScreenTransition('result2');
+      navigate('/result2');
+    }, 30000);
+    setRedirectTimer(timer);
+  }, [updateBattleState, pauseBattleTimer, handleScreenTransition, navigate, showDefeatComments]);
   
   // 連続クリック防止付きプレイヤー攻撃ハンドラ
   const handlePlayerAttack = useCallback(() => {
@@ -225,23 +260,30 @@ const Battle2Screen: React.FC = () => {
         setSpecialAttackAvailable(true);
       }
       
-      // Check if opponent is defeated
-      setTimeout(() => {
-        if (opponentHp - damage <= 0 && !specialModeActive) {
-          handleVictory();
-        } else {
+      if (opponentHp - damage <= 0 && !specialModeActive) {
+        handleVictory();
+      } else {
+        setTimeout(() => {
           updateBattleState({ isPlayerTurn: false, attackInProgress: false });
-          // 敵の攻撃を呼び出す処理（handleEnemyAttack）を呼び出し、終了時にロック解除
           handleEnemyAttack(() => {
             actionLockRef.current = false;
           });
-        }
-      }, 500);
+        }, 1000);
+      }
     }, 500);
   }, [
-    isPlayerTurn, attackInProgress, isBattleOver, specialModeActive, player,
-    opponentHp, attackCount, addComment, setAttackCount, setSpecialAttackAvailable,
-    updateBattleState, handleVictory
+    isPlayerTurn,
+    attackInProgress,
+    isBattleOver,
+    specialModeActive,
+    player,
+    opponentHp,
+    attackCount,
+    addComment,
+    setAttackCount,
+    setSpecialAttackAvailable,
+    updateBattleState,
+    handleVictory
   ]);
   
   // handleEnemyAttack に onComplete コールバックを追加
@@ -275,7 +317,7 @@ const Battle2Screen: React.FC = () => {
         addComment('システム', `ゆうじの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
         if (onComplete) onComplete();
       }, 500);
-    } else if (opponentHp < opponent2.maxHp * 0.3 && !battleState.yujiInSpecialMode) {
+    } else if (opponentHp < opponent2.maxHp * 0.3 && !yujiInSpecialMode) {
       setTimeout(() => {
         updateBattleState({ isPlayerTurn: true, attackInProgress: false });
         if (onComplete) onComplete();
@@ -305,9 +347,17 @@ const Battle2Screen: React.FC = () => {
       }, 500);
     }
   }, [
-    isBattleOver, specialModeActive, opponentHp, battleState.yujiInSpecialMode,
-    opponent2.attackMin, opponent2.attackMax, opponent2.maxHp,
-    addComment, setPlayer, updateBattleState, handleDefeat
+    isBattleOver,
+    specialModeActive,
+    yujiInSpecialMode,
+    opponentHp,
+    opponent2.attackMin,
+    opponent2.attackMax,
+    opponent2.maxHp,
+    addComment,
+    setPlayer,
+    updateBattleState,
+    handleDefeat
   ]);
   
   const handlePlayerSpecial = useCallback(() => {
@@ -344,10 +394,20 @@ const Battle2Screen: React.FC = () => {
       }
     }, 500);
   }, [
-    isPlayerTurn, attackInProgress, specialAttackAvailable, isBattleOver,
-    opponentHp, specialModeActive, player.specialPower,
-    addComment, setSpecialAttackAvailable, setAttackCount,
-    handleEnemyAttack, handleVictory, updateBattleState
+    isPlayerTurn,
+    attackInProgress,
+    specialAttackAvailable,
+    isBattleOver,
+    opponentHp,
+    specialModeActive,
+    player.specialPower,
+    addComment,
+    setOpponentHp,
+    setSpecialAttackAvailable,
+    setAttackCount,
+    handleEnemyAttack,
+    handleVictory,
+    updateBattleState
   ]);
   
   const handleRunAway = useCallback(() => {
@@ -408,7 +468,7 @@ const Battle2Screen: React.FC = () => {
       }, 1000);
     }, 500);
   }, [isPlayerTurn, attackInProgress, isBattleOver, player.currentHp, player.maxHp, addComment, setPlayer, updateBattleState, handleEnemyAttack, handleDefeat]);
-  
+
   const activateYujiSpecialMode = useCallback(() => {
     updateBattleState({ yujiInSpecialMode: true });
     setYujiSpecialMode(true);
@@ -421,19 +481,30 @@ const Battle2Screen: React.FC = () => {
       setOpponentHp(opponent2.maxHp);
     }, 1000);
   }, [addComment, opponent2.maxHp, setYujiSpecialMode, updateBattleState]);
-  
+
   const handleSkip = useCallback(() => {
     if (!isBattleOver) return;
-    handleSkipCallback();
-  }, [isBattleOver, handleSkipCallback]);
-  
+    if (redirectTimer) {
+      clearTimeout(redirectTimer);
+      setRedirectTimer(null);
+    }
+    pauseBattleTimer();
+    setSoundEffect(BUTTON_SOUND);
+    if (battleResult === 'victory') {
+      handleScreenTransition('victory2');
+      navigate('/victory2');
+    } else if (battleResult === 'defeat') {
+      handleScreenTransition('result2');
+      navigate('/result2');
+    }
+  }, [isBattleOver, redirectTimer, pauseBattleTimer, battleResult, handleScreenTransition, navigate]);
+
   useEffect(() => {
     const cleanupTimeouts = () => {
       if (redirectTimer) {
         clearTimeout(redirectTimer);
       }
       pauseBattleTimer();
-      clearAllTimers();
     };
     clearComments();
     setPlayer(prev => ({ ...prev, currentHp: 100 }));
@@ -454,10 +525,8 @@ const Battle2Screen: React.FC = () => {
     });
     setCurrentBgm(BATTLE_BGM);
     setBattleResult(null);
-    setIsPlayerVictory(null);
-    setTransitionScheduled(false);
     startBattleTimer();
-    
+
     const preloadAudios = [
       BATTLE_BGM,
       YUJI_SPECIAL_BGM,
@@ -475,26 +544,21 @@ const Battle2Screen: React.FC = () => {
       audio.preload = "auto";
       console.log(`Preloading audio: ${url}`);
     });
-    
+
     setTimeout(() => {
       addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
       addComment('ゆうじ＠陽気なおじさん', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
     }, 1000);
-    
+
     return cleanupTimeouts;
   }, []);
-  
-  const handleCharacterClick = useCallback((character: 'player' | 'opponent1' | 'opponent2') => {
-    setCurrentCharacterSheet(character);
-    setShowCharacterSheet(true);
-  }, [setCurrentCharacterSheet, setShowCharacterSheet]);
-  
+
   useEffect(() => {
-    if (opponentHp <= 20 && !battleState.yujiInSpecialMode && !isBattleOver && !specialModeActive) {
+    if (opponentHp <= 20 && !yujiInSpecialMode && !isBattleOver && !specialModeActive) {
       activateYujiSpecialMode();
     }
-  }, [opponentHp, battleState.yujiInSpecialMode, isBattleOver, specialModeActive, activateYujiSpecialMode]);
-  
+  }, [opponentHp, yujiInSpecialMode, isBattleOver, specialModeActive, activateYujiSpecialMode]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (specialModeActive && !isBattleOver) {
@@ -515,7 +579,7 @@ const Battle2Screen: React.FC = () => {
       if (interval) clearInterval(interval);
     };
   }, [specialModeActive, isBattleOver, addComment, updateBattleState]);
-  
+
   useEffect(() => {
     if (battleResult === 'victory') {
       setCurrentBgm(VICTORY_BGM);
@@ -523,73 +587,29 @@ const Battle2Screen: React.FC = () => {
       setCurrentBgm(DEFEAT_BGM);
     }
   }, [battleResult]);
-  
+
   useEffect(() => {
-    const cleanupTimeouts = () => {
-      if (redirectTimer) {
-        clearTimeout(redirectTimer);
-      }
-      pauseBattleTimer();
+    let skipButtonTimer: NodeJS.Timeout | null = null;
+    if (isBattleOver) {
+      const delay = battleResult === 'victory' ? 10000 : 15000;
+      skipButtonTimer = setTimeout(() => {
+        updateBattleState({ showSkipButton: true });
+      }, delay);
+    }
+    return () => {
+      if (skipButtonTimer) clearTimeout(skipButtonTimer);
     };
-    clearComments();
-    setPlayer(prev => ({ ...prev, currentHp: 100 }));
-    resetBattleState();
-    setOpponentHp(opponent2.currentHp);
-    setAttackCount(0);
-    setSpecialAttackAvailable(false);
-    setYujiSpecialMode(false);
-    updateBattleState({
-      isPlayerTurn: true,
-      isBattleOver: false,
-      attackInProgress: false,
-      yujiInSpecialMode: false,
-      specialModeActive: false,
-      specialModeTimer: 0,
-      isHighballConfused: false,
-      showSkipButton: false
-    });
-    setCurrentBgm(BATTLE_BGM);
-    setBattleResult(null);
-    setIsPlayerVictory(null);
-    setTransitionScheduled(false);
-    startBattleTimer();
-    
-    const preloadAudios = [
-      BATTLE_BGM,
-      YUJI_SPECIAL_BGM,
-      VICTORY_BGM,
-      DEFEAT_BGM,
-      ATTACK_SOUND,
-      SPECIAL_SOUND,
-      RUN_AWAY_SOUND,
-      HIGHBALL_SOUND,
-      BUTTON_SOUND
-    ];
-    preloadAudios.forEach(url => {
-      const audio = new Audio();
-      audio.src = url;
-      audio.preload = "auto";
-      console.log(`Preloading audio: ${url}`);
-    });
-    
-    setTimeout(() => {
-      addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
-      addComment('ゆうじ＠陽気なおじさん', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
-    }, 1000);
-    
-    return cleanupTimeouts;
-  }, []);
-  
+  }, [isBattleOver, battleResult, updateBattleState]);
+
   useEffect(() => {
     return () => {
       if (redirectTimer) {
         clearTimeout(redirectTimer);
       }
       pauseBattleTimer();
-      clearAllTimers();
     };
-  }, [redirectTimer, pauseBattleTimer, clearAllTimers]);
-  
+  }, [redirectTimer, pauseBattleTimer]);
+
   useEffect(() => {
     if (player.currentHp <= 0 && !isBattleOver) {
       handleDefeat();
@@ -597,7 +617,7 @@ const Battle2Screen: React.FC = () => {
       handleVictory();
     }
   }, [player.currentHp, opponentHp, specialModeActive, isBattleOver, handleDefeat, handleVictory]);
-  
+
   const formatTime = useCallback((seconds: number): string => {
     if (seconds > 6000) {
       return "99:99";
@@ -606,7 +626,7 @@ const Battle2Screen: React.FC = () => {
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   }, []);
-  
+
   const soundEffectPlayer = useMemo(() => {
     return soundEffect ? (
       <AudioPlayer 
@@ -620,7 +640,7 @@ const Battle2Screen: React.FC = () => {
       />
     ) : null;
   }, [soundEffect]);
-  
+
   const gaugesDisplayComponent = useMemo(() => (
     <GaugesDisplay 
       player={player}
@@ -629,7 +649,7 @@ const Battle2Screen: React.FC = () => {
       sosoHealMode={false}
     />
   ), [player, opponent2, opponentHp, attackCount]);
-  
+
   const portraitsComponent = useMemo(() => (
     <CharacterPortraits 
       player={player}
@@ -638,7 +658,7 @@ const Battle2Screen: React.FC = () => {
       sosoHealMode={false}
     />
   ), [player, opponent2, opponentHp, handleCharacterClick]);
-  
+
   const battleActionsComponent = useMemo(() => (
     <BattleActions 
       isPlayerTurn={isPlayerTurn}
@@ -653,7 +673,7 @@ const Battle2Screen: React.FC = () => {
     isPlayerTurn, isBattleOver, specialAttackAvailable,
     handlePlayerAttack, handlePlayerSpecial, handleRunAway, handleHighball
   ]);
-  
+
   return (
     <MobileContainer backgroundGradient={battleBackgroundGradient}>
       <div 
@@ -673,17 +693,7 @@ const Battle2Screen: React.FC = () => {
           id="battle2-bgm"
           key={`battle-bgm-${currentBgm}`}
         />
-        {soundEffect && (
-          <AudioPlayer 
-            src={soundEffect} 
-            loop={false} 
-            autoPlay={true} 
-            volume={0.7}
-            id="battle2-effect"
-            key={`battle-effect-${Date.now()}`}
-            onEnded={() => setSoundEffect(null)}
-          />
-        )}
+        {soundEffectPlayer}
         
         <PlayerInfo 
           name="とおる＠経営参謀" 
@@ -692,19 +702,8 @@ const Battle2Screen: React.FC = () => {
           title="さよなら！陽気なおじさん！！"
         />
         
-        <GaugesDisplay 
-          player={player}
-          opponent={{ ...opponent2, currentHp: opponentHp }}
-          attackCount={attackCount}
-          sosoHealMode={false}
-        />
-        
-        <CharacterPortraits 
-          player={player}
-          opponent={{ ...opponent2, currentHp: opponentHp }}
-          onCharacterClick={handleCharacterClick}
-          sosoHealMode={false}
-        />
+        {gaugesDisplayComponent}
+        {portraitsComponent}
         
         {specialModeActive && (
           <div className="absolute top-1/4 left-0 right-0 flex justify-center">
@@ -719,21 +718,13 @@ const Battle2Screen: React.FC = () => {
         </div>
         
         <div className="mt-auto">
-          <BattleActions 
-            isPlayerTurn={isPlayerTurn}
-            isBattleOver={isBattleOver}
-            specialAttackAvailable={specialAttackAvailable}
-            onAttack={handlePlayerAttack}
-            onSpecial={handlePlayerSpecial}
-            onRunAway={handleRunAway}
-            onHighball={handleHighball}
-          />
+          {battleActionsComponent}
           <CommentInput />
         </div>
         
         {showSkipButton && (
           <Button
-            onClick={handleSkip}
+            onClick={handleSkipCallback}
             className="absolute bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
             style={{ position: 'absolute' }}
           >
@@ -764,4 +755,3 @@ const Battle2Screen: React.FC = () => {
 };
 
 export default React.memo(Battle2Screen);
-
