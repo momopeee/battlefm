@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -64,7 +63,7 @@ const yujiSpecialComments = [
 
 // Define missing arrays
 const yujiAttackComments = [
-  "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
+  "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つ��とが大事です",
   "経営の何がわからないのかわからないってのが経営なんですよぉ〜",
   "経営を上手くやるには、波長の合う人とやるのがいちばんですね〜",
   "売上を上げるには、まずは表に出て顔と名前を売るのが大事ですよ",
@@ -157,9 +156,16 @@ const Battle2Screen: React.FC = () => {
     showSkipButton,
   } = battleState;
   
-  // 型安全な状態更新用ヘルパー関数
-  const updateBattleState = useCallback((newState: Partial<BattleState>) => {
-    setBattleState(prev => ({ ...prev, ...newState }));
+  // 型安全な状態更新用ヘルパー関数 - Fix for the TS error
+  const updateBattleState = useCallback((newState: Partial<BattleState> | ((prev: BattleState) => Partial<BattleState>)) => {
+    setBattleState(prev => {
+      // Handle the function case
+      if (typeof newState === 'function') {
+        return { ...prev, ...newState(prev) };
+      }
+      // Handle the object case
+      return { ...prev, ...newState };
+    });
   }, []);
   
   // オーディオ関連の状態
@@ -555,21 +561,23 @@ const Battle2Screen: React.FC = () => {
     if (specialModeActive && !isBattleOver) {
       setCurrentBgm(YUJI_SPECIAL_BGM);
       interval = setInterval(() => {
-        updateBattleState(prev => {
-          const newTime = prev.specialModeTimer + 1;
-          if (newTime >= 40) {
-            setCurrentBgm(BATTLE_BGM);
-            addComment('システム', 'ゆうじ確変モードが終了した', true);
-            return { ...prev, specialModeTimer: 0, specialModeActive: false };
-          }
-          return { ...prev, specialModeTimer: newTime };
-        });
+        updateBattleState(prev => ({ 
+          ...prev, 
+          specialModeTimer: prev.specialModeTimer + 1,
+          specialModeActive: prev.specialModeTimer + 1 < 40
+        }));
+        
+        // Update BGM and add comment if special mode is ending
+        if (specialModeTimer >= 39) {
+          setCurrentBgm(BATTLE_BGM);
+          addComment('システム', 'ゆうじ確変モードが終了した', true);
+        }
       }, 1000);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [specialModeActive, isBattleOver, addComment, updateBattleState]);
+  }, [specialModeActive, isBattleOver, specialModeTimer, addComment, updateBattleState]);
   
   useEffect(() => {
     if (battleResult === 'victory') {
@@ -746,29 +754,3 @@ const Battle2Screen: React.FC = () => {
 };
 
 export default React.memo(Battle2Screen);
-
-/*
-  以下は型安全な状態更新の例（参考）:
-
-  // Define explicit state type
-  interface GameState {
-    isPlayerTurn: boolean;
-    isBattleOver: boolean;
-    attackInProgress: boolean;
-    // other relevant properties
-  }
-
-  // Initialize with proper typing
-  const [gameState, setGameState] = useState<GameState>({
-    isPlayerTurn: true,
-    isBattleOver: false,
-    attackInProgress: false,
-    // initial values
-  });
-
-  // Type-safe state update
-  setGameState((prev: GameState) => ({
-    ...prev,  // preserve existing state
-    isPlayerTurn: !prev.isPlayerTurn,  // example of specific update
-  }));
-*/
