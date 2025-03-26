@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -555,21 +554,24 @@ const Battle2Screen: React.FC = () => {
     if (specialModeActive && !isBattleOver) {
       setCurrentBgm(YUJI_SPECIAL_BGM);
       interval = setInterval(() => {
-        updateBattleState(prev => {
-          const newTime = prev.specialModeTimer + 1;
-          if (newTime >= 40) {
-            setCurrentBgm(BATTLE_BGM);
-            addComment('システム', 'ゆうじ確変モードが終了した', true);
-            return { ...prev, specialModeTimer: 0, specialModeActive: false };
-          }
-          return { ...prev, specialModeTimer: newTime };
+        updateBattleState({
+          specialModeTimer: battleState.specialModeTimer + 1,
         });
+        
+        if (battleState.specialModeTimer >= 40) {
+          setCurrentBgm(BATTLE_BGM);
+          addComment('システム', 'ゆうじ確変モードが終了した', true);
+          updateBattleState({ 
+            specialModeTimer: 0, 
+            specialModeActive: false 
+          });
+        }
       }, 1000);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [specialModeActive, isBattleOver, addComment, updateBattleState]);
+  }, [specialModeActive, isBattleOver, addComment, updateBattleState, battleState.specialModeTimer]);
   
   useEffect(() => {
     if (battleResult === 'victory') {

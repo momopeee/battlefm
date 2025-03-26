@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
@@ -20,7 +19,7 @@ const SelectScreen: React.FC = () => {
   const handleHeaderClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setButtonSound(BUTTON_SOUND);
-    handleScreenTransition('assault');
+    handleScreenTransition('assault' as any);
     navigate('/assault');
   };
 
@@ -179,3 +178,4 @@ const SelectScreen: React.FC = () => {
 };
 
 export default SelectScreen;
+
