@@ -19,7 +19,7 @@ export interface Comment {
 }
 
 // Define the possible screens
-export type Screen = 'index' | 'start' | 'battle1' | 'victory1' | 'result1' | 'select' | 'assault' | 'battle2' | 'victory2' | 'result2' | 'endingA' | 'endingB' | 'endingC';
+export type Screen = 'index' | 'start' | 'battle1' | 'victory1' | 'result1' | 'select' | 'battle2' | 'victory2' | 'result2' | 'endingA' | 'endingB' | 'endingC';
 
 // AppContext interface
 interface AppContextProps {
