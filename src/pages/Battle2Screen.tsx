@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import CommentArea from '@/components/CommentArea';
@@ -30,7 +29,6 @@ import {
   HIGHBALL_SOUND
 } from '@/constants/audioUrls';
 
-// Player attack comments for Yuji battle
 const playerAttackComments = [
   "ゆうじは人の相談にのってはいけない人間だと確信している",
   "正論を言われた時に、拗ねて逃げていては成長に繋がらないだろ",
@@ -44,14 +42,12 @@ const playerAttackComments = [
   "それっぽいものを作ってもダメだ、目の前の相手をしっかり見ろ"
 ];
 
-// Player special attack comments for Yuji battle
 const playerSpecialComments = [
   "パッションは大事だ、でもパッションだけじゃ薄っぺらい詐欺師と何も変わらないだろ！ゆうじが守りたいものを思い出して、正面からぶつかっていけ！骨は俺が拾う！！",
   "俺達はゆうじが大好きだからいろいろ言うんだ、耳が痛い事もあるだろう、だが逃げるな！何があってもお前の骨は俺が拾う！！！",
   "自らアドバイスを求めたなら、その相手には進捗の報告を怠るな！！俺達はいい、友達だから報告が無くても\"ゆうじは最低だ！！\"で済ませて、その後も仲良く出来る。だが、他の人は違う、一度不義理をしたら一生相手にされないし、下手したら敵になって戻ってくる。良く考えて行動し、軽はずみで他人を使い捨てにするな！！"
 ];
 
-// UPDATED: Yuji's special attack comments
 const yujiSpecialComments = [
   "やまにいは僕の事いじめたいだけですよね、ひどいです",
   "じゅんさんも本当にひどいです",
@@ -62,7 +58,6 @@ const yujiSpecialComments = [
   "式場の利益よりもプランナーの地位向上のが大事なんです。それが分からない式場は全部だめですよ"
 ];
 
-// Define missing arrays
 const yujiAttackComments = [
   "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
   "経営の何がわからないのかわからないってのが経営なんですよぉ〜",
@@ -93,7 +88,6 @@ const defeatComments = [
   "もう一度挑戦するか？"
 ];
 
-// 明示的なバトル状態の型定義
 interface BattleState {
   isPlayerTurn: boolean;
   isBattleOver: boolean;
@@ -116,7 +110,7 @@ const Battle2Screen: React.FC = () => {
     battleTimer,
     startBattleTimer,
     pauseBattleTimer,
-    resetBattleTimer,
+    resetBattleState,
     comments,
     attackCount,
     specialAttackAvailable, 
@@ -124,7 +118,7 @@ const Battle2Screen: React.FC = () => {
     showCharacterSheet,
     currentCharacterSheet,
     setShowCharacterSheet,
-    setCurrentCharacterSheet,
+    setCurrentBattleState, // 仮の関数名（必要なら）
     addComment,
     clearComments,
     setAttackCount,
@@ -134,7 +128,6 @@ const Battle2Screen: React.FC = () => {
     setPlayer
   } = useApp();
   
-  // battleState を明示的な型定義を用いて管理
   const [battleState, setBattleState] = useState<BattleState>({
     isPlayerTurn: true,
     isBattleOver: false,
@@ -146,23 +139,12 @@ const Battle2Screen: React.FC = () => {
     showSkipButton: false,
   });
   
-  const {
-    isPlayerTurn,
-    isBattleOver,
-    attackInProgress,
-    yujiInSpecialMode,
-    specialModeActive,
-    isHighballConfused,
-    specialModeTimer,
-    showSkipButton,
-  } = battleState;
+  const { isPlayerTurn, isBattleOver, attackInProgress, specialModeActive, showSkipButton } = battleState;
   
-  // 型安全な状態更新用ヘルパー関数
   const updateBattleState = useCallback((newState: Partial<BattleState>) => {
     setBattleState(prev => ({ ...prev, ...newState }));
   }, []);
   
-  // オーディオ関連の状態
   const [soundEffect, setSoundEffect] = useState<string | null>(null);
   const [currentBgm, setCurrentBgm] = useState<string>(BATTLE_BGM);
   const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
@@ -170,148 +152,39 @@ const Battle2Screen: React.FC = () => {
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   
   const battleBackgroundGradient = useMemo(() => 
-    'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))'
-  , []);
+    'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))',
+    []
+  );
   
-  // Function declarations rearranged to fix circular dependency issues
+  // 連続クリック防止用のロックフラグ
+  const actionLockRef = useRef(false);
   
-  // First define handleEnemyAttack before it's used by other functions
-  const handleEnemyAttack = useCallback(() => {
-    if (isBattleOver) return;
-    updateBattleState({ attackInProgress: true });
-    
-    if (specialModeActive) {
-      setSoundEffect(SPECIAL_SOUND);
-      const specialComment = yujiSpecialComments[Math.floor(Math.random() * yujiSpecialComments.length)];
-      addComment('ゆうじ＠陽気なおじさん', specialComment);
-      const min = opponent2.attackMin;
-      const max = opponent2.attackMax;
-      const damage = Math.floor(Math.random() * (max - min + 1)) + min;
-      
-      setTimeout(() => {
-        setPlayer(prev => {
-          const newHp = Math.max(0, prev.currentHp - damage);
-          if (newHp <= 0) {
-            setTimeout(() => handleDefeat(), 0);
-          } else {
-            setTimeout(() => {
-              updateBattleState({ isPlayerTurn: true, attackInProgress: false });
-            }, 1000);
-          }
-          return { ...prev, currentHp: newHp };
-        });
-        addComment('システム', `ゆうじの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
-      }, 500);
-    } else if (opponentHp < opponent2.maxHp * 0.3 && !yujiInSpecialMode) {
-      setTimeout(() => {
-        updateBattleState({ isPlayerTurn: true, attackInProgress: false });
-      }, 1000);
-    } else {
-      setSoundEffect(ATTACK_SOUND);
-      const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
-      const min = opponent2.attackMin;
-      const max = opponent2.attackMax;
-      const damage = Math.floor(Math.random() * (max - min + 1)) + min;
-      
-      setTimeout(() => {
-        setPlayer(prev => {
-          const newHp = Math.max(0, prev.currentHp - damage);
-          if (newHp <= 0) {
-            setTimeout(() => handleDefeat(), 0);
-          } else {
-            setTimeout(() => {
-              updateBattleState({ isPlayerTurn: true, attackInProgress: false });
-            }, 1000);
-          }
-          return { ...prev, currentHp: newHp };
-        });
-        addComment('ゆうじ＠陽気なおじさん', attackComment);
-        addComment('システム', `ゆうじの陽気なトークが突き刺さる！ ${damage}ポイントのダメージ！`, true);
-      }, 500);
+  // 連続クリック防止付きスキップハンドラ
+  const handleSkipCallback = useCallback(() => {
+    if (actionLockRef.current) return;
+    actionLockRef.current = true;
+    if (redirectTimer) {
+      clearTimeout(redirectTimer);
+      setRedirectTimer(null);
     }
-  }, [
-    isBattleOver, specialModeActive, yujiInSpecialMode, opponentHp,
-    opponent2.attackMin, opponent2.attackMax, opponent2.maxHp,
-    addComment, setPlayer, updateBattleState
-  ]);
-  
-  // Define victory and defeat handlers before they're used
-  const showVictoryComments = useCallback(() => {
-    victoryComments.forEach((comment, index) => {
-      setTimeout(() => {
-        addComment('システム', comment, true);
-      }, index * 3000);
-    });
-  }, [addComment]);
-  
-  const showDefeatComments = useCallback(() => {
-    defeatComments.forEach((comment, index) => {
-      setTimeout(() => {
-        addComment('システム', comment, true);
-      }, index * 3000);
-    });
-  }, [addComment]);
-  
-  const handleVictory = useCallback(() => {
-    updateBattleState({ isBattleOver: true });
-    setBattleResult('victory');
-    setCurrentBgm(VICTORY_BGM);
+    pauseBattleTimer();
     setSoundEffect(BUTTON_SOUND);
-    showVictoryComments();
-    console.log('Victory trigger: Setting sound effect to', VICTORY_BGM);
-    console.log('Scheduling victory transition in 30 seconds...');
-    const timer = setTimeout(() => {
-      pauseBattleTimer();
-      console.log('Executing automatic victory transition to victory2');
+    if (battleResult === 'victory') {
       handleScreenTransition('victory2');
       navigate('/victory2');
-    }, 30000);
-    setRedirectTimer(timer);
-  }, [showVictoryComments, pauseBattleTimer, handleScreenTransition, navigate, updateBattleState]);
-  
-  const handleDefeat = useCallback(() => {
-    updateBattleState({ isBattleOver: true });
-    setBattleResult('defeat');
-    setCurrentBgm(DEFEAT_BGM);
-    setSoundEffect(BUTTON_SOUND);
-    showDefeatComments();
-    console.log('Defeat trigger: Setting sound effect to', DEFEAT_BGM);
-    console.log('Scheduling defeat transition in 30 seconds...');
-    const timer = setTimeout(() => {
-      pauseBattleTimer();
-      console.log('Executing automatic defeat transition to result2');
+    } else if (battleResult === 'defeat') {
       handleScreenTransition('result2');
       navigate('/result2');
-    }, 30000);
-    setRedirectTimer(timer);
-  }, [showDefeatComments, pauseBattleTimer, handleScreenTransition, navigate, updateBattleState]);
+    }
+    // 遷移後はロック解除不要
+  }, [redirectTimer, pauseBattleTimer, battleResult, handleScreenTransition, navigate]);
   
-  // Now define the player action handlers that use handleEnemyAttack
+  // 連続クリック防止付きプレイヤー攻撃ハンドラ
   const handlePlayerAttack = useCallback(() => {
-    if (!isPlayerTurn || attackInProgress || isBattleOver) return;
+    if (!isPlayerTurn || attackInProgress || isBattleOver || actionLockRef.current) return;
+    actionLockRef.current = true;
     updateBattleState({ attackInProgress: true });
     setSoundEffect(ATTACK_SOUND);
-    
-    if (isHighballConfused) {
-      addComment('とおる＠経営参謀', 'え？ちょっとまって、なに？なに？ちょっとまって？えっ？');
-      setTimeout(() => {
-        addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた', true);
-        setPlayer(prev => {
-          const newHp = Math.max(0, prev.currentHp - 10);
-          if (newHp <= 0) {
-            setTimeout(() => handleDefeat(), 0);
-          } else {
-            setTimeout(() => {
-              updateBattleState({ isPlayerTurn: false, attackInProgress: false });
-              handleEnemyAttack();
-            }, 1000);
-          }
-          return { ...prev, currentHp: newHp };
-        });
-        updateBattleState({ isHighballConfused: false });
-      }, 500);
-      return;
-    }
     
     const randomIndex = Math.floor(Math.random() * playerAttackComments.length);
     const attackComment = playerAttackComments[randomIndex];
@@ -347,15 +220,83 @@ const Battle2Screen: React.FC = () => {
       } else {
         setTimeout(() => {
           updateBattleState({ isPlayerTurn: false, attackInProgress: false });
-          handleEnemyAttack();
+          // 敵の攻撃を呼び出す処理（handleEnemyAttack）を呼び出し、終了時にロック解除
+          handleEnemyAttack(() => {
+            actionLockRef.current = false;
+          });
         }, 1000);
       }
     }, 500);
   }, [
-    isPlayerTurn, attackInProgress, isBattleOver, isHighballConfused, 
-    player, opponentHp, specialModeActive, attackCount,
-    addComment, setPlayer, setOpponentHp, setAttackCount, setSpecialAttackAvailable, 
-    handleEnemyAttack, handleVictory, handleDefeat, updateBattleState
+    isPlayerTurn, attackInProgress, isBattleOver, specialModeActive, player,
+    opponentHp, attackCount, addComment, setAttackCount, setSpecialAttackAvailable,
+    updateBattleState, handleVictory, handleEnemyAttack
+  ]);
+  
+  // handleEnemyAttack に onComplete コールバックを追加
+  const handleEnemyAttack = useCallback((onComplete?: () => void) => {
+    if (isBattleOver) {
+      if (onComplete) onComplete();
+      return;
+    }
+    updateBattleState({ attackInProgress: true });
+    
+    if (specialModeActive) {
+      setSoundEffect(SPECIAL_SOUND);
+      const specialComment = yujiSpecialComments[Math.floor(Math.random() * yujiSpecialComments.length)];
+      addComment('ゆうじ＠陽気なおじさん', specialComment);
+      const min = opponent2.attackMin;
+      const max = opponent2.attackMax;
+      const damage = Math.floor(Math.random() * (max - min + 1)) + min;
+      
+      setTimeout(() => {
+        setPlayer(prev => {
+          const newHp = Math.max(0, prev.currentHp - damage);
+          if (newHp <= 0) {
+            setTimeout(() => handleDefeat(), 0);
+          } else {
+            setTimeout(() => {
+              updateBattleState({ isPlayerTurn: true, attackInProgress: false });
+            }, 1000);
+          }
+          return { ...prev, currentHp: newHp };
+        });
+        addComment('システム', `ゆうじの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
+        if (onComplete) onComplete();
+      }, 500);
+    } else if (opponentHp < opponent2.maxHp * 0.3 && !yujiInSpecialMode) {
+      setTimeout(() => {
+        updateBattleState({ isPlayerTurn: true, attackInProgress: false });
+        if (onComplete) onComplete();
+      }, 1000);
+    } else {
+      setSoundEffect(ATTACK_SOUND);
+      const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
+      const min = opponent2.attackMin;
+      const max = opponent2.attackMax;
+      const damage = Math.floor(Math.random() * (max - min + 1)) + min;
+      
+      setTimeout(() => {
+        setPlayer(prev => {
+          const newHp = Math.max(0, prev.currentHp - damage);
+          if (newHp <= 0) {
+            setTimeout(() => handleDefeat(), 0);
+          } else {
+            setTimeout(() => {
+              updateBattleState({ isPlayerTurn: true, attackInProgress: false });
+            }, 1000);
+          }
+          return { ...prev, currentHp: newHp };
+        });
+        addComment('ゆうじ＠陽気なおじさん', attackComment);
+        addComment('システム', `ゆうじの陽気なトークが突き刺さる！ ${damage}ポイントのダメージ！`, true);
+        if (onComplete) onComplete();
+      }, 500);
+    }
+  }, [
+    isBattleOver, specialModeActive, yujiInSpecialMode, opponentHp,
+    opponent2.attackMin, opponent2.attackMax, opponent2.maxHp,
+    addComment, setPlayer, updateBattleState, handleDefeat
   ]);
   
   const handlePlayerSpecial = useCallback(() => {
@@ -385,14 +326,16 @@ const Battle2Screen: React.FC = () => {
       } else {
         setTimeout(() => {
           updateBattleState({ isPlayerTurn: false, attackInProgress: false });
-          handleEnemyAttack();
+          handleEnemyAttack(() => {
+            actionLockRef.current = false;
+          });
         }, 1000);
       }
     }, 500);
   }, [
     isPlayerTurn, attackInProgress, specialAttackAvailable, isBattleOver,
     opponentHp, specialModeActive, player.specialPower,
-    addComment, setOpponentHp, setSpecialAttackAvailable, setAttackCount, 
+    addComment, setOpponentHp, setSpecialAttackAvailable, setAttackCount,
     handleEnemyAttack, handleVictory, updateBattleState
   ]);
   
@@ -409,7 +352,9 @@ const Battle2Screen: React.FC = () => {
         } else {
           setTimeout(() => {
             updateBattleState({ isPlayerTurn: false, attackInProgress: false });
-            handleEnemyAttack();
+            handleEnemyAttack(() => {
+              actionLockRef.current = false;
+            });
           }, 1000);
         }
         return { ...prev, currentHp: newHp };
@@ -446,7 +391,9 @@ const Battle2Screen: React.FC = () => {
       }
       setTimeout(() => {
         updateBattleState({ isPlayerTurn: false, attackInProgress: false });
-        handleEnemyAttack();
+        handleEnemyAttack(() => {
+          actionLockRef.current = false;
+        });
       }, 1000);
     }, 500);
   }, [isPlayerTurn, attackInProgress, isBattleOver, player.currentHp, player.maxHp, addComment, setPlayer, updateBattleState, handleEnemyAttack, handleDefeat]);
@@ -481,7 +428,6 @@ const Battle2Screen: React.FC = () => {
     }
   }, [isBattleOver, redirectTimer, pauseBattleTimer, battleResult, handleScreenTransition, navigate]);
   
-  // Component lifecycle effects and initializations
   useEffect(() => {
     const cleanupTimeouts = () => {
       if (redirectTimer) {
@@ -490,11 +436,8 @@ const Battle2Screen: React.FC = () => {
       pauseBattleTimer();
     };
     clearComments();
-    setPlayer(prev => ({
-      ...prev,
-      currentHp: 100
-    }));
-    resetBattleTimer();
+    setPlayer(prev => ({ ...prev, currentHp: 100 }));
+    resetBattleState();
     setOpponentHp(opponent2.currentHp);
     setAttackCount(0);
     setSpecialAttackAvailable(false);
@@ -514,9 +457,9 @@ const Battle2Screen: React.FC = () => {
     startBattleTimer();
     
     const preloadAudios = [
-      BATTLE_BGM, 
-      YUJI_SPECIAL_BGM, 
-      VICTORY_BGM, 
+      BATTLE_BGM,
+      YUJI_SPECIAL_BGM,
+      VICTORY_BGM,
       DEFEAT_BGM,
       ATTACK_SOUND,
       SPECIAL_SOUND,
@@ -715,7 +658,7 @@ const Battle2Screen: React.FC = () => {
         
         {showSkipButton && (
           <Button
-            onClick={handleSkip}
+            onClick={handleSkipCallback}
             className="absolute bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
             style={{ position: 'absolute' }}
           >
@@ -746,6 +689,7 @@ const Battle2Screen: React.FC = () => {
 };
 
 export default React.memo(Battle2Screen);
+
 
 /*
   以下は型安全な状態更新の例（参考）:
