@@ -25,7 +25,7 @@ const AssaultScreen: React.FC = () => {
     if (actionInProgress) return;
     setActionInProgress(true);
     // ※ここで handleScreenTransition による自動リダイレクトが発生していないか、内部実装を確認してください。
-    handleScreenTransition('battle2' as any);
+    handleScreenTransition('battle2');
     navigate('/battle2');
   }, [actionInProgress, handleScreenTransition, navigate]);
 
@@ -48,7 +48,7 @@ const AssaultScreen: React.FC = () => {
   }, [handleSkip]);
 
   return (
-    <MobileContainer backgroundClassName="min-h-screen">
+    <MobileContainer style={{ minHeight: '100vh' }}>
       {/* 最下層レイヤー：背景画像（指定URL） */}
       <div
         style={{
