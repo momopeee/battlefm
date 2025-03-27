@@ -2,12 +2,17 @@
 import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import AudioPlayer from '@/components/AudioPlayer';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileContainer from '@/components/MobileContainer';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { SELECT_NORMAL_BGM, BUTTON_SOUND } from '@/constants/audioUrls';
 import { Separator } from '@/components/ui/separator';
+import {
+  Dialog,
+  DialogContent,
+  DialogClose
+} from '@/components/ui/dialog';
 
 const SelectScreen: React.FC = () => {
   const { bgmEnabled, toggleBgm, handleScreenTransition } = useApp();
@@ -15,9 +20,18 @@ const SelectScreen: React.FC = () => {
   const isMobile = useIsMobile();
   const [showWarning, setShowWarning] = useState(false);
   const [buttonSound, setButtonSound] = useState<string | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   // 画面上部セクション（ヘッダー）がクリックされたら、AssaultScreenへリダイレクトする
   const handleHeaderClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setButtonSound(BUTTON_SOUND);
+    handleScreenTransition('assault');
+    navigate('/assault');
+  };
+
+  // 中部セクションがクリックされたら、AssaultScreenへリダイレクトする
+  const handleContentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setButtonSound(BUTTON_SOUND);
     handleScreenTransition('assault');
@@ -32,6 +46,13 @@ const SelectScreen: React.FC = () => {
     setTimeout(() => {
       setShowWarning(false);
     }, 3000);
+  };
+
+  // 下部画像クリック時のポップアップ表示
+  const handleBottomImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setButtonSound(BUTTON_SOUND);
+    setShowPopup(true);
   };
 
   return (
@@ -92,9 +113,12 @@ const SelectScreen: React.FC = () => {
           </h1>
         </div>
 
-        {/* 中部セクション */}
+        {/* 中部セクション - クリック可能にする */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-4 border-b">
+          <div 
+            className="p-4 border-b cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={handleContentClick}
+          >
             <div className="flex items-start space-x-3">
               <div className="relative">
                 <img
@@ -146,12 +170,13 @@ const SelectScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* 画面下部セクション - 画像表示エリア */}
+        {/* 画面下部セクション - 画像表示エリア（クリックでポップアップ） */}
         <div className="p-4">
           <img 
             src="/lovable-uploads/0369bc15-40c5-4d18-9304-28624ac2e69f.png" 
             alt="Bottom navigation" 
-            className="w-full" 
+            className="w-full cursor-pointer hover:opacity-90 transition-opacity" 
+            onClick={handleBottomImageClick}
           />
         </div>
 
@@ -174,6 +199,20 @@ const SelectScreen: React.FC = () => {
           {bgmEnabled ? <Volume2 size={24} color="black" /> : <VolumeX size={24} color="black" />}
         </button>
       </div>
+
+      {/* ポップアップダイアログ */}
+      <Dialog open={showPopup} onOpenChange={setShowPopup}>
+        <DialogContent className="sm:max-w-md">
+          <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
+          <div className="p-4 text-center">
+            <p className="mb-2 text-lg font-medium">よけいな事をせず、ゲームに集中してください</p>
+            <p className="text-gray-600">まじで頼みますよ、ほんと・・・</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </MobileContainer>
   );
 };
