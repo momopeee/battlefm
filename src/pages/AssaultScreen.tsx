@@ -48,7 +48,7 @@ const AssaultScreen: React.FC = () => {
   }, [handleSkip]);
 
   return (
-    <MobileContainer style={{ minHeight: '100vh' }}>
+    <MobileContainer backgroundClassName="min-h-screen">
       {/* 最下層レイヤー：背景画像（指定URL） */}
       <div
         style={{

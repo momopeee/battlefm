@@ -26,7 +26,8 @@ const SelectScreen: React.FC = () => {
   const handleHeaderClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setButtonSound(BUTTON_SOUND);
-    handleScreenTransition('assault');
+    // Fix: Corrected the type of argument passed to handleScreenTransition
+    handleScreenTransition('battle2');
     navigate('/assault');
   };
 
@@ -34,7 +35,8 @@ const SelectScreen: React.FC = () => {
   const handleContentClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setButtonSound(BUTTON_SOUND);
-    handleScreenTransition('assault');
+    // Fix: Corrected the type of argument passed to handleScreenTransition
+    handleScreenTransition('battle2');
     navigate('/assault');
   };
 
