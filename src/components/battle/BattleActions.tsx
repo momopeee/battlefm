@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState, useCallback, memo } from 'react';
 import AudioPlayer from '@/components/AudioPlayer';
 import { ATTACK_SOUND, SPECIAL_SOUND, RUN_AWAY_SOUND, HIGHBALL_SOUND } from '@/constants/audioUrls';
@@ -11,6 +10,7 @@ interface BattleActionsProps {
   onSpecial: () => void;
   onRunAway: () => void;
   onHighball: () => void;
+  disabled?: boolean; // 追加: 親コンポーネントからのアクション無効化フラグ
 }
 
 const BattleActions: React.FC<BattleActionsProps> = ({
@@ -20,7 +20,8 @@ const BattleActions: React.FC<BattleActionsProps> = ({
   onAttack,
   onSpecial,
   onRunAway,
-  onHighball
+  onHighball,
+  disabled = false // デフォルト値を設定
 }) => {
   // 状態とキーを組み合わせて効率化
   const [soundToPlay, setSoundToPlay] = useState<{ src: string | null, key: number }>({ 
@@ -59,7 +60,8 @@ const BattleActions: React.FC<BattleActionsProps> = ({
 
   // アクションハンドラをメモ化して再レンダリングを減らす
   const handleActionWithSound = useCallback((e: React.MouseEvent<HTMLButtonElement>, soundSrc: string, action: () => void) => {
-    if (actionInProgress) return;
+    // 親コンポーネントから無効化されている場合は早期リターン
+    if (actionInProgress || disabled) return;
     
     handleButtonAnimation(e);
     setSoundToPlay({ src: soundSrc, key: Date.now() });
@@ -74,7 +76,7 @@ const BattleActions: React.FC<BattleActionsProps> = ({
       timerRef.current = resetTimer;
     }, 100);
     timerRef.current = actionTimer;
-  }, [actionInProgress, handleButtonAnimation]);
+  }, [actionInProgress, handleButtonAnimation, disabled]); // disabled を依存配列に追加
 
   // 個別のクリックハンドラをメモ化
   const handleAttackClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -116,10 +118,10 @@ const BattleActions: React.FC<BattleActionsProps> = ({
     }
   }, []);
 
-  // メモ化したボタン無効状態
-  const isAttackDisabled = !isPlayerTurn || isBattleOver || actionInProgress;
-  const isSpecialDisabled = !isPlayerTurn || isBattleOver || !specialAttackAvailable || actionInProgress;
-  const isOtherDisabled = !isPlayerTurn || isBattleOver || actionInProgress;
+  // メモ化したボタン無効状態 - 親コンポーネントからの disabled フラグを追加
+  const isAttackDisabled = !isPlayerTurn || isBattleOver || actionInProgress || disabled;
+  const isSpecialDisabled = !isPlayerTurn || isBattleOver || !specialAttackAvailable || actionInProgress || disabled;
+  const isOtherDisabled = !isPlayerTurn || isBattleOver || actionInProgress || disabled;
 
   return (
     <>
@@ -179,6 +181,7 @@ function arePropsEqual(prevProps: BattleActionsProps, nextProps: BattleActionsPr
     prevProps.isPlayerTurn === nextProps.isPlayerTurn &&
     prevProps.isBattleOver === nextProps.isBattleOver &&
     prevProps.specialAttackAvailable === nextProps.specialAttackAvailable &&
+    prevProps.disabled === nextProps.disabled && // 追加: disabled プロパティの比較
     // We assume action handlers are stable (created with useCallback)
     true
   );

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
@@ -135,6 +134,9 @@ const Battle2Screen: React.FC = () => {
     showSkipButton: false,
   });
 
+  // 追加: 最後のアクション時間を記録
+  const [lastActionTime, setLastActionTime] = useState(0);
+
   // Extract state variables for cleaner code
   const {
     isPlayerTurn,
@@ -203,6 +205,7 @@ const Battle2Screen: React.FC = () => {
     startBattleTimer();
     
     // Preload audio files for better performance
+    const audioElements: HTMLAudioElement[] = [];
     const preloadAudios = [
       BATTLE_BGM, 
       YUJI_SPECIAL_BGM, 
@@ -219,16 +222,27 @@ const Battle2Screen: React.FC = () => {
       const audio = new Audio();
       audio.src = url;
       audio.preload = "auto";
+      audioElements.push(audio);
       console.log(`Preloading audio: ${url}`);
     });
     
+    // Initial battle setup
     // Initial battle setup messages
     setTimeout(() => {
       addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
       addComment('ゆうじ＠陽気なおじさん', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
     }, 1000);
     
-    return cleanupTimeouts;
+    return () => {
+      // クリーンアップ関数
+      cleanupTimeouts();
+      
+      // 作成した全てのオーディオ要素を解放
+      audioElements.forEach(audio => {
+        audio.pause();
+        audio.src = '';
+      });
+    };
   }, []);
   
   // Handle character sheet display
@@ -331,7 +345,35 @@ const Battle2Screen: React.FC = () => {
     }, 1000);
   }, [addComment, opponent2.maxHp, setYujiSpecialMode]);
   
-  // Skip to the appropriate ending screen - MODIFIED as a callback
+  // 追加: アクションのデバウンス処理を行う関数
+  const handleActionWithDebounce = useCallback((action: () => void, soundSrc?: string) => {
+    const now = Date.now();
+    // 最後のアクションから300ms以内の場合は無視
+    if (attackInProgress || now - lastActionTime < 300) return;
+    
+    updateBattleState({ attackInProgress: true });
+    setLastActionTime(now);
+    
+    // サウンドエフェクトが指定されていれば再生
+    if (soundSrc) {
+      setSoundEffect(soundSrc);
+    }
+    
+    // アクションを実行する前に短いタイムアウトを設定
+    const actionTimer = setTimeout(() => {
+      action();
+      // アクション完了後にフラグをリセット
+      const resetTimer = setTimeout(() => {
+        updateBattleState({ attackInProgress: false });
+      }, 500);
+    }, 100);
+    
+    return () => {
+      clearTimeout(actionTimer);
+    };
+  }, [attackInProgress, lastActionTime, updateBattleState]);
+  
+  // Skip to the appropriate ending screen - MODIFIED as a callback with debounce
   const handleSkip = useCallback(() => {
     if (!isBattleOver) return;
     
@@ -354,7 +396,12 @@ const Battle2Screen: React.FC = () => {
     }
   }, [isBattleOver, redirectTimer, pauseBattleTimer, battleResult, handleScreenTransition, navigate]);
   
-  // Player attack function - optimized as a callback
+  // 追加: デバウンス処理を適用したスキップハンドラ
+  const handleSkipWithDebounce = useCallback(() => {
+    handleActionWithDebounce(handleSkip, BUTTON_SOUND);
+  }, [handleActionWithDebounce, handleSkip]);
+  
+  // Player attack function - optimized with debounce
   const handlePlayerAttack = useCallback(() => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
@@ -438,7 +485,12 @@ const Battle2Screen: React.FC = () => {
     addComment, setPlayer, setOpponentHp, setAttackCount, setSpecialAttackAvailable
   ]);
   
-  // Player special attack - optimized as a callback
+  // 追加: デバウンス処理を適用した攻撃ハンドラ
+  const handlePlayerAttackWithDebounce = useCallback(() => {
+    handleActionWithDebounce(() => handlePlayerAttack(), ATTACK_SOUND);
+  }, [handleActionWithDebounce, handlePlayerAttack]);
+  
+  // Player special attack - optimized with debounce
   const handlePlayerSpecial = useCallback(() => {
     if (!isPlayerTurn || attackInProgress || !specialAttackAvailable || isBattleOver) return;
     
@@ -479,6 +531,11 @@ const Battle2Screen: React.FC = () => {
     opponentHp, specialModeActive, player.specialPower,
     addComment, setOpponentHp, setSpecialAttackAvailable, setAttackCount
   ]);
+  
+  // 追加: デバウンス処理を適用した特殊攻撃ハンドラ
+  const handlePlayerSpecialWithDebounce = useCallback(() => {
+    handleActionWithDebounce(() => handlePlayerSpecial(), SPECIAL_SOUND);
+  }, [handleActionWithDebounce, handlePlayerSpecial]);
   
   // Handle enemy attack - Defined as a callable function in component scope
   const handleEnemyAttack = useCallback(() => {
@@ -523,6 +580,7 @@ const Battle2Screen: React.FC = () => {
         });
       }, 1000);
     } else {
+      setSoundEffect
       setSoundEffect(ATTACK_SOUND);
       
       const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
@@ -558,10 +616,11 @@ const Battle2Screen: React.FC = () => {
     player.currentHp, addComment, setPlayer
   ]);
   
-  // Handle running away - optimized as a callback
+  // Handle running away - optimized with debounce
   const handleRunAway = useCallback(() => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
+    updateBattleState({ attackInProgress: true });
     setSoundEffect(RUN_AWAY_SOUND);
     addComment('とおる＠経営参謀', "逃げよう...");
     
@@ -587,10 +646,16 @@ const Battle2Screen: React.FC = () => {
     }, 500);
   }, [isPlayerTurn, attackInProgress, isBattleOver, player.currentHp, addComment, setPlayer]);
   
-  // Handle highball offer - optimized as a callback
+  // 追加: デバウンス処理を適用した逃走ハンドラ
+  const handleRunAwayWithDebounce = useCallback(() => {
+    handleActionWithDebounce(() => handleRunAway(), RUN_AWAY_SOUND);
+  }, [handleActionWithDebounce, handleRunAway]);
+  
+  // Handle highball offer - optimized with debounce
   const handleHighball = useCallback(() => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
+    updateBattleState({ attackInProgress: true });
     setSoundEffect(HIGHBALL_SOUND);
     addComment('とおる＠経営参謀', 'ぐびぐび、うへぇ～、もう一杯お願いします。メガで。');
     
@@ -636,6 +701,11 @@ const Battle2Screen: React.FC = () => {
       }, 1000);
     }, 500);
   }, [isPlayerTurn, attackInProgress, isBattleOver, player.currentHp, player.maxHp, addComment, setPlayer]);
+  
+  // 追加: デバウンス処理を適用したハイボールハンドラ
+  const handleHighballWithDebounce = useCallback(() => {
+    handleActionWithDebounce(() => handleHighball(), HIGHBALL_SOUND);
+  }, [handleActionWithDebounce, handleHighball]);
   
   // Display victory comments sequentially - memoized for performance
   const showVictoryComments = useCallback(() => {
@@ -754,20 +824,22 @@ const Battle2Screen: React.FC = () => {
     />
   ), [player, opponent2, opponentHp, handleCharacterClick]);
 
-  // Performance optimization - cache this component instance
+  // Performance optimization - cache this component instance with debounced handlers
   const battleActionsComponent = useMemo(() => (
     <BattleActions 
       isPlayerTurn={isPlayerTurn}
       isBattleOver={isBattleOver}
       specialAttackAvailable={specialAttackAvailable}
-      onAttack={handlePlayerAttack}
-      onSpecial={handlePlayerSpecial}
-      onRunAway={handleRunAway}
-      onHighball={handleHighball}
+      onAttack={handlePlayerAttackWithDebounce}
+      onSpecial={handlePlayerSpecialWithDebounce}
+      onRunAway={handleRunAwayWithDebounce}
+      onHighball={handleHighballWithDebounce}
+      disabled={attackInProgress} // 追加: アクション中は全ボタンを無効化
     />
   ), [
-    isPlayerTurn, isBattleOver, specialAttackAvailable,
-    handlePlayerAttack, handlePlayerSpecial, handleRunAway, handleHighball
+    isPlayerTurn, isBattleOver, specialAttackAvailable, attackInProgress,
+    handlePlayerAttackWithDebounce, handlePlayerSpecialWithDebounce, 
+    handleRunAwayWithDebounce, handleHighballWithDebounce
   ]);
 
   return (
@@ -825,8 +897,9 @@ const Battle2Screen: React.FC = () => {
         
         {showSkipButton && (
           <Button
-            onClick={handleSkip}
-            className="absolute bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
+            onClick={handleSkipWithDebounce}
+            disabled={attackInProgress}
+            className={`absolute bottom-16 sm:bottom-20 right-3 sm:right-6 z-20 bg-blue-600 hover:bg-blue-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-md animate-pulse flex items-center gap-1 sm:gap-2 text-sm sm:text-base ${attackInProgress ? 'opacity-70' : ''}`}
             style={{ position: 'absolute' }}
           >
             <SkipForward size={isMobile ? 16 : 20} />
