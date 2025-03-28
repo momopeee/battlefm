@@ -63,7 +63,7 @@ const yujiSpecialComments = [
 
 // Define missing arrays
 const yujiAttackComments = [
-  "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
+  "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つこ���が大事です",
   "経営の何がわからないのかわからないってのが経営なんですよぉ〜",
   "経営を上手くやるには、波長の合う人とやるのがいちばんですね〜",
   "売上を上げるには、まずは表に出て顔と名前を売るのが大事ですよ",
@@ -191,7 +191,10 @@ const Battle2Screen: React.FC = () => {
         setPlayer(prev => {
           const newHp = Math.max(0, prev.currentHp - damage);
           if (newHp <= 0) {
-            setTimeout(() => handleDefeat(), 0);
+            // Only call handleDefeat if battle is not already over
+            if (!isBattleOver) {
+              setTimeout(() => handleDefeat(), 0);
+            }
           } else {
             setTimeout(() => {
               updateBattleState({ isPlayerTurn: true, attackInProgress: false });
@@ -216,7 +219,10 @@ const Battle2Screen: React.FC = () => {
         setPlayer(prev => {
           const newHp = Math.max(0, prev.currentHp - damage);
           if (newHp <= 0) {
-            setTimeout(() => handleDefeat(), 0);
+            // Only call handleDefeat if battle is not already over
+            if (!isBattleOver) {
+              setTimeout(() => handleDefeat(), 0);
+            }
           } else {
             setTimeout(() => {
               updateBattleState({ isPlayerTurn: true, attackInProgress: false });
@@ -269,6 +275,8 @@ const Battle2Screen: React.FC = () => {
   }, [showVictoryComments, pauseBattleTimer, handleScreenTransition, navigate, updateBattleState]);
   
   const handleDefeat = useCallback(() => {
+    if (isBattleOver) return;
+    
     updateBattleState({ isBattleOver: true });
     setBattleResult('defeat');
     setCurrentBgm(DEFEAT_BGM);
@@ -298,7 +306,10 @@ const Battle2Screen: React.FC = () => {
         setPlayer(prev => {
           const newHp = Math.max(0, prev.currentHp - 10);
           if (newHp <= 0) {
-            setTimeout(() => handleDefeat(), 0);
+            // Only call handleDefeat if battle is not already over
+            if (!isBattleOver) {
+              setTimeout(() => handleDefeat(), 0);
+            }
           } else {
             setTimeout(() => {
               updateBattleState({ isPlayerTurn: false, attackInProgress: false });
@@ -404,7 +415,10 @@ const Battle2Screen: React.FC = () => {
       setPlayer(prev => {
         const newHp = Math.max(0, prev.currentHp - 10);
         if (newHp <= 0) {
-          setTimeout(() => handleDefeat(), 0);
+          // Only call handleDefeat if battle is not already over
+          if (!isBattleOver) {
+            setTimeout(() => handleDefeat(), 0);
+          }
         } else {
           setTimeout(() => {
             updateBattleState({ isPlayerTurn: false, attackInProgress: false });
@@ -435,7 +449,10 @@ const Battle2Screen: React.FC = () => {
         setPlayer(prev => {
           const newHp = Math.max(0, prev.currentHp - 10);
           if (newHp <= 0) {
-            setTimeout(() => handleDefeat(), 0);
+            // Only call handleDefeat if battle is not already over
+            if (!isBattleOver) {
+              setTimeout(() => handleDefeat(), 0);
+            }
           }
           return { ...prev, currentHp: newHp };
         });
