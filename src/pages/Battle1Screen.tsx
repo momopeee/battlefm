@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useCallback } from 'react';
 import { useApp } from '@/context/AppContext';
 import CommentArea from '@/components/CommentArea';
@@ -22,7 +23,6 @@ const Battle1Screen: React.FC = () => {
   const isMobile = useIsMobile();
   const [buttonSound, setButtonSound] = useState<string | null>(null);
   const [actionInProgress, setActionInProgress] = useState(false);
-  const [lastActionTime, setLastActionTime] = useState(0);
   
   const {
     player,
@@ -75,71 +75,36 @@ const Battle1Screen: React.FC = () => {
     console.log(`BGM changed to: ${currentBgm}`);
     
     // Preload important audio files
-    const audioElements: HTMLAudioElement[] = [];
     const preloadAudios = [BATTLE_BGM, SOSO_SPECIAL_BGM, VICTORY_BGM, DEFEAT_BGM, BUTTON_SOUND];
-    
     preloadAudios.forEach(url => {
       const audio = new Audio();
       audio.src = url;
-      audioElements.push(audio);
       console.log(`Preloading audio: ${url}`);
     });
-    
-    // Cleanup function
-    return () => {
-      // Release all created audio elements
-      audioElements.forEach(audio => {
-        audio.pause();
-        audio.src = '';
-      });
-    };
   }, [currentBgm]);
 
-  // Improved helper function to handle button clicks with sound
-  const playButtonSoundAndDoAction = useCallback((action: () => void) => {
-    const now = Date.now();
-    // Ignore if an action is already in progress or if last action was too recent
-    if (actionInProgress || now - lastActionTime < 300) return;
+  // Helper function to handle button clicks with sound
+  const playButtonSoundAndDoAction = (action: () => void) => {
+    if (actionInProgress) return;
     
     setActionInProgress(true);
-    setLastActionTime(now);
     setButtonSound(BUTTON_SOUND);
     
-    // Set a timer for the action to execute
-    const actionTimer = setTimeout(() => {
+    // Wait for sound to start playing before action
+    setTimeout(() => {
       action();
-      // Reset after action completes
-      const resetTimer = setTimeout(() => {
+      // Reset after action
+      setTimeout(() => {
         setButtonSound(null);
         setActionInProgress(false);
       }, 500);
-      
-      return () => clearTimeout(resetTimer);
     }, 200);
-    
-    return () => clearTimeout(actionTimer);
-  }, [actionInProgress, lastActionTime]);
+  };
   
-  // Wrap battle actions with the improved handler
-  const handleAttackWithSound = useCallback(() => {
-    playButtonSoundAndDoAction(handlePlayerAttack);
-  }, [playButtonSoundAndDoAction, handlePlayerAttack]);
-  
-  const handleSpecialWithSound = useCallback(() => {
-    playButtonSoundAndDoAction(handlePlayerSpecial);
-  }, [playButtonSoundAndDoAction, handlePlayerSpecial]);
-  
-  const handleRunAwayWithSound = useCallback(() => {
-    playButtonSoundAndDoAction(handleRunAway);
-  }, [playButtonSoundAndDoAction, handleRunAway]);
-  
-  const handleHighballWithSound = useCallback(() => {
-    playButtonSoundAndDoAction(handleHighball);
-  }, [playButtonSoundAndDoAction, handleHighball]);
-  
-  const handleSkipWithSound = useCallback(() => {
+  // Wrap the skip handler with sound
+  const handleSkipWithSound = () => {
     playButtonSoundAndDoAction(handleSkip);
-  }, [playButtonSoundAndDoAction, handleSkip]);
+  };
 
   return (
     <MobileContainer
@@ -210,11 +175,10 @@ const Battle1Screen: React.FC = () => {
             isPlayerTurn={isPlayerTurn}
             isBattleOver={isBattleOver}
             specialAttackAvailable={specialAttackAvailable}
-            onAttack={handleAttackWithSound}
-            onSpecial={handleSpecialWithSound}
-            onRunAway={handleRunAwayWithSound}
-            onHighball={handleHighballWithSound}
-            disabled={actionInProgress} // Added: disable all buttons during action
+            onAttack={handlePlayerAttack}
+            onSpecial={handlePlayerSpecial}
+            onRunAway={handleRunAway}
+            onHighball={handleHighball}
           />
           
           {/* Comment input - always at bottom */}
