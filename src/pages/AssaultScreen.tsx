@@ -48,7 +48,7 @@ const AssaultScreen: React.FC = () => {
   }, [handleSkip]);
 
   return (
-    <MobileContainer backgroundClassName="min-h-screen">
+    <MobileContainer backgroundClassName="bg-black">
       {/* 最下層レイヤー：背景画像（指定URL） */}
       <div
         style={{
