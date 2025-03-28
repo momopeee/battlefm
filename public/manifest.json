@@ -4,12 +4,12 @@
   "name": "battle.fm",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "https://tangerine-valkyrie-189847.netlify.app/icon-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/icon-512.png",
+      "src": "https://tangerine-valkyrie-189847.netlify.app/icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
