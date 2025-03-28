@@ -97,7 +97,7 @@ const Battle1Screen: React.FC = () => {
       setTimeout(() => {
         setButtonSound(null);
         setActionInProgress(false);
-      }, 500);
+      }, 1500);
     }, 200);
   };
   
