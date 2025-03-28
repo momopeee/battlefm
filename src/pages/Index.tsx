@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,7 @@ declare global {
 }
 
 // アプリケーションのバージョン
-const APP_VERSION = "Ver.3.167.0";
+const APP_VERSION = "Ver.3.383.0";
 
 const Index = () => {
   const { bgmEnabled, toggleBgm } = useApp();
