@@ -29,7 +29,7 @@ import {
   HIGHBALL_SOUND
 } from '@/constants/audioUrls';
 
-// Player attack comments for Yuji battle
+// Player attack comments for Yuji battle - 文字化け修正
 const playerAttackComments = [
   "ゆうじは人の相談にのってはいけない人間だと確信している",
   "正論を言われた時に、拗ねて逃げていては成長に繋がらないだろ",
@@ -50,7 +50,7 @@ const playerSpecialComments = [
   "自らアドバイスを求めたなら、その相手には進捗の報告を怠るな！！俺達はいい、友達だから報告が無くても\"ゆうじは最低だ！！\"で済ませて、その後も仲良く出来る。だが、他の人は違う、一度不義理をしたら一生相手にされないし、下手したら敵になって戻ってくる。良く考えて行動し、軽はずみで他人を使い捨てにするな！！"
 ];
 
-// UPDATED: Yuji's special attack comments
+// UPDATED: Yuji's special attack comments - 文字化け修正
 const yujiSpecialComments = [
   "やまにいは僕の事いじめたいだけですよね、ひどいです",
   "じゅんさんも本当にひどいです",
@@ -61,7 +61,7 @@ const yujiSpecialComments = [
   "式場の利益よりもプランナーの地位向上のが大事なんです。それが分からない式場は全部だめですよ"
 ];
 
-// Define missing arrays
+// Define the missing arrays - 文字化け修正
 const yujiAttackComments = [
   "経営を成功させるには、本当に良いもの、良いリソース、良い人材を持つことが大事です",
   "経営の何がわからないのかわからないってのが経営なんですよぉ〜",
@@ -75,6 +75,7 @@ const yujiAttackComments = [
   "失敗しても気にしない、前向きな姿勢こそがビジネスの秘訣です"
 ];
 
+// Define victory and defeat comment arrays
 const victoryComments = [
   "とおるはゆうじの経営論を打ち砕いた！",
   "ゆうじはとおるの言葉を受け入れ、考えを改めることを決意した。",
@@ -91,18 +92,6 @@ const defeatComments = [
   "とおるは敗北した...",
   "もう一度挑戦するか？"
 ];
-
-// 明示的なバトル状態の型定義
-interface BattleState {
-  isPlayerTurn: boolean;
-  isBattleOver: boolean;
-  attackInProgress: boolean;
-  yujiInSpecialMode: boolean;
-  specialModeActive: boolean;
-  isHighballConfused: boolean;
-  specialModeTimer: number;
-  showSkipButton: boolean;
-}
 
 const Battle2Screen: React.FC = () => {
   const navigate = useNavigate();
@@ -133,8 +122,8 @@ const Battle2Screen: React.FC = () => {
     setPlayer
   } = useApp();
   
-  // battleState を明示的な型定義を用いて管理
-  const [battleState, setBattleState] = useState<BattleState>({
+  // Battle state - grouped related state together
+  const [battleState, setBattleState] = useState({
     isPlayerTurn: true,
     isBattleOver: false,
     attackInProgress: false,
@@ -144,6 +133,9 @@ const Battle2Screen: React.FC = () => {
     specialModeTimer: 0,
     showSkipButton: false,
   });
+
+  // 追加: 最後のアクション時間を記録
+  const [lastActionTime, setLastActionTime] = useState(0);
 
   // Extract state variables for cleaner code
   const {
@@ -156,19 +148,15 @@ const Battle2Screen: React.FC = () => {
     specialModeTimer,
     showSkipButton,
   } = battleState;
-  
-  // 型安全な状態更新用ヘルパー関数
-  const updateBattleState = useCallback((newState: Partial<BattleState>) => {
-    setBattleState(prev => ({ ...prev, ...newState }));
-  }, []);
-  
-  // オーディオ関連の状態
+
+  // Separate audio-related state
   const [soundEffect, setSoundEffect] = useState<string | null>(null);
   const [currentBgm, setCurrentBgm] = useState<string>(BATTLE_BGM);
   const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
   const [opponentHp, setOpponentHp] = useState(opponent2.currentHp);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   
+  // Memoize unchanging values
   const battleBackgroundGradient = useMemo(() => 
     'linear-gradient(180deg, rgba(0, 153, 198, 1), rgba(12, 33, 133, 1))'
   , []);
@@ -217,6 +205,7 @@ const Battle2Screen: React.FC = () => {
     startBattleTimer();
     
     // Preload audio files for better performance
+    const audioElements: HTMLAudioElement[] = [];
     const preloadAudios = [
       BATTLE_BGM, 
       YUJI_SPECIAL_BGM, 
@@ -233,16 +222,27 @@ const Battle2Screen: React.FC = () => {
       const audio = new Audio();
       audio.src = url;
       audio.preload = "auto";
+      audioElements.push(audio);
       console.log(`Preloading audio: ${url}`);
     });
     
+    // Initial battle setup
     // Initial battle setup messages
     setTimeout(() => {
       addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
       addComment('ゆうじ＠陽気なおじさん', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
     }, 1000);
     
-    return cleanupTimeouts;
+    return () => {
+      // クリーンアップ関数
+      cleanupTimeouts();
+      
+      // 作成した全てのオーディオ要素を解放
+      audioElements.forEach(audio => {
+        audio.pause();
+        audio.src = '';
+      });
+    };
   }, []);
   
   // Handle character sheet display
@@ -298,30 +298,82 @@ const Battle2Screen: React.FC = () => {
     } else if (battleResult === 'defeat') {
       setCurrentBgm(DEFEAT_BGM);
     }
-  }, [
-    isBattleOver, specialModeActive, yujiInSpecialMode, opponentHp,
-    opponent2.attackMin, opponent2.attackMax, opponent2.maxHp,
-    addComment, setPlayer, updateBattleState
-  ]);
+  }, [battleResult]);
   
-  // Define victory and defeat handlers before they're used
-  const showVictoryComments = useCallback(() => {
-    victoryComments.forEach((comment, index) => {
-      setTimeout(() => {
-        addComment('システム', comment, true);
-      }, index * 3000);
-    });
-  }, [addComment]);
+  // Display skip button after battle is over with some delay - optimized with cleanup
+  useEffect(() => {
+    let skipButtonTimer: NodeJS.Timeout | null = null;
+    
+    if (isBattleOver) {
+      const delay = battleResult === 'victory' ? 10000 : 15000;
+      skipButtonTimer = setTimeout(() => {
+        updateBattleState({ showSkipButton: true });
+      }, delay);
+    }
+    
+    return () => {
+      if (skipButtonTimer) clearTimeout(skipButtonTimer);
+    };
+  }, [isBattleOver, battleResult]);
+
+  // Clean up redirect timer on component unmount - improved cleanup
+  useEffect(() => {
+    return () => {
+      if (redirectTimer) {
+        clearTimeout(redirectTimer);
+      }
+      pauseBattleTimer();
+    };
+  }, [redirectTimer, pauseBattleTimer]);
   
-  const showDefeatComments = useCallback(() => {
-    defeatComments.forEach((comment, index) => {
-      setTimeout(() => {
-        addComment('システム', comment, true);
-      }, index * 3000);
-    });
-  }, [addComment]);
+  // UPDATED: Activate Yuji's special mode - as a callback for stability
+  const activateYujiSpecialMode = useCallback(() => {
+    updateBattleState({ yujiInSpecialMode: true });
+    setYujiSpecialMode(true);
+    
+    addComment('ゆうじ＠陽気なおじさん', 'もう一回デザフェス出るから、みんなお金で応援して！！お願い！！');
+    
+    setTimeout(() => {
+      addComment('システム', 'ゆうじはクラウドファンディングを発動した', true);
+      addComment('システム', 'ゆうじのHPゲージが満タンになった', true);
+      
+      addComment('システム', 'ゆうじは特性「のれんに腕押し」を発動した', true);
+      updateBattleState({ specialModeActive: true });
+      
+      setOpponentHp(opponent2.maxHp);
+      
+    }, 1000);
+  }, [addComment, opponent2.maxHp, setYujiSpecialMode]);
   
-  // Skip to the appropriate ending screen - MODIFIED as a callback
+  // 追加: アクションのデバウンス処理を行う関数
+  const handleActionWithDebounce = useCallback((action: () => void, soundSrc?: string) => {
+    const now = Date.now();
+    // 最後のアクションから300ms以内の場合は無視
+    if (attackInProgress || now - lastActionTime < 300) return;
+    
+    updateBattleState({ attackInProgress: true });
+    setLastActionTime(now);
+    
+    // サウンドエフェクトが指定されていれば再生
+    if (soundSrc) {
+      setSoundEffect(soundSrc);
+    }
+    
+    // アクションを実行する前に短いタイムアウトを設定
+    const actionTimer = setTimeout(() => {
+      action();
+      // アクション完了後にフラグをリセット
+      const resetTimer = setTimeout(() => {
+        updateBattleState({ attackInProgress: false });
+      }, 500);
+    }, 100);
+    
+    return () => {
+      clearTimeout(actionTimer);
+    };
+  }, [attackInProgress, lastActionTime, updateBattleState]);
+  
+  // Skip to the appropriate ending screen - MODIFIED as a callback with debounce
   const handleSkip = useCallback(() => {
     if (!isBattleOver) return;
     
@@ -334,59 +386,54 @@ const Battle2Screen: React.FC = () => {
     
     // Play button sound
     setSoundEffect(BUTTON_SOUND);
-    showVictoryComments();
-    console.log('Victory trigger: Setting sound effect to', VICTORY_BGM);
-    console.log('Scheduling victory transition in 30 seconds...');
-    const timer = setTimeout(() => {
-      pauseBattleTimer();
-      console.log('Executing automatic victory transition to victory2');
+    
+    if (battleResult === 'victory') {
       handleScreenTransition('victory2');
       navigate('/victory2');
-    }, 30000);
-    setRedirectTimer(timer);
-  }, [showVictoryComments, pauseBattleTimer, handleScreenTransition, navigate, updateBattleState]);
-  
-  const handleDefeat = useCallback(() => {
-    updateBattleState({ isBattleOver: true });
-    setBattleResult('defeat');
-    setCurrentBgm(DEFEAT_BGM);
-    setSoundEffect(BUTTON_SOUND);
-    showDefeatComments();
-    console.log('Defeat trigger: Setting sound effect to', DEFEAT_BGM);
-    console.log('Scheduling defeat transition in 30 seconds...');
-    const timer = setTimeout(() => {
-      pauseBattleTimer();
-      console.log('Executing automatic defeat transition to result2');
+    } else if (battleResult === 'defeat') {
       handleScreenTransition('result2');
       navigate('/result2');
-    }, 30000);
-    setRedirectTimer(timer);
-  }, [showDefeatComments, pauseBattleTimer, handleScreenTransition, navigate, updateBattleState]);
+    }
+  }, [isBattleOver, redirectTimer, pauseBattleTimer, battleResult, handleScreenTransition, navigate]);
   
-  // Player attack function - optimized as a callback
+  // 追加: デバウンス処理を適用したスキップハンドラ
+  const handleSkipWithDebounce = useCallback(() => {
+    handleActionWithDebounce(handleSkip, BUTTON_SOUND);
+  }, [handleActionWithDebounce, handleSkip]);
+  
+  // Player attack function - optimized with debounce
   const handlePlayerAttack = useCallback(() => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
+    
     updateBattleState({ attackInProgress: true });
     setSoundEffect(ATTACK_SOUND);
     
     if (isHighballConfused) {
       addComment('とおる＠経営参謀', 'え？ちょっとまって、なに？なに？ちょっとまって？えっ？');
+      
       setTimeout(() => {
         addComment('システム', '何を言っているのか分からない。とおるは酔っぱらっているようだ。\nとおるは10のダメージを受けた', true);
-        setPlayer(prev => {
-          const newHp = Math.max(0, prev.currentHp - 10);
-          if (newHp <= 0) {
-            setTimeout(() => handleDefeat(), 0);
-          } else {
-            setTimeout(() => {
-              updateBattleState({ isPlayerTurn: false, attackInProgress: false });
-              handleEnemyAttack();
-            }, 1000);
-          }
-          return { ...prev, currentHp: newHp };
-        });
+        
+        setPlayer(prev => ({
+          ...prev,
+          currentHp: Math.max(0, prev.currentHp - 10)
+        }));
+        
         updateBattleState({ isHighballConfused: false });
+        
+        if (player.currentHp - 10 <= 0) {
+          handleDefeat();
+        } else {
+          setTimeout(() => {
+            updateBattleState({ 
+              isPlayerTurn: false,
+              attackInProgress: false
+            });
+            handleEnemyAttack();
+          }, 1000);
+        }
       }, 500);
+      
       return;
     }
     
@@ -401,15 +448,16 @@ const Battle2Screen: React.FC = () => {
     setTimeout(() => {
       if (specialModeActive) {
         const randomChance = Math.floor(Math.random() * 3) + 1;
+        
         if (randomChance <= 2) {
-          setOpponentHp(prevHp => Math.max(0, prevHp - 5));
+          setOpponentHp(Math.max(0, opponentHp - 5));
           addComment('システム', 'ゆうじはのれんに腕押しを発動した。とおるの言葉は響かない。ゆうじは5ダメージしか受けなかった。', true);
         } else {
-          setOpponentHp(prevHp => Math.max(0, prevHp - damage));
+          setOpponentHp(Math.max(0, opponentHp - damage));
           addComment('システム', `さすがのゆうじも耳が痛い！！${damage}のダメージを受けた`, true);
         }
       } else {
-        setOpponentHp(prevHp => Math.max(0, prevHp - damage));
+        setOpponentHp(Math.max(0, opponentHp - damage));
         addComment('システム', `とおるの言葉が突き刺さる！ ${damage}ポイントのダメージ！`, true);
       }
       
@@ -423,7 +471,10 @@ const Battle2Screen: React.FC = () => {
         handleVictory();
       } else {
         setTimeout(() => {
-          updateBattleState({ isPlayerTurn: false, attackInProgress: false });
+          updateBattleState({
+            isPlayerTurn: false,
+            attackInProgress: false
+          });
           handleEnemyAttack();
         }, 1000);
       }
@@ -431,13 +482,18 @@ const Battle2Screen: React.FC = () => {
   }, [
     isPlayerTurn, attackInProgress, isBattleOver, isHighballConfused, 
     player, opponentHp, specialModeActive, attackCount,
-    addComment, setPlayer, setOpponentHp, setAttackCount, setSpecialAttackAvailable, 
-    handleEnemyAttack, handleVictory, handleDefeat, updateBattleState
+    addComment, setPlayer, setOpponentHp, setAttackCount, setSpecialAttackAvailable
   ]);
   
-  // Player special attack - optimized as a callback
+  // 追加: デバウンス処理を適用した攻撃ハンドラ
+  const handlePlayerAttackWithDebounce = useCallback(() => {
+    handleActionWithDebounce(() => handlePlayerAttack(), ATTACK_SOUND);
+  }, [handleActionWithDebounce, handlePlayerAttack]);
+  
+  // Player special attack - optimized with debounce
   const handlePlayerSpecial = useCallback(() => {
     if (!isPlayerTurn || attackInProgress || !specialAttackAvailable || isBattleOver) return;
+    
     updateBattleState({ attackInProgress: true });
     setSoundEffect(SPECIAL_SOUND);
     setSpecialAttackAvailable(false);
@@ -451,10 +507,10 @@ const Battle2Screen: React.FC = () => {
     
     setTimeout(() => {
       if (specialModeActive) {
-        setOpponentHp(prevHp => Math.max(0, prevHp - damage));
+        setOpponentHp(Math.max(0, opponentHp - damage));
         addComment('システム', `とおるの必殺技が炸裂！ゆうじののれんに腕押しをわずかに通過した。 ${damage}ポイントのダメージ！`, true);
       } else {
-        setOpponentHp(prevHp => Math.max(0, prevHp - damage));
+        setOpponentHp(Math.max(0, opponentHp - damage));
         addComment('システム', `とおるの必殺技が炸裂！ ${damage}ポイントの大ダメージ！`, true);
       }
       
@@ -462,7 +518,10 @@ const Battle2Screen: React.FC = () => {
         handleVictory();
       } else {
         setTimeout(() => {
-          updateBattleState({ isPlayerTurn: false, attackInProgress: false });
+          updateBattleState({
+            isPlayerTurn: false,
+            attackInProgress: false
+          });
           handleEnemyAttack();
         }, 1000);
       }
@@ -472,6 +531,11 @@ const Battle2Screen: React.FC = () => {
     opponentHp, specialModeActive, player.specialPower,
     addComment, setOpponentHp, setSpecialAttackAvailable, setAttackCount
   ]);
+  
+  // 追加: デバウンス処理を適用した特殊攻撃ハンドラ
+  const handlePlayerSpecialWithDebounce = useCallback(() => {
+    handleActionWithDebounce(() => handlePlayerSpecial(), SPECIAL_SOUND);
+  }, [handleActionWithDebounce, handlePlayerSpecial]);
   
   // Handle enemy attack - Defined as a callable function in component scope
   const handleEnemyAttack = useCallback(() => {
@@ -516,6 +580,7 @@ const Battle2Screen: React.FC = () => {
         });
       }, 1000);
     } else {
+      setSoundEffect
       setSoundEffect(ATTACK_SOUND);
       
       const attackComment = yujiAttackComments[Math.floor(Math.random() * yujiAttackComments.length)];
@@ -551,64 +616,96 @@ const Battle2Screen: React.FC = () => {
     player.currentHp, addComment, setPlayer
   ]);
   
-  // Handle running away - optimized as a callback
+  // Handle running away - optimized with debounce
   const handleRunAway = useCallback(() => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
+    updateBattleState({ attackInProgress: true });
     setSoundEffect(RUN_AWAY_SOUND);
     addComment('とおる＠経営参謀', "逃げよう...");
+    
     setTimeout(() => {
       addComment('システム', "とおるは逃げようとしたが、漢として本当に逃げていいのか、逃げた先にいったい何がある？ここで逃げたら俺は一生逃げ続ける。不毛でも立ち向かわなければならない。無駄だとしても、踏ん張らなければあかん時があるやろ！！と思いなおし、自分の頬を思いっきりビンタした。とおるは10のダメージを受けた。", true);
-      setPlayer(prev => {
-        const newHp = Math.max(0, prev.currentHp - 10);
-        if (newHp <= 0) {
-          setTimeout(() => handleDefeat(), 0);
-        } else {
-          setTimeout(() => {
-            updateBattleState({ isPlayerTurn: false, attackInProgress: false });
-            handleEnemyAttack();
-          }, 1000);
-        }
-        return { ...prev, currentHp: newHp };
-      });
+      
+      setPlayer(prev => ({
+        ...prev,
+        currentHp: Math.max(0, prev.currentHp - 10)
+      }));
+      
+      if (player.currentHp - 10 <= 0) {
+        handleDefeat();
+      } else {
+        setTimeout(() => {
+          updateBattleState({
+            isPlayerTurn: false,
+            attackInProgress: false
+          });
+          handleEnemyAttack();
+        }, 1000);
+      }
     }, 500);
-  }, [isPlayerTurn, attackInProgress, isBattleOver, addComment, setPlayer, updateBattleState, handleEnemyAttack, handleDefeat]);
+  }, [isPlayerTurn, attackInProgress, isBattleOver, player.currentHp, addComment, setPlayer]);
   
-  // Handle highball offer - optimized as a callback
+  // 追加: デバウンス処理を適用した逃走ハンドラ
+  const handleRunAwayWithDebounce = useCallback(() => {
+    handleActionWithDebounce(() => handleRunAway(), RUN_AWAY_SOUND);
+  }, [handleActionWithDebounce, handleRunAway]);
+  
+  // Handle highball offer - optimized with debounce
   const handleHighball = useCallback(() => {
     if (!isPlayerTurn || attackInProgress || isBattleOver) return;
     
+    updateBattleState({ attackInProgress: true });
     setSoundEffect(HIGHBALL_SOUND);
     addComment('とおる＠経営参謀', 'ぐびぐび、うへぇ～、もう一杯お願いします。メガで。');
+    
     setTimeout(() => {
       if (player.currentHp < player.maxHp / 2) {
         addComment('システム', "一周まわって、とおるは力がみなぎってきた。\nとおるの体力は全回復した", true);
-        setPlayer(prev => ({ ...prev, currentHp: prev.maxHp }));
+        
+        setPlayer(prev => ({
+          ...prev,
+          currentHp: prev.maxHp
+        }));
       } else {
         const highballEffects = [
           "とおるはハイボールを飲んだ、\nとおるはトイレが近くなった。\nとおるは10のダメージを受けた",
           "とおるはハイボールを飲んだ、\nとおるは眠くなってしまった。\nとおるは10のダメージを受けた",
           "とおるはハイボールを飲んだ、\nとおるは何を言っているのかわからなくなった\nとおるは10のダメージを受けた。"
         ];
+        
         const effectIdx = Math.floor(Math.random() * highballEffects.length);
         addComment('システム', highballEffects[effectIdx], true);
-        setPlayer(prev => {
-          const newHp = Math.max(0, prev.currentHp - 10);
-          if (newHp <= 0) {
-            setTimeout(() => handleDefeat(), 0);
-          }
-          return { ...prev, currentHp: newHp };
-        });
+        
+        setPlayer(prev => ({
+          ...prev,
+          currentHp: Math.max(0, prev.currentHp - 10)
+        }));
+        
         if (effectIdx === 2) {
           updateBattleState({ isHighballConfused: true });
         }
+        
+        if (player.currentHp - 10 <= 0) {
+          handleDefeat();
+          return;
+        }
       }
+      
       setTimeout(() => {
-        updateBattleState({ isPlayerTurn: false, attackInProgress: false });
+        updateBattleState({
+          isPlayerTurn: false,
+          attackInProgress: false
+        });
         handleEnemyAttack();
       }, 1000);
     }, 500);
   }, [isPlayerTurn, attackInProgress, isBattleOver, player.currentHp, player.maxHp, addComment, setPlayer]);
+  
+  // 追加: デバウンス処理を適用したハイボールハンドラ
+  const handleHighballWithDebounce = useCallback(() => {
+    handleActionWithDebounce(() => handleHighball(), HIGHBALL_SOUND);
+  }, [handleActionWithDebounce, handleHighball]);
   
   // Display victory comments sequentially - memoized for performance
   const showVictoryComments = useCallback(() => {
@@ -634,138 +731,45 @@ const Battle2Screen: React.FC = () => {
     setBattleResult('victory');
     setCurrentBgm(VICTORY_BGM);
     setSoundEffect(BUTTON_SOUND);
-    if (battleResult === 'victory') {
+    showVictoryComments();
+    
+    // Log information for debugging
+    console.log('Victory trigger: Setting sound effect to', VICTORY_BGM);
+    console.log('Scheduling victory transition in 30 seconds...');
+    
+    const timer = setTimeout(() => {
+      pauseBattleTimer();
+      console.log('Executing automatic victory transition to victory2');
       handleScreenTransition('victory2');
       navigate('/victory2');
-    } else if (battleResult === 'defeat') {
+    }, 30000);
+    
+    setRedirectTimer(timer);
+  }, [showVictoryComments, pauseBattleTimer, handleScreenTransition, navigate]);
+  
+  // Handle defeat - memoized for performance
+  const handleDefeat = useCallback(() => {
+    updateBattleState({ isBattleOver: true });
+    setBattleResult('defeat');
+    setCurrentBgm(DEFEAT_BGM);
+    setSoundEffect(BUTTON_SOUND);
+    showDefeatComments();
+    
+    // Log information for debugging
+    console.log('Defeat trigger: Setting sound effect to', DEFEAT_BGM);
+    console.log('Scheduling defeat transition in 30 seconds...');
+    
+    const timer = setTimeout(() => {
+      pauseBattleTimer();
+      console.log('Executing automatic defeat transition to result2');
       handleScreenTransition('result2');
       navigate('/result2');
-    }
-  }, [isBattleOver, redirectTimer, pauseBattleTimer, battleResult, handleScreenTransition, navigate]);
-  
-  // Component lifecycle effects and initializations
-  useEffect(() => {
-    const cleanupTimeouts = () => {
-      if (redirectTimer) {
-        clearTimeout(redirectTimer);
-      }
-      pauseBattleTimer();
-    };
-    clearComments();
-    setPlayer(prev => ({
-      ...prev,
-      currentHp: 100
-    }));
-    resetBattleTimer();
-    setOpponentHp(opponent2.currentHp);
-    setAttackCount(0);
-    setSpecialAttackAvailable(false);
-    setYujiSpecialMode(false);
-    updateBattleState({
-      isPlayerTurn: true,
-      isBattleOver: false,
-      attackInProgress: false,
-      yujiInSpecialMode: false,
-      specialModeActive: false,
-      specialModeTimer: 0,
-      isHighballConfused: false,
-      showSkipButton: false
-    });
-    setCurrentBgm(BATTLE_BGM);
-    setBattleResult(null);
-    startBattleTimer();
+    }, 30000);
     
-    const preloadAudios = [
-      BATTLE_BGM, 
-      YUJI_SPECIAL_BGM, 
-      VICTORY_BGM, 
-      DEFEAT_BGM,
-      ATTACK_SOUND,
-      SPECIAL_SOUND,
-      RUN_AWAY_SOUND,
-      HIGHBALL_SOUND,
-      BUTTON_SOUND
-    ];
-    preloadAudios.forEach(url => {
-      const audio = new Audio();
-      audio.src = url;
-      audio.preload = "auto";
-      console.log(`Preloading audio: ${url}`);
-    });
-    
-    setTimeout(() => {
-      addComment('システム', '第二戦！とおる VS ゆうじ＠陽気なおじさん', true);
-      addComment('ゆうじ＠陽気なおじさん', 'どうも～陽気なおじさんでお馴染み、ゆうじです。今日はやまにぃに経営とは何かについて僕なりに指南していきますよ～！');
-    }, 1000);
-    
-    return cleanupTimeouts;
-  }, []);
+    setRedirectTimer(timer);
+  }, [showDefeatComments, pauseBattleTimer, handleScreenTransition, navigate]);
   
-  const handleCharacterClick = useCallback((character: 'player' | 'opponent1' | 'opponent2') => {
-    setCurrentCharacterSheet(character);
-    setShowCharacterSheet(true);
-  }, [setCurrentCharacterSheet, setShowCharacterSheet]);
-  
-  useEffect(() => {
-    if (opponentHp <= 20 && !yujiInSpecialMode && !isBattleOver && !specialModeActive) {
-      activateYujiSpecialMode();
-    }
-  }, [opponentHp, yujiInSpecialMode, isBattleOver, specialModeActive, activateYujiSpecialMode]);
-  
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (specialModeActive && !isBattleOver) {
-      setCurrentBgm(YUJI_SPECIAL_BGM);
-      interval = setInterval(() => {
-        updateBattleState({
-          specialModeTimer: battleState.specialModeTimer + 1,
-        });
-        
-        if (battleState.specialModeTimer >= 40) {
-          setCurrentBgm(BATTLE_BGM);
-          addComment('システム', 'ゆうじ確変モードが終了した', true);
-          updateBattleState({ 
-            specialModeTimer: 0, 
-            specialModeActive: false 
-          });
-        }
-      }, 1000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [specialModeActive, isBattleOver, addComment, updateBattleState, battleState.specialModeTimer]);
-  
-  useEffect(() => {
-    if (battleResult === 'victory') {
-      setCurrentBgm(VICTORY_BGM);
-    } else if (battleResult === 'defeat') {
-      setCurrentBgm(DEFEAT_BGM);
-    }
-  }, [battleResult]);
-  
-  useEffect(() => {
-    let skipButtonTimer: NodeJS.Timeout | null = null;
-    if (isBattleOver) {
-      const delay = battleResult === 'victory' ? 10000 : 15000;
-      skipButtonTimer = setTimeout(() => {
-        updateBattleState({ showSkipButton: true });
-      }, delay);
-    }
-    return () => {
-      if (skipButtonTimer) clearTimeout(skipButtonTimer);
-    };
-  }, [isBattleOver, battleResult, updateBattleState]);
-  
-  useEffect(() => {
-    return () => {
-      if (redirectTimer) {
-        clearTimeout(redirectTimer);
-      }
-      pauseBattleTimer();
-    };
-  }, [redirectTimer, pauseBattleTimer]);
-  
+  // Check for battle end conditions - optimized with improved dependencies
   useEffect(() => {
     if (player.currentHp <= 0 && !isBattleOver) {
       handleDefeat();
@@ -773,16 +777,19 @@ const Battle2Screen: React.FC = () => {
       handleVictory();
     }
   }, [player.currentHp, opponentHp, specialModeActive, isBattleOver, handleDefeat, handleVictory]);
-  
+
+  // Memoized time formatter to prevent recreating on each render
   const formatTime = useCallback((seconds: number): string => {
     if (seconds > 6000) {
       return "99:99";
     }
+    
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   }, []);
-  
+
+  // Performance optimization - only recompute when dependencies change
   const soundEffectPlayer = useMemo(() => {
     return soundEffect ? (
       <AudioPlayer 
@@ -791,31 +798,33 @@ const Battle2Screen: React.FC = () => {
         autoPlay={true} 
         volume={0.7}
         id="battle2-effect"
-        key={`battle-effect-${Date.now()}`}
+        key={`battle-effect-${Date.now()}`} // Use unique key for each sound effect
         onEnded={() => setSoundEffect(null)}
       />
     ) : null;
   }, [soundEffect]);
-  
+
+  // Performance optimization - cache this component instance
   const gaugesDisplayComponent = useMemo(() => (
     <GaugesDisplay 
       player={player}
-      opponent={{ ...opponent2, currentHp: opponentHp }}
+      opponent={{...opponent2, currentHp: opponentHp}}
       attackCount={attackCount}
       sosoHealMode={false}
     />
   ), [player, opponent2, opponentHp, attackCount]);
-  
+
+  // Performance optimization - cache this component instance
   const portraitsComponent = useMemo(() => (
     <CharacterPortraits 
       player={player}
-      opponent={{ ...opponent2, currentHp: opponentHp }}
+      opponent={{...opponent2, currentHp: opponentHp}}
       onCharacterClick={handleCharacterClick}
       sosoHealMode={false}
     />
   ), [player, opponent2, opponentHp, handleCharacterClick]);
 
-  // Performance optimization - cache this component instance
+  // Performance optimization - cache this component instance with debounced handlers
   const battleActionsComponent = useMemo(() => (
     <BattleActions 
       isPlayerTurn={isPlayerTurn}
@@ -832,7 +841,7 @@ const Battle2Screen: React.FC = () => {
     handlePlayerAttackWithDebounce, handlePlayerSpecialWithDebounce, 
     handleRunAwayWithDebounce, handleHighballWithDebounce
   ]);
-  
+
   return (
     <MobileContainer backgroundGradient={battleBackgroundGradient}>
       <div 
@@ -844,14 +853,17 @@ const Battle2Screen: React.FC = () => {
           height: '100%',
         }}
       >
+        {/* Main BGM - Using currentBgm state to handle all BGM state changes */}
         <AudioPlayer 
           src={currentBgm}
           loop={battleResult === null}
           autoPlay={true}
           volume={0.7}
           id="battle2-bgm"
-          key={`battle-bgm-${currentBgm}`}
+          key={`battle-bgm-${currentBgm}`} // Force remount when BGM changes
         />
+
+        {/* Sound Effects - Only render when needed */}
         {soundEffectPlayer}
         
         <PlayerInfo 
@@ -862,6 +874,7 @@ const Battle2Screen: React.FC = () => {
         />
         
         {gaugesDisplayComponent}
+        
         {portraitsComponent}
         
         {specialModeActive && (
@@ -878,6 +891,7 @@ const Battle2Screen: React.FC = () => {
         
         <div className="mt-auto">
           {battleActionsComponent}
+          
           <CommentInput />
         </div>
         
@@ -915,29 +929,3 @@ const Battle2Screen: React.FC = () => {
 };
 
 export default React.memo(Battle2Screen);
-
-/*
-  以下は型安全な状態更新の例（参考）:
-
-  // Define explicit state type
-  interface GameState {
-    isPlayerTurn: boolean;
-    isBattleOver: boolean;
-    attackInProgress: boolean;
-    // other relevant properties
-  }
-
-  // Initialize with proper typing
-  const [gameState, setGameState] = useState<GameState>({
-    isPlayerTurn: true,
-    isBattleOver: false,
-    attackInProgress: false,
-    // initial values
-  });
-
-  // Type-safe state update
-  setGameState((prev: GameState) => ({
-    ...prev,  // preserve existing state
-    isPlayerTurn: !prev.isPlayerTurn,  // example of specific update
-  }));
-*/
