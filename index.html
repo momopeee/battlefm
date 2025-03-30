@@ -11,10 +11,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <title>battle.fm</title>
+    <!-- Preload critical audio files -->
+    <link rel="preload" href="https://tangerine-valkyrie-189847.netlify.app/1-1-kyoman01.mp3" as="audio" />
+    <link rel="preload" href="https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3" as="audio" />
   </head>
   <body>
     <div id="root"></div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/main.tsx" defer></script>
   </body>
 </html>

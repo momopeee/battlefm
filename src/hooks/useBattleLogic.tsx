@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import { useBattleActions } from './battle/useBattleActions';
@@ -30,8 +30,11 @@ export const useBattleLogic = () => {
   const [showSkipButton, setShowSkipButton] = useState(false);
   const [redirectTimer, setRedirectTimer] = useState<NodeJS.Timeout | null>(null);
   const [battleResult, setBattleResult] = useState<'victory' | 'defeat' | null>(null);
-  
   const [specialSkillMessageDisplayed, setSpecialSkillMessageDisplayed] = useState(false);
+
+  const opponentTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const skipButtonTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const sosoHealTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const { handleVictory, handleDefeat, handleSkip: handleSkipResult, clearAllTimers } = useBattleResults({
     addComment,
@@ -70,8 +73,24 @@ export const useBattleLogic = () => {
     handleDefeat
   });
 
+  const clearLocalTimers = () => {
+    if (opponentTimerRef.current) {
+      clearTimeout(opponentTimerRef.current);
+      opponentTimerRef.current = null;
+    }
+    if (skipButtonTimerRef.current) {
+      clearTimeout(skipButtonTimerRef.current);
+      skipButtonTimerRef.current = null;
+    }
+    if (sosoHealTimerRef.current) {
+      clearTimeout(sosoHealTimerRef.current);
+      sosoHealTimerRef.current = null;
+    }
+  };
+
   useEffect(() => {
     clearAllTimers();
+    clearLocalTimers();
     clearComments();
     resetBattleTimer();
     startBattleTimer();
@@ -104,26 +123,36 @@ export const useBattleLogic = () => {
     setShowSkipButton(false);
     setSpecialSkillMessageDisplayed(false);
     
-    console.log("Battle1 initialized with fresh state: Player HP=" + player.maxHp + ", Opponent HP=" + opponent1.maxHp);
-    
     addComment("システム", "バトル開始！ さよならクソリプそーそー！", true);
     
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      clearAllTimers();
+      clearLocalTimers();
+    };
   }, []);
 
   useEffect(() => {
+    if (opponentTimerRef.current) {
+      clearTimeout(opponentTimerRef.current);
+      opponentTimerRef.current = null;
+    }
+    
     if (!isPlayerTurn && isBattleStarted && !isBattleOver) {
-      const opponentTimer = setTimeout(() => {
+      opponentTimerRef.current = setTimeout(() => {
         if (sosoHealMode) {
           handleSosoHeal();
         } else {
           handleOpponentAttack();
         }
       }, 1500);
-      
-      return () => clearTimeout(opponentTimer);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
+    return () => {
+      if (opponentTimerRef.current) {
+        clearTimeout(opponentTimerRef.current);
+        opponentTimerRef.current = null;
+      }
+    };
   }, [isPlayerTurn, isBattleStarted, isBattleOver, sosoHealMode]);
 
   useEffect(() => {
@@ -138,47 +167,71 @@ export const useBattleLogic = () => {
         handleVictory();
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player.currentHp, opponent1.currentHp]);
 
   useEffect(() => {
+    if (sosoHealTimerRef.current) {
+      clearTimeout(sosoHealTimerRef.current);
+      sosoHealTimerRef.current = null;
+    }
+    
     if (opponent1.currentHp <= 30 && !sosoHealMode && !isBattleOver && !specialSkillMessageDisplayed) {
       setSosoHealMode(true);
       setSpecialSkillMessageDisplayed(true);
       
       addComment("システム", "そーそーがとくぎ「強制コラボ召喚」を発動した", true);
       
-      setTimeout(() => {
+      sosoHealTimerRef.current = setTimeout(() => {
         addComment(opponent1.name, "あー、生きるのってむずかしいんだよなー、株クラのみんなも上がろうよ", false);
+        
+        const innerTimer = setTimeout(() => {
+          addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した", true);
+        }, 1000);
+        
+        if (sosoHealTimerRef.current) {
+          const oldTimer = sosoHealTimerRef.current;
+          sosoHealTimerRef.current = innerTimer;
+          clearTimeout(oldTimer);
+        }
       }, 1000);
-      
-      setTimeout(() => {
-        addComment("システム", "ラムダがコラボに参加した、松嶋ことがコラボに参加した", true);
-      }, 2000);
     }
-  }, [opponent1.currentHp, sosoHealMode, isBattleOver, specialSkillMessageDisplayed, addComment, opponent1.name]);
+    
+    return () => {
+      if (sosoHealTimerRef.current) {
+        clearTimeout(sosoHealTimerRef.current);
+        sosoHealTimerRef.current = null;
+      }
+    };
+  }, [opponent1.currentHp, sosoHealMode, isBattleOver, specialSkillMessageDisplayed]);
 
   useEffect(() => {
-    let skipButtonTimer: NodeJS.Timeout | null = null;
+    if (skipButtonTimerRef.current) {
+      clearTimeout(skipButtonTimerRef.current);
+      skipButtonTimerRef.current = null;
+    }
     
     if (isBattleOver && isPlayerVictory === true) {
-      skipButtonTimer = setTimeout(() => {
+      skipButtonTimerRef.current = setTimeout(() => {
         setShowSkipButton(true);
       }, 10000);
     } else if (isBattleOver && isPlayerVictory === false) {
-      skipButtonTimer = setTimeout(() => {
+      skipButtonTimerRef.current = setTimeout(() => {
         setShowSkipButton(true);
       }, 15000);
     }
     
     return () => {
-      if (skipButtonTimer) clearTimeout(skipButtonTimer);
+      if (skipButtonTimerRef.current) {
+        clearTimeout(skipButtonTimerRef.current);
+        skipButtonTimerRef.current = null;
+      }
     };
   }, [isBattleOver, isPlayerVictory]);
 
   useEffect(() => {
     return () => {
       clearAllTimers();
+      clearLocalTimers();
       if (redirectTimer) clearTimeout(redirectTimer);
     };
   }, [redirectTimer]);
@@ -187,6 +240,7 @@ export const useBattleLogic = () => {
     if (!isBattleOver) return;
     
     clearAllTimers();
+    clearLocalTimers();
     
     setTransitionScheduled(true);
     handleSkipResult(isPlayerVictory, redirectTimer);
