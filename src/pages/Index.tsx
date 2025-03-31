@@ -22,7 +22,7 @@ const Index = () => {
           <div className="text-center flex flex-col items-center justify-center gap-6 sm:gap-10">
             {/* Logo */}
             <img 
-              src="/lovable-uploads/e15f68a7-5489-457f-9899-f405d425cb31.png" 
+              src="https://tangerine-valkyrie-189847.netlify.app/icon-320.png" 
               alt="battle.fm" 
               className="w-48 sm:w-64 md:w-80 mb-6 sm:mb-10"
             />
