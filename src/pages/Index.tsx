@@ -3,13 +3,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import MobileContainer from '@/components/MobileContainer';
-import { useApp } from '@/context/AppContext';
+
+// useApp の toggleBgm は使用していないため、削除します
+//import { useApp } from '@/context/AppContext';
+//  const { toggleBgm } = useApp();
 
 // アプリケーションのバージョン
 const APP_VERSION = "Ver.3.383.0";
 
 const Index = () => {
-  const { toggleBgm } = useApp();
   
   return (
     <MobileContainer
