@@ -1,5 +1,5 @@
 
-import { useRef } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { VICTORY_BGM, DEFEAT_BGM } from '@/constants/audioUrls';
 
@@ -29,8 +29,18 @@ export const useBattleResults = ({
   // Use a ref to store all active timers
   const timersRef = useRef<NodeJS.Timeout[]>([]);
   
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      // Clear all timers when component unmounts
+      if (timersRef.current.length > 0) {
+        clearAllTimers();
+      }
+    };
+  }, []);
+  
   // Improved timer creation that automatically tracks the timer
-  const createTimer = (callback: () => void, delay: number): NodeJS.Timeout => {
+  const createTimer = useCallback((callback: () => void, delay: number): NodeJS.Timeout => {
     const timer = setTimeout(() => {
       // Remove this timer from our tracking array when it executes
       timersRef.current = timersRef.current.filter(t => t !== timer);
@@ -41,16 +51,16 @@ export const useBattleResults = ({
     // Add this timer to our tracking array
     timersRef.current.push(timer);
     return timer;
-  };
+  }, []);
   
   // Clear all tracked timers
-  const clearAllTimers = () => {
+  const clearAllTimers = useCallback(() => {
     timersRef.current.forEach(timer => clearTimeout(timer));
     timersRef.current = [];
-  };
+  }, []);
 
   // Handle victory with properly sequenced comments and actions
-  const handleVictory = () => {
+  const handleVictory = useCallback(() => {
     // Already scheduled a transition or in progress
     if (timersRef.current.length > 0) return;
     
@@ -90,10 +100,10 @@ export const useBattleResults = ({
       
       setRedirectTimer(timer);
     }, 12000);
-  };
+  }, [addComment, createTimer, handleScreenTransition, navigate, setRedirectTimer, setShowSkipButton, setBattleResult, setTransitionScheduled]);
 
   // Handle defeat with properly sequenced comments and actions
-  const handleDefeat = () => {
+  const handleDefeat = useCallback(() => {
     // Already scheduled a transition or in progress
     if (timersRef.current.length > 0) return;
     
@@ -141,10 +151,10 @@ export const useBattleResults = ({
         setRedirectTimer(timer);
       }, 3000);
     }, 15000);
-  };
+  }, [addComment, createTimer, handleScreenTransition, navigate, setRedirectTimer, setShowSkipButton, setBattleResult, setTransitionScheduled]);
 
   // Handle skipping end sequences
-  const handleSkip = (isPlayerVictory: boolean | null, redirectTimer: NodeJS.Timeout | null) => {
+  const handleSkip = useCallback((isPlayerVictory: boolean | null, redirectTimer: NodeJS.Timeout | null) => {
     // Clear all timers to prevent any further automatic transitions
     clearAllTimers();
     
@@ -160,7 +170,7 @@ export const useBattleResults = ({
       handleScreenTransition('result1');
       navigate('/result1');
     }
-  };
+  }, [clearAllTimers, handleScreenTransition, navigate]);
 
   return {
     handleVictory,
