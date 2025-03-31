@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useApp } from '@/context/AppContext';
 import CommentArea from '@/components/CommentArea';
 import CharacterSheet from '@/components/CharacterSheet';
@@ -23,8 +23,6 @@ const Battle1Screen: React.FC = () => {
   const isMobile = useIsMobile();
   const [buttonSound, setButtonSound] = useState<string | null>(null);
   const [actionInProgress, setActionInProgress] = useState(false);
-  const buttonSoundTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const actionResetTimerRef = useRef<NodeJS.Timeout | null>(null);
   
   const {
     player,
@@ -52,12 +50,16 @@ const Battle1Screen: React.FC = () => {
   // Memoize the current BGM to prevent unnecessary re-renders
   const getCurrentBgm = useCallback(() => {
     if (battleResult === 'victory') {
+      console.log('Playing victory BGM');
       return VICTORY_BGM;
     } else if (battleResult === 'defeat') {
+      console.log('Playing defeat BGM');
       return DEFEAT_BGM;
     } else if (sosoHealMode) {
+      console.log('Playing Soso special BGM');
       return SOSO_SPECIAL_BGM;
     } else {
+      console.log('Playing normal battle BGM');
       return BATTLE_BGM;
     }
   }, [battleResult, sosoHealMode]);
@@ -70,51 +72,29 @@ const Battle1Screen: React.FC = () => {
   useEffect(() => {
     // When the BGM source changes, update the key to force AudioPlayer to reset
     setBgmKey(Date.now());
+    console.log(`BGM changed to: ${currentBgm}`);
     
     // Preload important audio files
-    const audioCache: { [key: string]: HTMLAudioElement } = {};
     const preloadAudios = [BATTLE_BGM, SOSO_SPECIAL_BGM, VICTORY_BGM, DEFEAT_BGM, BUTTON_SOUND];
-    
     preloadAudios.forEach(url => {
-      if (!audioCache[url]) {
-        const audio = new Audio();
-        audio.src = url;
-        audioCache[url] = audio;
-      }
+      const audio = new Audio();
+      audio.src = url;
+      console.log(`Preloading audio: ${url}`);
     });
-    
-    // Clean up function
-    return () => {
-      // Clear any timers
-      if (buttonSoundTimerRef.current) {
-        clearTimeout(buttonSoundTimerRef.current);
-      }
-      if (actionResetTimerRef.current) {
-        clearTimeout(actionResetTimerRef.current);
-      }
-    };
   }, [currentBgm]);
 
-  // Helper function to handle button clicks with sound - optimize timers
+  // Helper function to handle button clicks with sound
   const playButtonSoundAndDoAction = (action: () => void) => {
     if (actionInProgress) return;
     
     setActionInProgress(true);
     setButtonSound(BUTTON_SOUND);
     
-    // Clear any existing timers
-    if (buttonSoundTimerRef.current) {
-      clearTimeout(buttonSoundTimerRef.current);
-    }
-    if (actionResetTimerRef.current) {
-      clearTimeout(actionResetTimerRef.current);
-    }
-    
     // Wait for sound to start playing before action
-    buttonSoundTimerRef.current = setTimeout(() => {
+    setTimeout(() => {
       action();
       // Reset after action
-      actionResetTimerRef.current = setTimeout(() => {
+      setTimeout(() => {
         setButtonSound(null);
         setActionInProgress(false);
       }, 1500);

@@ -1,5 +1,4 @@
 
-import { useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { VICTORY_BGM, DEFEAT_BGM } from '@/constants/audioUrls';
 
@@ -26,51 +25,29 @@ export const useBattleResults = ({
 }: BattleResultsProps) => {
   const navigate = useNavigate();
   
-  // Use a ref to store all active timers
-  const timersRef = useRef<NodeJS.Timeout[]>([]);
+  // Keep track of all timers we create so we can clear them if needed
+  const timers: NodeJS.Timeout[] = [];
   
-  // Cleanup timers on unmount
-  useEffect(() => {
-    return () => {
-      // Clear all timers when component unmounts
-      if (timersRef.current.length > 0) {
-        clearAllTimers();
-      }
-    };
-  }, []);
-  
-  // Improved timer creation that automatically tracks the timer
-  const createTimer = useCallback((callback: () => void, delay: number): NodeJS.Timeout => {
-    const timer = setTimeout(() => {
-      // Remove this timer from our tracking array when it executes
-      timersRef.current = timersRef.current.filter(t => t !== timer);
-      // Execute the callback
-      callback();
-    }, delay);
-    
-    // Add this timer to our tracking array
-    timersRef.current.push(timer);
+  const createTimer = (callback: () => void, delay: number): NodeJS.Timeout => {
+    const timer = setTimeout(callback, delay);
+    timers.push(timer);
     return timer;
-  }, []);
+  };
   
-  // Clear all tracked timers
-  const clearAllTimers = useCallback(() => {
-    timersRef.current.forEach(timer => clearTimeout(timer));
-    timersRef.current = [];
-  }, []);
+  const clearAllTimers = () => {
+    timers.forEach(timer => clearTimeout(timer));
+  };
 
-  // Handle victory with properly sequenced comments and actions
-  const handleVictory = useCallback(() => {
-    // Already scheduled a transition or in progress
-    if (timersRef.current.length > 0) return;
-    
+  // Handle victory
+  const handleVictory = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
     setBattleResult('victory');
     
-    // Add victory comments in sequence
+    // Add victory comments
     addComment("システム", "とおるが勝利した、そーそーは破れかぶれになってクソリプを量産してしまった", true);
     
+    // Queue up the victory messages with delays
     createTimer(() => {
       addComment("システム", "とおるは400の経験値を得た、とおるはレベルが上がった", true);
     }, 3000);
@@ -83,9 +60,11 @@ export const useBattleResults = ({
       addComment("システム", "とおるは祝いの美酒の効果で痛風が悪化した、80のダメージ", true);
     }, 9000);
     
-    // Final message and screen transition
+    // Final message and screen transition with clear console logs for debugging
     createTimer(() => {
       addComment("システム", "ライブが終了しました", true);
+      console.log("Victory sound set to:", VICTORY_BGM);
+      console.log("Scheduling victory transition in 20 seconds...");
       
       // Show skip button after 10 seconds
       createTimer(() => {
@@ -94,24 +73,22 @@ export const useBattleResults = ({
       
       // Set up a 20-second timer for automatic redirect
       const timer = createTimer(() => {
+        console.log("Executing automatic victory transition to victory1");
         handleScreenTransition('victory1');
         navigate('/victory1');
       }, 20000); // 20 seconds automatic redirect
       
       setRedirectTimer(timer);
     }, 12000);
-  }, [addComment, createTimer, handleScreenTransition, navigate, setRedirectTimer, setShowSkipButton, setBattleResult, setTransitionScheduled]);
+  };
 
-  // Handle defeat with properly sequenced comments and actions
-  const handleDefeat = useCallback(() => {
-    // Already scheduled a transition or in progress
-    if (timersRef.current.length > 0) return;
-    
+  // Handle defeat
+  const handleDefeat = () => {
     // Mark that we've already scheduled a transition
     setTransitionScheduled(true);
     setBattleResult('defeat');
     
-    // Add defeat comments in sequence
+    // Add defeat comments
     addComment("システム", "とおるが敗北した、そーそーは歯止めが利かなくなってしまった", true);
     
     createTimer(() => {
@@ -130,20 +107,23 @@ export const useBattleResults = ({
       addComment("システム", "とおるは敗北の美酒に酔いしれた", true);
     }, 12000);
     
-    // Final messages and screen transition
+    // Final messages and screen transition with clear console logs for debugging
     createTimer(() => {
       addComment("システム", "とおるは敗北の美酒の効果で痛風が悪化した、530000のダメージ", true);
       
       createTimer(() => {
         addComment("システム", "ライブが終了しました", true);
+        console.log("Defeat sound set to:", DEFEAT_BGM);
+        console.log("Scheduling defeat transition to result1 in 20 seconds...");
         
         // Show skip button after 15 seconds
         createTimer(() => {
           setShowSkipButton(true);
         }, 1000);
         
-        // Set up a 20-second timer for automatic redirect to result1
+        // Set up a 20-second timer for automatic redirect to result1 instead of endingB
         const timer = createTimer(() => {
+          console.log("Executing automatic defeat transition to result1");
           handleScreenTransition('result1');
           navigate('/result1');
         }, 20000); // 20 seconds automatic redirect
@@ -151,10 +131,10 @@ export const useBattleResults = ({
         setRedirectTimer(timer);
       }, 3000);
     }, 15000);
-  }, [addComment, createTimer, handleScreenTransition, navigate, setRedirectTimer, setShowSkipButton, setBattleResult, setTransitionScheduled]);
+  };
 
   // Handle skipping end sequences
-  const handleSkip = useCallback((isPlayerVictory: boolean | null, redirectTimer: NodeJS.Timeout | null) => {
+  const handleSkip = (isPlayerVictory: boolean | null, redirectTimer: NodeJS.Timeout | null) => {
     // Clear all timers to prevent any further automatic transitions
     clearAllTimers();
     
@@ -164,13 +144,15 @@ export const useBattleResults = ({
     
     // Transition to the appropriate screen based on battle outcome
     if (isPlayerVictory === true) {
+      console.log("Skipping to victory1 screen");
       handleScreenTransition('victory1');
       navigate('/victory1');
     } else if (isPlayerVictory === false) {
+      console.log("Skipping to result1 screen");
       handleScreenTransition('result1');
       navigate('/result1');
     }
-  }, [clearAllTimers, handleScreenTransition, navigate]);
+  };
 
   return {
     handleVictory,

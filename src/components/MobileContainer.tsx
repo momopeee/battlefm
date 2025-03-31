@@ -1,5 +1,5 @@
 
-import React, { ReactNode, memo } from 'react';
+import React, { ReactNode } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Footer from './Footer';
 
@@ -50,7 +50,7 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
       className={`min-h-screen w-full flex items-center justify-center ${backgroundClassName || 'bg-black'} pc-fixed-container`}
       style={containerStyle}
     >
-      {/* Blurred background for desktop only - with will-change optimization */}
+      {/* Blurred background for desktop only */}
       {!isMobile && (
         <div 
           className="absolute inset-0 w-full h-full z-0"
@@ -58,9 +58,7 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
             ...backgroundStyle,
             filter: 'blur(30px)',
             opacity: 0.7,
-            transform: 'scale(1.1)',
-            willChange: 'transform',
-            backfaceVisibility: 'hidden',
+            transform: 'scale(1.1)'
           }}
         />
       )}
@@ -78,7 +76,6 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
           paddingLeft: isMobile ? 'env(safe-area-inset-left)' : 0,
           paddingRight: isMobile ? 'env(safe-area-inset-right)' : 0,
           boxSizing: 'border-box',
-          contain: 'paint layout',
         }}
       >
         <div className="flex-1 overflow-auto">
@@ -90,5 +87,4 @@ const MobileContainer: React.FC<MobileContainerProps> = ({
   );
 };
 
-// Memoize the component to prevent unnecessary re-renders
-export default memo(MobileContainer);
+export default MobileContainer;

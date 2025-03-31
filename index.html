@@ -7,66 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="https://tangerine-valkyrie-189847.netlify.app/icon-192.png" />
-    
-    <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Preload critical fonts with high fetchpriority -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Press+Start+2P&display=swap">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Press+Start+2P&display=swap" 
-          rel="stylesheet" media="print" onload="this.media='all'">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <title>battle.fm</title>
-    
-    <!-- Critical CSS inlining -->
-    <style>
-      html, body {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        overflow-x: hidden;
-      }
-      
-      @media (min-width: 768px) {
-        html, body {
-          height: 100vh;
-          overflow: hidden;
-        }
-        
-        .pc-fixed-container {
-          height: 100vh;
-          overflow: hidden;
-          box-sizing: border-box;
-        }
-      }
-      
-      /* Preload spinner to avoid CLS */
-      .initial-loading {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        width: 100%;
-        background-color: #000;
-        color: #fff;
-      }
-    </style>
-    
-    <!-- Preload critical audio files with lower priority -->
-    <link rel="preload" href="https://tangerine-valkyrie-189847.netlify.app/1-1-kyoman01.mp3" as="audio" fetchpriority="low" />
-    <link rel="preload" href="https://tangerine-valkyrie-189847.netlify.app/1-a-button.mp3" as="audio" fetchpriority="low" />
   </head>
   <body>
-    <div id="root">
-      <!-- Minimal loading state to avoid CLS -->
-      <div class="initial-loading">Loading...</div>
-    </div>
+    <div id="root"></div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx" defer></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
